@@ -1,0 +1,12 @@
+{
+  "rpcnode": {
+      "client": "goquorum",
+      "rpcUrl": "http://localhost:8545",
+      "wsUrl": "local"
+  },
+  "member1": {
+      "client": "goquorum",
+      "rpcUrl": "http://localhost:20000",
+      "wsUrl": "local"
+  }
+}
