@@ -4,7 +4,6 @@ import NodePeers from './nodes/NodePeers';
 import NodeBlocks from './nodes/NodeBlocks';
 import NodeTxns from './nodes/NodeTxns';
 import NodeInfo from './nodes/NodeInfo';
-
 import {Container, Row, Col, Tabs, Tab} from 'react-bootstrap';
 
 const nodesConfig = require('../config/nodes.json');
@@ -26,18 +25,17 @@ function Nodes(){
             <Row> <p></p> </Row>
 
             <Row>
-              <Col sm={3}><NodeStatus /></Col>
-              <Col sm={3}><NodePeers /></Col>
-              <Col sm={3}><NodeBlocks /></Col>
-              <Col sm={3}><NodeTxns /></Col>
+              <Col sm={3}><NodeStatus node={node} status="running"/></Col>
+              <Col sm={3}><NodePeers node={node} peers="5" /></Col>
+              <Col sm={3}><NodeBlocks node={node} blocks="100" /></Col>
+              <Col sm={3}><NodeTxns node={node} txns="0" /></Col>
             </Row>
 
             <Row> <p></p> </Row>
 
             <Row>
               <Col>
-              <NodeInfo />
-              Hi, I am {node} tab content. {nodesConfig[node]['client']}
+                <NodeInfo node={node}/>
               </Col>
             </Row>
 

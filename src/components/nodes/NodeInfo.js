@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import {Container, Row, Col, Card} from 'react-bootstrap';
+const nodesConfig = require('../../config/nodes.json');
 
+function NodeInfo(props){
 
-
-// Generic card to show a single piece of info eg chain head, peer count etc
-
-function NodeTxns(){
+  const node = props.node;
+  const client = nodesConfig[node]['client'];
 
   return (
     
@@ -18,7 +18,7 @@ function NodeTxns(){
           <Container>
           <Row>
             <Col md={2}><Card.Text className="cBold">Client</Card.Text></Col>
-            <Col md={10}><Card.Text className="text-truncate">Besu</Card.Text></Col>
+            <Col md={10}><Card.Text className="text-truncate cCapitalize">{client}</Card.Text></Col>
           </Row>
           <Row>
             <Col md={2}><Card.Text className="cBold">Node ID</Card.Text></Col>
@@ -49,7 +49,7 @@ function NodeTxns(){
 
 }
 
-export default NodeTxns;
+export default NodeInfo;
 
 
 
