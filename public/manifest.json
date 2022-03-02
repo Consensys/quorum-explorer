@@ -8,7 +8,7 @@
     },
     {
       "src": "logo.svg",
-      "type": "image/svg",
+      "type": "image/svg"
     }
   ],
   "start_url": ".",

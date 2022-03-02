@@ -13,8 +13,9 @@ function Footer() {
           <Nav.Link className="bg-dark text-white" href="https://consensys.net/docs/goquorum/en/latest/"> GoQuorum </Nav.Link> 
           <Nav.Link className="bg-dark text-white" href="https://docs.tessera.consensys.net/en/latest/"> Tessera </Nav.Link>
           <Nav.Link className="bg-dark text-white" href="https://docs.orchestrate.consensys.net/en/latest/"> Codefi Orchestrate </Nav.Link>
+          <Nav.Link className="bg-dark text-white" href="https://discord.com/channels/697535391594446898/"> Discord </Nav.Link>
           <Nav.Link className="bg-dark text-white" href="https://consensys.net/contact/"> Contact </Nav.Link>
-          <Nav.Link className="bg-dark text-white alignRight" href="#">    Ⓒ Copyright Consensys 2022. </Nav.Link>
+          <Nav.Link className="bg-dark text-white alignRight" href="#">    Ⓒ Copyright ConsenSys 2022. </Nav.Link>
         </Nav>
         </Row>
       </Container>
