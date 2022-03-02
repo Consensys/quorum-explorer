@@ -8,5 +8,10 @@
       "client": "goquorum",
       "rpcUrl": "http://localhost:20000",
       "wsUrl": "local"
+  },
+  "member2": {
+    "client": "besu",
+    "rpcUrl": "http://localhost:20002",
+    "wsUrl": "local"
   }
 }

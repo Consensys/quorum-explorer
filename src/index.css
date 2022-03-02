@@ -1,10 +1,10 @@
 * {
-  margin: 1px;
-  padding: 1px;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
   font-family: 'Roboto';
 }
 
-h1 {
-  padding: 10px 5px;
+footer-ul {
+  list-style-type: none;
 }

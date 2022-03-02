@@ -1,31 +1,29 @@
 import * as React from 'react';
-const nodesConfig = require('../config/nodes.json');
+import {Container, Navbar, Nav, NavDropdown} from 'react-bootstrap';
 
-const pages = ['Dashboard', 'Explorer', 'Contracts'];
-const nodes = Object.keys(nodesConfig);
+const pages = ['Dashboard', 'Nodes', 'Explorer', 'Contracts'];
 
 function Navigation() {
 
   return (
   
-    <div>
-      <p>LOGO</p>
+    <Navbar bg="dark" variant="dark" expand="xl">
+      <Container>
+      <Navbar.Brand href="#home">Quorum Explorer</Navbar.Brand>
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+     
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="ms-auto ">
+            {pages.map((page) => (
+            <Nav.Link key={page} href={`${page}`}>{page}</Nav.Link>
+            ))}
+          </Nav>
+        </Navbar.Collapse>
+     
+      </Container>
+    </Navbar>
 
-      <div>
-      <a href="/Dashboard"><button>Dashboard</button></a>
-      <a href="/Explorer"><button>Explorer</button></a>
-      <a href="/Contracts"><button>Contracts</button></a>
-      </div>
 
-      <div class="dropdown">
-        <button onClick="myFunction()" class="dropbtn">Dropdown</button>
-        <div id="myDropdown" class="dropdown-content">
-          <a href="#">rpcnode</a>
-          <a href="#">node1</a>
-          <a href="#">node2</a>
-        </div>
-      </div>
-    </div>
 
   );
 };
