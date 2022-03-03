@@ -8,7 +8,7 @@ function Footer() {
       <div className="bg-dark text-white">
       <Container fluid="md">
         <Row >
-        <Nav className="me-auto">
+        <Nav className="me-auto ">
           <Nav.Link className="bg-dark text-white" href="https://besu.hyperledger.org/en/latest/"> Hyperledger Besu </Nav.Link>
           <Nav.Link className="bg-dark text-white" href="https://consensys.net/docs/goquorum/en/latest/"> GoQuorum </Nav.Link> 
           <Nav.Link className="bg-dark text-white" href="https://docs.tessera.consensys.net/en/latest/"> Tessera </Nav.Link>

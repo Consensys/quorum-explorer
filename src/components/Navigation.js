@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Container, Navbar, Nav, NavDropdown} from 'react-bootstrap';
+import {Container, Navbar, Nav, Dropdown, NavDropdown} from 'react-bootstrap';
 
 const pages = ['Dashboard', 'Nodes', 'Explorer', 'Contracts'];
 
@@ -26,6 +26,7 @@ function Navigation() {
             <Nav.Link key={page} href={`${page}`}>{page}</Nav.Link>
             ))}
           </Nav>
+     
         </Navbar.Collapse>
      
       </Container>

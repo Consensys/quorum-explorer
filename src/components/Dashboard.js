@@ -1,17 +1,33 @@
 import React, { Component } from 'react';
 import {Container, Row, Col, Card} from 'react-bootstrap';
+import NodeBlocks from './nodes/NodeBlocks';
 
-function Dashboard(){
+class Dashboard extends Component{
 
-  return (
-    <Container className="container-fluid vh-100">
-    <Row><p></p></Row>
-    <Row>
-    <h2> Dashboard</h2>
-    </Row>
-    </Container>
-  );
+  constructor(props){
+    super(props);
+    this.state = { 
+      blocks: 0
+    }
+  }
+
   
+
+  render(){
+    return (
+      <Container className="container-fluid vh-100">
+      <Row><p></p></Row>
+      <Row>
+      <h2> Dashboard</h2>
+      </Row>
+
+      <Row>
+      <Col sm={3}><NodeBlocks blocks={this.state.blocks} /></Col>
+      </Row>
+
+      </Container>
+    );
+  }
 }
 
 export default Dashboard;
