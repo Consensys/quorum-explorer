@@ -15,6 +15,7 @@ class Nodes extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      delay: 10000,
       client: nodeKeys[0].client,
       selectedNode: nodeKeys[0],
       nodeId: '',
@@ -31,9 +32,9 @@ class Nodes extends Component {
   }
 
   async nodeInfoHandler(node) {
-    console.log(">>>>> nodeInfoHandler")
-    const rpcUrl = nodesConfig[node].rpcUrl
-    const res = await updateNodeInfo(rpcUrl)
+    // console.log("nodeInfoHandler");
+    const rpcUrl = nodesConfig[node].rpcUrl;
+    const res = await updateNodeInfo(rpcUrl);
     this.setState({
       client: nodesConfig[node].client,
       selectedNode: node,
@@ -49,10 +50,15 @@ class Nodes extends Component {
     // console.log('State: '+ JSON.stringify(this.state, null, 2));
   }
 
+  tick = () => {
+    this.nodeInfoHandler(this.state.selectedNode);
+  }
+
   // content visible on screen
   async componentDidMount() {
     console.log("component rendered to screen");
-    await this.nodeInfoHandler(this.state.selectedNode);
+    this.interval = setInterval(this.tick, this.state.delay);
+    this.nodeInfoHandler(this.state.selectedNode);
   }
 
   // sit and wait to updates from setState
@@ -63,6 +69,7 @@ class Nodes extends Component {
   // sit and wait till component is no longer shown
   componentWillUnmount() {
     console.log("component gone off screen");
+    clearInterval(this.interval);
   }
 
   // shouldComponentUpdate(){}
