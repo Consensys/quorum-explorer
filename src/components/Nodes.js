@@ -6,7 +6,7 @@ import NodeTxns from './nodes/NodeTxns';
 import NodeInfo from './nodes/NodeInfo';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { Sliders } from 'react-bootstrap-icons';
-import { postAdminNodeInfo } from './services/goquorum_api_calls';
+import { postAdminNodeInfo } from './services/common_api_calls';
 const nodesConfig = require('../config/nodes.json');
 const nodeKeys = Object.keys(nodesConfig);
 
@@ -32,34 +32,19 @@ class Nodes extends Component {
   async nodeInfoHandler(node) {
     console.log(">>>>> nodeInfoHandler")
     const rpcUrl = nodesConfig[node].rpcUrl
-    try {
-      const res = await postAdminNodeInfo(rpcUrl)
-      this.setState({
-        client: nodesConfig[node].client,
-        selectedNode: node,
-        status: res.statusText,
-        nodeId: res.data.result.id,
-        nodeName: res.data.result.name,
-        enode: res.data.result.enode,
-        ip: res.data.result.ip,
-        rpcUrl: rpcUrl,
-      })
-    }catch (e) {
-      console.error(e);
-      this.setState({
-        client: nodesConfig[node].client,
-        selectedNode: node,
-        status: "null",
-        nodeId: "",
-        nodeName:  "",
-        enode:  "",
-        ip:  "",
-        rpcUrl: rpcUrl,
-      })
-    } 
+    const res = await postAdminNodeInfo(rpcUrl)
+    this.setState({
+      client: nodesConfig[node].client,
+      selectedNode: node,
+      status: res.statusText,
+      nodeId: res.nodeId,
+      nodeName: res.nodeName,
+      enode: res.enode,
+      ip: res.ip,
+      rpcUrl: rpcUrl,
+    })
     // console.log('State: '+ JSON.stringify(this.state, null, 2));
   }
-
 
   // content visible on screen
   async componentDidMount() {
