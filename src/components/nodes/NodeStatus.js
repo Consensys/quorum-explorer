@@ -6,13 +6,10 @@ class NodesCard extends Component{
 
   constructor(props){
     super(props);
-    this.state = { 
-      status : this.props.status
-    }
   }
 
   render(){
-    const isRunningStatus = (this.state.status === "OK")
+    const isRunningStatus = (this.props.status === "OK")
     return (
       <Card >
         <Card.Body>
@@ -26,7 +23,7 @@ class NodesCard extends Component{
             </Col>
             <Col sm={8} className="cCenterAlign">
               <Card.Title>Status</Card.Title>
-              <Card.Text className='cCapitalize'>{this.state.status}</Card.Text>
+              <Card.Text>{this.props.name}</Card.Text>
             </Col>
           </Row>
         </Card.Body>

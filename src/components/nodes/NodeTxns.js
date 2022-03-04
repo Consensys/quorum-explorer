@@ -6,9 +6,6 @@ class NodeTxns extends Component{
 
   constructor(props){
     super(props);
-    this.state = { 
-      txns : this.props.txns
-    }
   }
 
   render(){
@@ -21,7 +18,7 @@ class NodeTxns extends Component{
             </Col>
             <Col sm={8}>
               <Card.Title>Queued Txns</Card.Title>
-              <Card.Text>{this.state.txns}</Card.Text>
+              <Card.Text>{this.props.txns}</Card.Text>
             </Col>
           </Row>
         </Card.Body>

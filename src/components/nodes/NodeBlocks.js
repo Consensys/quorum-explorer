@@ -6,9 +6,6 @@ class NodePeers extends Component{
 
   constructor(props){
     super(props);
-    this.state = { 
-      blocks : this.props.blocks
-    }
   }
   
   render(){
@@ -21,7 +18,7 @@ class NodePeers extends Component{
             </Col>
             <Col sm={8}>
               <Card.Title>Blocks</Card.Title>
-              <Card.Text>{this.state.blocks}</Card.Text>
+              <Card.Text>{this.props.blocks}</Card.Text>
             </Col>
           </Row>
         </Card.Body>
