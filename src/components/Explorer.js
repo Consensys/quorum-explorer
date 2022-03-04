@@ -5,7 +5,7 @@ function Explorer(){
 
   return (
     <Container className="container-fluid vh-100">
-    <Row><p></p></Row>
+    <br/>
     <Row>
     <h2> Explorer</h2>
     </Row>

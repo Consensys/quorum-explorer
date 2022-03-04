@@ -12,7 +12,7 @@ class NodesCard extends Component{
   }
 
   render(){
-    const isRunningStatus = (this.state.status === "running")
+    const isRunningStatus = (this.state.status === "OK")
     return (
       <Card >
         <Card.Body>

@@ -16,7 +16,7 @@ class Dashboard extends Component{
   render(){
     return (
       <Container className="container-fluid vh-100">
-      <Row><p></p></Row>
+      <br/>
       <Row>
       <h2> Dashboard</h2>
       </Row>
