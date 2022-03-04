@@ -9,7 +9,7 @@ class NodesCard extends Component{
   }
 
   render(){
-    const isRunningStatus = (this.props.status === "OK")
+    const isRunningStatus = (this.props.statusText === "OK")
     return (
       <Card >
         <Card.Body>

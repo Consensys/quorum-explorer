@@ -6,7 +6,7 @@ import NodeTxns from './nodes/NodeTxns';
 import NodeInfo from './nodes/NodeInfo';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { Sliders } from 'react-bootstrap-icons';
-import { postAdminNodeInfo } from './services/common_api_calls';
+import { updateNodeInfo } from './services/common_api_calls';
 const nodesConfig = require('../config/nodes.json');
 const nodeKeys = Object.keys(nodesConfig);
 
@@ -22,26 +22,29 @@ class Nodes extends Component {
       enode: '',
       ip: '127.0.0.1',
       rpcUrl: 'http://127.0.0.1:8545',
-      status: "null",
+      statusText: "error",
       blocks: 0,
       peers: 0,
-      txns: 0,
+      queuedTxns: 0,
+      pendingTxns: 0,
     }
   }
 
   async nodeInfoHandler(node) {
     console.log(">>>>> nodeInfoHandler")
     const rpcUrl = nodesConfig[node].rpcUrl
-    const res = await postAdminNodeInfo(rpcUrl)
+    const res = await updateNodeInfo(rpcUrl)
     this.setState({
       client: nodesConfig[node].client,
       selectedNode: node,
-      status: res.statusText,
+      statusText: res.statusText,
       nodeId: res.nodeId,
       nodeName: res.nodeName,
       enode: res.enode,
       ip: res.ip,
       rpcUrl: rpcUrl,
+      blocks: res.blocks,
+      peers: res.peers,
     })
     // console.log('State: '+ JSON.stringify(this.state, null, 2));
   }
@@ -96,10 +99,10 @@ class Nodes extends Component {
         <Row>
           <br />
           <Row>
-            <Col sm={3}><NodeStatus name={this.state.selectedNode} status={this.state.status} /></Col>
+            <Col sm={3}><NodeStatus name={this.state.selectedNode} statusText={this.state.statusText} /></Col>
             <Col sm={3}><NodePeers peers={this.state.peers} /></Col>
             <Col sm={3}><NodeBlocks blocks={this.state.blocks} /></Col>
-            <Col sm={3}><NodeTxns txns={this.state.txns} /></Col>
+            <Col sm={3}><NodeTxns txns={this.state.queuedTxns} /></Col>
           </Row>
 
           <Row><p> </p></Row>
