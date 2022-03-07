@@ -15,6 +15,7 @@ const nodeKeys = Object.keys(nodesConfig);
 export default class Nodes extends Component {
   constructor(props) {
     super(props);
+    this.handler = this.childHandler.bind(this);
     this.state = {
       delay: 1000,
       client: nodeKeys[0].client,
@@ -31,6 +32,13 @@ export default class Nodes extends Component {
       pendingTxns: 0,
     };
   }
+
+  childHandler = (dropDownNode) => {
+    console.log(dropDownNode);
+    this.setState({
+      selectedNode: dropDownNode.target.value,
+    });
+  };
 
   async nodeInfoHandler(node) {
     // console.log("nodeInfoHandler");
@@ -106,6 +114,7 @@ export default class Nodes extends Component {
         <PageHeader HeadingName="Nodes" />
         <StatCard cards={cards} />
         <NodeData
+          childHandler={this.childHandler}
           selectedNode={this.state.selectedNode}
           client={this.state.client}
           nodeId={this.state.nodeId}

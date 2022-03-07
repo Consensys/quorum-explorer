@@ -4,6 +4,7 @@ const nodesConfig = require("../../config/nodes.json");
 const nodeKeys = Object.keys(nodesConfig);
 
 export default function NodeData({
+  childHandler,
   selectedNode,
   client,
   nodeId,
@@ -20,7 +21,7 @@ export default function NodeData({
             <Text minW="max" fontSize="lg" color="muted">
               Select node:
             </Text>
-            <Select variant="filled">
+            <Select variant="filled" onChange={childHandler}>
               {nodeKeys.map((node, index) => (
                 <option key={index} value={node}>
                   {node}
