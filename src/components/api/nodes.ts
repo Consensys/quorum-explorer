@@ -1,22 +1,10 @@
 
+import { ethApiCall } from './common';
+import { NodeDetails } from "./types/responses";
 const axios = require('axios');
 
-export async function ethApiCall(url, method, params=[]){
-  return axios({
-    method: 'post',
-    url: url,
-    data: {
-        jsonrpc: '2.0',
-        method: method,
-        params: params,
-        id: 1
-    },
-    headers: {'Content-Type': 'application/json'}
-  })
-}
-
-export async function updateNodeInfo(url){
-  let nodeDetails = { status: "error", nodeId: "", nodeName: "", enode: "", ip: "" }
+export async function updateNodeInfo(url:string) {
+  let nodeDetails: NodeDetails= { statusText: "error", nodeId: "", nodeName: "", enode: "", ip: "", blocks: -1, peers: -1, queuedTxns: -1, pendingTxns:-1 }
   try {
     const adminNodeInfo = await ethApiCall(url, 'admin_nodeInfo'); 
     const ethBlockNumber = await ethApiCall(url, 'eth_blockNumber'); 
@@ -38,10 +26,10 @@ export async function updateNodeInfo(url){
   }
 }
 
-export async function getBlockByNumber(url, blockNumber='latest'){
+export async function getBlockByNumber(url:string, blockNumber:string ='latest'){
   let blockDetails = { status: "error", number: "", hash: "", transactionsRoot: "", stateRoot: "", receiptsRoot: "", miner: "",  extraData: "", size: "", gasUsed: "", gasLimit: "" ,"timestamp": "", uncles: [], transactions: [] }
   try {
-    const ethBlockByNumber = await ethApiCall(url, 'eth_getBlockByNumber', [blockNumber.toString(16), true]); 
+    const ethBlockByNumber = await ethApiCall(url, 'eth_getBlockByNumber', [blockNumber, true] ); 
     blockDetails['number'] = ethBlockByNumber.data.result.number;
     blockDetails['hash'] = ethBlockByNumber.data.result.hash;
     blockDetails['transactionsRoot'] = ethBlockByNumber.data.result.transactionsRoot;

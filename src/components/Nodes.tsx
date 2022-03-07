@@ -6,17 +6,36 @@ import NodeTxns from './nodes/NodeTxns';
 import NodeInfo from './nodes/NodeInfo';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { Sliders } from 'react-bootstrap-icons';
-import { updateNodeInfo } from './services/common_api_calls';
+import { updateNodeInfo } from './api/nodes';
 const nodesConfig = require('../config/nodes.json');
 const nodeKeys = Object.keys(nodesConfig);
 
-class Nodes extends Component {
+interface IProps {
+}
 
-  constructor(props) {
+interface IState {
+    delay: number,
+    client: string,
+    selectedNode: string,
+    nodeId: string,
+    nodeName: string,
+    enode: string,
+    ip: string,
+    rpcUrl: string,
+    statusText: string,
+    blocks: number,
+    peers: number,
+    queuedTxns: number,
+    pendingTxns: number,
+}
+
+class Nodes extends Component<IProps, IState> {
+
+  constructor(props: IProps) {
     super(props);
     this.state = {
       delay: 10000,
-      client: nodeKeys[0].client,
+      client: nodeKeys[0],
       selectedNode: nodeKeys[0],
       nodeId: '',
       nodeName: '',
@@ -30,9 +49,10 @@ class Nodes extends Component {
       pendingTxns: 0,
     }
   }
+  //timer
+  intervalId: number = 0;
 
-  async nodeInfoHandler(node) {
-    // console.log("nodeInfoHandler");
+  async nodeInfoHandler(node:string) {
     const rpcUrl = nodesConfig[node].rpcUrl;
     const res = await updateNodeInfo(rpcUrl);
     this.setState({
@@ -57,7 +77,7 @@ class Nodes extends Component {
   // content visible on screen
   async componentDidMount() {
     console.log("component rendered to screen");
-    this.interval = setInterval(this.tick, this.state.delay);
+    this.intervalId = window.setInterval(this.tick, this.state.delay);
     this.nodeInfoHandler(this.state.selectedNode);
   }
 
@@ -69,14 +89,15 @@ class Nodes extends Component {
   // sit and wait till component is no longer shown
   componentWillUnmount() {
     console.log("component gone off screen");
-    clearInterval(this.interval);
+    clearInterval(this.intervalId);
   }
 
   // shouldComponentUpdate(){}
   // getSnapshotBeforeUpdate(){}
 
+  //TODO: fix type for e
   render() {
-    const handleSelectNode = (e) => {
+    const handleSelectNode = (e:any) => {
       console.log(e);
       this.nodeInfoHandler(e);
     }
@@ -116,7 +137,7 @@ class Nodes extends Component {
 
           <Row>
             <Col>
-              <NodeInfo name={this.state.selectedNode} client={this.state.client} nodeId={this.state.nodeId} nodeName={this.state.nodeName} enode={this.state.enode} rpcUrl={this.state.rpcUrl} ip={this.state.ip} />
+              <NodeInfo client={this.state.client} nodeId={this.state.nodeId} nodeName={this.state.nodeName} enode={this.state.enode} rpcUrl={this.state.rpcUrl} ip={this.state.ip} />
             </Col>
           </Row>
         </Row>

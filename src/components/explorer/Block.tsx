@@ -2,12 +2,19 @@ import React, { Component } from 'react';
 import {Container, Row, Col, Card} from 'react-bootstrap';
 import { Boxes } from 'react-bootstrap-icons';
 
-class Block extends Component{
+interface IProps {
+  number: number
+}
 
-  constructor(props){
+interface IState {
+}
+
+class Block extends Component<IProps, IState> {
+
+  constructor(props: IProps){
     super(props);
   }
-  
+ 
   render(){
     return (
       <Card >

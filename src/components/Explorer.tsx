@@ -1,14 +1,23 @@
 import React, { Component } from 'react';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
-import { Sliders } from 'react-bootstrap-icons';
-import { getLatestBlockNumber, getBlockByNumber } from './services/common_api_calls';
+import { getBlockByNumber } from './api/explorer';
 import Block from './explorer/Block';
 const nodesConfig = require('../config/nodes.json');
 const nodeKeys = Object.keys(nodesConfig);
 
-class Explorer extends Component {
+interface IProps {
+}
 
-  constructor(props) {
+interface IState {
+    delay: number,
+    blockNumber: number,
+    transactions: string[],
+    blocks: number[],
+}
+
+class Explorer extends Component<IProps, IState> {
+
+  constructor(props: IProps) {
     super(props);
     this.state = {
       delay: 5000,
@@ -17,22 +26,21 @@ class Explorer extends Component {
       blocks: [],
     }
   }
+  //timer
+  intervalId: number = 0;
 
-  updateArray = (arr, elem, len) => { 
+  //get the latest n elements in an array
+  updateArray = <T,>(arr:T[], elem:T, len:number) => { 
     arr.unshift(elem);
     return arr.slice(0, len);
   }
 
-
   async getBlockByNumber() {
-    console.log("getLatestBlockNumber");
     const rpcUrl = nodesConfig['rpcnode'].rpcUrl;
     const res = await getBlockByNumber(rpcUrl, 'latest');
     var tmpBlocks = this.updateArray(this.state.blocks, res.number, 5);
-    console.log('tmpBlocks: '+ JSON.stringify(tmpBlocks, null, 2));
-
     this.setState({ blockNumber: res.number, blocks: tmpBlocks });
-    console.log('State: '+ JSON.stringify(this.state, null, 2));
+    // console.log('State: '+ JSON.stringify(this.state, null, 2));
   }
 
   tick = () => {
@@ -42,7 +50,7 @@ class Explorer extends Component {
   // content visible on screen
   async componentDidMount() {
     console.log("component rendered to screen");
-    this.interval = setInterval(this.tick, this.state.delay);
+    this.intervalId = window.setInterval(this.tick, this.state.delay);
     this.getBlockByNumber();
   }
 
@@ -54,17 +62,13 @@ class Explorer extends Component {
   // sit and wait till component is no longer shown
   componentWillUnmount() {
     console.log("component gone off screen");
-    clearInterval(this.interval);
+    clearInterval(this.intervalId);
   }
 
   // shouldComponentUpdate(){}
   // getSnapshotBeforeUpdate(){}
 
   render() {
-    // const handleSelectNode = (e) => {
-    //   console.log(e);
-    //   // this.nodeInfoHandler(e);
-    // }
     return (
       <Container className="container-fluid vh-100">
         <br />

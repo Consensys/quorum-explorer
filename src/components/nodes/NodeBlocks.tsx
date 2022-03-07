@@ -2,9 +2,16 @@ import React, { Component } from 'react';
 import {Container, Row, Col, Card} from 'react-bootstrap';
 import { Boxes } from 'react-bootstrap-icons';
 
-class NodePeers extends Component{
+interface IProps {
+  blocks: number
+}
 
-  constructor(props){
+interface IState {
+}
+
+class NodeBlocks extends Component<IProps, IState> {
+
+  constructor(props: IProps){
     super(props);
   }
   
@@ -27,7 +34,7 @@ class NodePeers extends Component{
   }
 }
 
-export default NodePeers;
+export default NodeBlocks;
 
 
 

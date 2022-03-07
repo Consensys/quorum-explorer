@@ -2,9 +2,17 @@ import React, { Component } from 'react';
 import {Container, Row, Col, Card} from 'react-bootstrap';
 import { PatchQuestionFill, PlayFill } from 'react-bootstrap-icons';
 
-class NodesCard extends Component{
+interface IProps {
+  statusText: string;
+  name: string;
+}
 
-  constructor(props){
+interface IState {
+}
+
+class NodeStatus extends Component<IProps, IState> {
+
+  constructor(props: IProps){
     super(props);
   }
 
@@ -33,7 +41,7 @@ class NodesCard extends Component{
 
 }
 
-export default NodesCard;
+export default NodeStatus;
 
 
 

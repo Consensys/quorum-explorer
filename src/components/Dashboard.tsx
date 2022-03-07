@@ -2,16 +2,21 @@ import React, { Component } from 'react';
 import {Container, Row, Col, Card} from 'react-bootstrap';
 import NodeBlocks from './nodes/NodeBlocks';
 
-class Dashboard extends Component{
+interface IProps {
+}
 
-  constructor(props){
+interface IState {
+  blocks: number;
+}
+
+class Dashboard extends Component<IProps, IState> {
+
+  constructor(props: IProps){
     super(props);
     this.state = { 
-      blocks: 0
+      blocks: 0,
     }
   }
-
-  
 
   render(){
     return (

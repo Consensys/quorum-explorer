@@ -2,9 +2,16 @@ import React, { Component } from 'react';
 import {Container, Row, Col, Card} from 'react-bootstrap';
 import { PeopleFill } from 'react-bootstrap-icons';
 
-class NodePeers extends Component{
+interface IProps {
+  peers: number;
+}
 
-  constructor(props){
+interface IState {
+}
+
+class NodePeers extends Component<IProps, IState> {
+
+  constructor(props: IProps){
     super(props);
   }
 

@@ -2,9 +2,16 @@ import React, { Component } from 'react';
 import {Container, Row, Col, Card} from 'react-bootstrap';
 import { ArrowDownUp } from 'react-bootstrap-icons';
 
-class NodeTxns extends Component{
+interface IProps {
+  txns: number;
+}
 
-  constructor(props){
+interface IState {
+}
+
+class NodeTxns extends Component<IProps, IState> {
+
+  constructor(props: IProps){
     super(props);
   }
 

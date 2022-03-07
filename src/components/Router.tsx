@@ -10,11 +10,11 @@ function Router() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route exact path="/" element={<Dashboard/>} />
-                <Route exact path="/dashboard" element={<Dashboard/>} />
-                <Route exact path="/explorer" element={<Explorer/>} />
-                <Route exact path="/contracts" element={<Contracts/>} />
-                <Route exact path="/nodes" element={<Nodes/>} />
+                <Route path="/" element={<Dashboard/>} />
+                <Route path="/dashboard" element={<Dashboard/>} />
+                <Route path="/explorer" element={<Explorer/>} />
+                <Route path="/contracts" element={<Contracts/>} />
+                <Route path="/nodes" element={<Nodes/>} />
 
             </Routes>
         </BrowserRouter>
