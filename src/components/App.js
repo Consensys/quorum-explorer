@@ -7,6 +7,7 @@ import Contracts from "../routes/Contracts";
 import Explorer from "../routes/Explorer";
 import Nodes from "../routes/Nodes";
 import NavBar from "./Navbar/NavBar";
+import Footer from "./Footer";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route exact path="/contracts" element={<Contracts />} />
             <Route exact path="/nodes" element={<Nodes />} />
           </Routes>
+          <Footer />
         </BrowserRouter>
       </ChakraProvider>
     </>
