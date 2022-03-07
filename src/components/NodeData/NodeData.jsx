@@ -1,11 +1,11 @@
 import React from "react";
-import { HStack, Container, Flex, Select, Text } from "@chakra-ui/react";
+import { HStack, Container, Flex, Select, Text, Stack } from "@chakra-ui/react";
+import NodeStack from "./NodeCard";
 const nodesConfig = require("../../config/nodes.json");
 const nodeKeys = Object.keys(nodesConfig);
 
 export default function NodeData({
   childHandler,
-  selectedNode,
   client,
   nodeId,
   nodeName,
@@ -15,8 +15,8 @@ export default function NodeData({
 }) {
   return (
     <>
-      <Container maxW={{ base: "container.sm", md: "container.xl" }}>
-        <Flex justify="flex-end">
+      <Container maxW={{ base: "container.sm", md: "container.md" }}>
+        <Flex justify="flex-end" mb={5}>
           <HStack>
             <Text minW="max" fontSize="lg" color="muted">
               Select node:
@@ -30,6 +30,14 @@ export default function NodeData({
             </Select>
           </HStack>
         </Flex>
+        <NodeStack
+          client={client}
+          nodeId={nodeId}
+          nodeName={nodeName}
+          enode={enode}
+          rpcUrl={rpcUrl}
+          ip={ip}
+        />
       </Container>
     </>
   );

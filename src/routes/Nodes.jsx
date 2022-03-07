@@ -115,7 +115,6 @@ export default class Nodes extends Component {
         <StatCard cards={cards} />
         <NodeData
           childHandler={this.childHandler}
-          selectedNode={this.state.selectedNode}
           client={this.state.client}
           nodeId={this.state.nodeId}
           nodeName={this.state.nodeName}
