@@ -1,0 +1,10 @@
+.cCenterAlign {
+  text-align: center;
+}
+.cBold {
+  font-weight: 400
+}
+
+.cCapitalize {
+  text-transform:capitalize;
+}
