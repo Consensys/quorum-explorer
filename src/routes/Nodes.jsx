@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { HStack, Container, Select, Text } from "@chakra-ui/react";
 import PageHeader from "../components/Header/PageHeader";
 import StatCard from "../components/Card/StatCard";
+import NodeData from "../components/NodeData/NodeData";
 import { updateNodeInfo } from "../components/services/common_api_calls";
 
 import { FaPlay, FaStop } from "react-icons/fa";
@@ -105,20 +105,15 @@ export default class Nodes extends Component {
       <>
         <PageHeader HeadingName="Nodes" />
         <StatCard cards={cards} />
-        <Container maxW={{ base: "container.sm", md: "container.xl" }}>
-          <HStack>
-            <Text minW="max" fontSize="lg" color="muted">
-              Select node:
-            </Text>
-            <Select>
-              {nodeKeys.map((node, index) => (
-                <option key={index} value={node}>
-                  {node}
-                </option>
-              ))}
-            </Select>
-          </HStack>
-        </Container>
+        <NodeData
+          selectedNode={this.state.selectedNode}
+          client={this.state.client}
+          nodeId={this.state.nodeId}
+          nodeName={this.state.nodeName}
+          enode={this.state.enode}
+          rpcUrl={this.state.rpcUrl}
+          ip={this.state.ip}
+        />
       </>
     );
   }
