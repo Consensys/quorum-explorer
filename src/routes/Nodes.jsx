@@ -34,7 +34,7 @@ export default class Nodes extends Component {
   }
 
   childHandler = (dropDownNode) => {
-    console.log(dropDownNode);
+    // console.log(dropDownNode);
     this.setState({
       selectedNode: dropDownNode.target.value,
     });
