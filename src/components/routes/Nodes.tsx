@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { Sliders } from 'react-bootstrap-icons';
+import { PlayFill, PatchQuestionFill, PeopleFill, Boxes, ArrowDownUp } from 'react-bootstrap-icons';
+import NodeDetails from '../nodes/NodeDetails';
+import { NodeStat } from '../types/nodes';
 import { updateNodeInfo } from '../api/nodes';
-import NodeStatus from '../nodes/NodeStatus';
-import NodePeers from '../nodes/NodePeers';
-import NodeBlocks from '../nodes/NodeBlocks';
-import NodeTxns from '../nodes/NodeTxns';
-import NodeInfo from '../nodes/NodeInfo';
+import NodeOverview from '../nodes/NodeOverview';
 const config = require('../../config/config.json');
 const nodesConfig = config.nodes;
 const nodeKeys = Object.keys(nodesConfig);
@@ -98,6 +97,35 @@ class Nodes extends Component<IProps, IState> {
 
   //TODO: fix type for e
   render() {
+  //stats
+    const stats : NodeStat[] = [
+      {
+        title: "Status",
+        text: this.state.statusText === "OK" ? "Running" : "Stopped",
+        icon:
+          this.state.statusText === "OK" ? (
+            <PlayFill color="green" size={48} />
+          ) : (
+            <PatchQuestionFill color="red" size={48} />
+          ),
+      },
+      {
+        title: "Blocks",
+        text: this.state.blocks,
+        icon: <Boxes color="RoyalBlue" size={48} />,
+      },
+      {
+        title: "Peers",
+        text: this.state.peers,
+        icon: <PeopleFill color="DimGray" size={48} />,
+      },
+      {
+        title: "Queued",
+        text: this.state.queuedTxns,
+        icon: <ArrowDownUp color="orangered" size={48} />,
+      },
+    ];
+
     const handleSelectNode = (e:any) => {
       console.log(e);
       this.nodeInfoHandler(e);
@@ -127,18 +155,13 @@ class Nodes extends Component<IProps, IState> {
         <br />
         <Row>
           <br />
-          <Row>
-            <Col sm={3}><NodeStatus name={this.state.selectedNode} statusText={this.state.statusText} /></Col>
-            <Col sm={3}><NodePeers peers={this.state.peers} /></Col>
-            <Col sm={3}><NodeBlocks blocks={this.state.blocks} /></Col>
-            <Col sm={3}><NodeTxns txns={this.state.queuedTxns} /></Col>
-          </Row>
+          <Row><NodeOverview stats={stats}></NodeOverview></Row>
 
           <Row><p> </p></Row>
 
           <Row>
             <Col>
-              <NodeInfo client={this.state.client} nodeId={this.state.nodeId} nodeName={this.state.nodeName} enode={this.state.enode} rpcUrl={this.state.rpcUrl} ip={this.state.ip} />
+              <NodeDetails client={this.state.client} nodeId={this.state.nodeId} nodeName={this.state.nodeName} enode={this.state.enode} rpcUrl={this.state.rpcUrl} ip={this.state.ip} />
             </Col>
           </Row>
         </Row>

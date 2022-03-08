@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {Container, Row, Col, Card} from 'react-bootstrap';
-import NodeBlocks from '../nodes/NodeBlocks';
 
 interface IProps {
 }
@@ -27,7 +26,7 @@ class Dashboard extends Component<IProps, IState> {
       </Row>
 
       <Row>
-      <Col sm={3}><NodeBlocks blocks={this.state.blocks} /></Col>
+ 
       </Row>
 
       </Container>

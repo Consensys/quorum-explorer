@@ -13,7 +13,7 @@ interface IProps {
 interface IState {
 }
 
-class NodeInfo extends Component<IProps, IState> {
+class NodeDetails extends Component<IProps, IState> {
 
   constructor(props: IProps){
     super(props);
@@ -62,7 +62,7 @@ class NodeInfo extends Component<IProps, IState> {
 
 }
 
-export default NodeInfo;
+export default NodeDetails;
 
 
 
