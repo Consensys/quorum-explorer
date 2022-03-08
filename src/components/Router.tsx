@@ -4,8 +4,10 @@ import Dashboard from "./routes/Dashboard";
 import Explorer from "./routes/Explorer";
 import Contracts from "./routes/Contracts";
 import Nodes from "./routes/Nodes";
+import { QuorumConfig } from './types/config';
 
 interface IProps {
+  config: QuorumConfig;
 }
 
 interface IState {
@@ -20,11 +22,11 @@ class Router extends Component<IProps, IState> {
     return (
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Dashboard/>} />
-          <Route path="/dashboard" element={<Dashboard/>} />
-          <Route path="/explorer" element={<Explorer/>} />
-          <Route path="/contracts" element={<Contracts/>} />
-          <Route path="/nodes" element={<Nodes/>} />
+          <Route path="/" element={<Dashboard config={this.props.config} />} />
+          <Route path="/dashboard" element={<Dashboard config={this.props.config} />} />
+          <Route path="/explorer" element={<Explorer config={this.props.config} />} />
+          <Route path="/contracts" element={<Contracts config={this.props.config} />} />
+          <Route path="/nodes" element={<Nodes config={this.props.config} />} />
         </Routes>
       </BrowserRouter>
     )

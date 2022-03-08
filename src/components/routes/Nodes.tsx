@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { Sliders } from 'react-bootstrap-icons';
 import { PlayFill, PatchQuestionFill, PeopleFill, Boxes, ArrowDownUp } from 'react-bootstrap-icons';
-import NodeDetails from '../nodes/NodeDetails';
 import { NodeStat } from '../types/nodes';
+import { QuorumConfig, QuorumNode } from '../types/config';
 import { updateNodeInfo } from '../api/nodes';
+import { getNodeKeys, getDetailsByNodeName } from '../api/quorumConfig';
+import NodeDetails from '../nodes/NodeDetails';
 import NodeOverview from '../nodes/NodeOverview';
-const config = require('../../config/config.json');
-const nodesConfig = config.nodes;
-const nodeKeys = Object.keys(nodesConfig);
 
 interface IProps {
+  config: QuorumConfig
 }
 
 interface IState {
@@ -35,8 +35,8 @@ class Nodes extends Component<IProps, IState> {
     super(props);
     this.state = {
       delay: 10000,
-      client: nodeKeys[0],
-      selectedNode: nodeKeys[0],
+      client: this.props.config.nodes[0].client,
+      selectedNode: this.props.config.nodes[0].name,
       nodeId: '',
       nodeName: '',
       enode: '',
@@ -51,13 +51,15 @@ class Nodes extends Component<IProps, IState> {
   }
   //timer
   intervalId: number = 0;
+  nodeKeys: string[] = getNodeKeys(this.props.config);
 
-  async nodeInfoHandler(node:string) {
-    const rpcUrl = nodesConfig[node].rpcUrl;
+  async nodeInfoHandler(name:string) {
+    const needle: QuorumNode = getDetailsByNodeName(this.props.config, name)
+    const rpcUrl: string = needle.rpcUrl;
     const res = await updateNodeInfo(rpcUrl);
     this.setState({
-      client: nodesConfig[node].client,
-      selectedNode: node,
+      client: needle.client,
+      selectedNode: name,
       statusText: res.statusText,
       nodeId: res.nodeId,
       nodeName: res.nodeName,
@@ -92,10 +94,6 @@ class Nodes extends Component<IProps, IState> {
     clearInterval(this.intervalId);
   }
 
-  // shouldComponentUpdate(){}
-  // getSnapshotBeforeUpdate(){}
-
-  //TODO: fix type for e
   render() {
   //stats
     const stats : NodeStat[] = [
@@ -144,7 +142,7 @@ class Nodes extends Component<IProps, IState> {
                   <Sliders size={20} />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  {nodeKeys.map((node) => (
+                  {this.nodeKeys.map((node) => (
                     <Dropdown.Item key={node} eventKey={node}>{node}</Dropdown.Item>
                   ))}
                 </Dropdown.Menu>
@@ -155,7 +153,11 @@ class Nodes extends Component<IProps, IState> {
         <br />
         <Row>
           <br />
-          <Row><NodeOverview stats={stats}></NodeOverview></Row>
+          <Row>
+            <Col>
+              <NodeOverview stats={stats}></NodeOverview>
+            </Col>
+          </Row>
 
           <Row><p> </p></Row>
 

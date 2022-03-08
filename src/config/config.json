@@ -1,35 +1,41 @@
 {
   "algorithm": "qbft",
-  "nodes": {
-    "rpcnode": {
-        "client": "goquorum",
-        "rpcUrl": "http://localhost:8545",
-        "wsUrl": "local"
+  "nodes": [
+    {
+      "name": "rpcnode",
+      "client": "goquorum",
+      "rpcUrl": "http://localhost:8545",
+      "wsUrl": "local"
     },
-    "validator1": {
-        "client": "goquorum",
-        "rpcUrl": "http://localhost:21001",
-        "wsUrl": "local"
+    { 
+      "name": "validator1",
+      "client": "goquorum",
+      "rpcUrl": "http://localhost:21001",
+      "wsUrl": "local"
     },
-    "validator2": {
+    { 
+      "name": "validator2",
       "client": "goquorum",
       "rpcUrl": "http://localhost:21002",
       "wsUrl": "local"
     },
-    "validator3": {
+    { 
+      "name": "validator3",
       "client": "goquorum",
       "rpcUrl": "http://localhost:21003",
       "wsUrl": "local"
     },
-    "validator4": {
+    { 
+      "name": "validator4",
       "client": "goquorum",
       "rpcUrl": "http://localhost:21004",
       "wsUrl": "local"
     },
-    "broken": {
+    { 
+      "name": "broken",
       "client": "besu",
       "rpcUrl": "http://localhost:9000",
       "wsUrl": "local"
     }
-  }
+  ]
 }

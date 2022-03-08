@@ -26,27 +26,4 @@ export async function updateNodeInfo(url:string) {
   }
 }
 
-export async function getBlockByNumber(url:string, blockNumber:string ='latest'){
-  let blockDetails = { status: "error", number: "", hash: "", transactionsRoot: "", stateRoot: "", receiptsRoot: "", miner: "",  extraData: "", size: "", gasUsed: "", gasLimit: "" ,"timestamp": "", uncles: [], transactions: [] }
-  try {
-    const ethBlockByNumber = await ethApiCall(url, 'eth_getBlockByNumber', [blockNumber, true] ); 
-    blockDetails['number'] = ethBlockByNumber.data.result.number;
-    blockDetails['hash'] = ethBlockByNumber.data.result.hash;
-    blockDetails['transactionsRoot'] = ethBlockByNumber.data.result.transactionsRoot;
-    blockDetails['stateRoot'] = ethBlockByNumber.data.result.stateRoot;
-    blockDetails['receiptsRoot'] = ethBlockByNumber.data.result.receiptsRoot;
-    blockDetails['miner'] = ethBlockByNumber.data.miner;
-    blockDetails['extraData'] = ethBlockByNumber.data.extraData;
-    blockDetails['size'] = ethBlockByNumber.data.result.size;
-    blockDetails['gasUsed'] = ethBlockByNumber.data.result.gasUsed;
-    blockDetails['gasLimit'] = ethBlockByNumber.data.result.gasLimit;
-    blockDetails['timestamp'] = ethBlockByNumber.data.result.timestamp;
-    blockDetails['uncles'] = ethBlockByNumber.data.result.uncles;
-    blockDetails['transactions'] = ethBlockByNumber.data.result.transactions;
-  } catch (e) {
-    console.error(e);
-  } finally {
-    return blockDetails;
-  }
-}
 
