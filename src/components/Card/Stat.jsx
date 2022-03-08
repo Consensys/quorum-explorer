@@ -26,7 +26,7 @@ export const Stat = (props) => {
       {...boxProps}
     >
       <VStack>
-        <HStack>
+        <HStack mb={3}>
           <Box>{icon}</Box>
           <Text fontSize="lg" color="muted">
             {label}

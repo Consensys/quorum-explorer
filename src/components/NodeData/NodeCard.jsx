@@ -7,7 +7,10 @@ function NodeCard({ title, desc, showPending }) {
       <Box p={5} shadow="md" borderWidth="1px">
         <Heading fontSize="xl">{title}</Heading>
         {showPending ? (
-          <Skeleton minH="20px" mt={5} mb={4} />
+          <>
+            <Skeleton minH="20px" mt={5} mb={3} />
+            <Skeleton minH="20px" mt={1} mb={3} />
+          </>
         ) : (
           <Text colorScheme="messenger" mt={4}>
             {desc}
