@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
-import { getBlockByNumber } from './api/explorer';
-import Block from './explorer/Block';
-const nodesConfig = require('../config/nodes.json');
+import { getBlockByNumber } from '../api/explorer';
+import Block from '../explorer/Block';
+const config = require('../../config/config.json');
+const nodesConfig = config.nodes;
 const nodeKeys = Object.keys(nodesConfig);
 
 interface IProps {
@@ -40,7 +41,7 @@ class Explorer extends Component<IProps, IState> {
     const res = await getBlockByNumber(rpcUrl, 'latest');
     var tmpBlocks = this.updateArray(this.state.blocks, res.number, 5);
     this.setState({ blockNumber: res.number, blocks: tmpBlocks });
-    // console.log('State: '+ JSON.stringify(this.state, null, 2));
+    console.log('State: '+ JSON.stringify(this.state, null, 2));
   }
 
   tick = () => {

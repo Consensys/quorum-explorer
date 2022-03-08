@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import NodeStatus from './nodes/NodeStatus';
-import NodePeers from './nodes/NodePeers';
-import NodeBlocks from './nodes/NodeBlocks';
-import NodeTxns from './nodes/NodeTxns';
-import NodeInfo from './nodes/NodeInfo';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { Sliders } from 'react-bootstrap-icons';
-import { updateNodeInfo } from './api/nodes';
-const nodesConfig = require('../config/nodes.json');
+import { updateNodeInfo } from '../api/nodes';
+import NodeStatus from '../nodes/NodeStatus';
+import NodePeers from '../nodes/NodePeers';
+import NodeBlocks from '../nodes/NodeBlocks';
+import NodeTxns from '../nodes/NodeTxns';
+import NodeInfo from '../nodes/NodeInfo';
+const config = require('../../config/config.json');
+const nodesConfig = config.nodes;
 const nodeKeys = Object.keys(nodesConfig);
 
 interface IProps {
