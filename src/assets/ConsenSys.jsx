@@ -6,7 +6,6 @@ export const ConsensysIcon = ({ isInverted, ...rest }) => {
   const darkMode = isInverted ? "gray.800" : "white";
 
   const iconFill = useColorModeValue(lightMode, darkMode);
-  const { boxSize } = { ...rest };
 
   return (
     <>

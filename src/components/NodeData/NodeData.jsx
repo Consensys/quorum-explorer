@@ -1,5 +1,5 @@
 import React from "react";
-import { HStack, Container, Flex, Select, Text, Stack } from "@chakra-ui/react";
+import { HStack, Container, Flex, Select, Text } from "@chakra-ui/react";
 import NodeStack from "./NodeCard";
 const nodesConfig = require("../../config/nodes.json");
 const nodeKeys = Object.keys(nodesConfig);
@@ -12,6 +12,7 @@ export default function NodeData({
   enode,
   rpcUrl,
   ip,
+  showPending,
 }) {
   return (
     <>
@@ -37,6 +38,7 @@ export default function NodeData({
           enode={enode}
           rpcUrl={rpcUrl}
           ip={ip}
+          showPending={showPending}
         />
       </Container>
     </>

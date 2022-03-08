@@ -2,27 +2,27 @@ import {
   Box,
   Heading,
   Text,
-  useBreakpointValue,
   useColorModeValue,
   HStack,
   VStack,
   Flex,
-} from '@chakra-ui/react';
+  Skeleton,
+} from "@chakra-ui/react";
 
-import * as React from 'react';
+import * as React from "react";
 
-export const Stat = props => {
-  const { label, value, icon, ...boxProps } = props;
+export const Stat = (props) => {
+  const { label, value, icon, showPending, ...boxProps } = props;
   return (
     <Flex
       alignItems="center"
       justifyContent="center"
-      flexDirection={{ base: 'column', md: 'row' }}
-      px={{ base: '5', md: '6' }}
-      py={{ base: '5', md: '6' }}
+      flexDirection={{ base: "column", md: "row" }}
+      px={{ base: "5", md: "6" }}
+      py={{ base: "5", md: "6" }}
       borderRadius="lg"
       borderWidth={2}
-      boxShadow={useColorModeValue('xs', '2xl')}
+      boxShadow={useColorModeValue("xs", "2xl")}
       {...boxProps}
     >
       <VStack>
@@ -32,11 +32,11 @@ export const Stat = props => {
             {label}
           </Text>
         </HStack>
-        <VStack>
-          <Heading size={useBreakpointValue({ base: 'sm', md: 'lg' })}>
-            {value}
-          </Heading>
-        </VStack>
+        {showPending ? (
+          <Skeleton minW="45px" minH="35px" />
+        ) : (
+          <Heading>{value}</Heading>
+        )}
       </VStack>
     </Flex>
   );

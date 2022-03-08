@@ -3,6 +3,7 @@ import PageHeader from "../components/Header/PageHeader";
 import StatCard from "../components/Card/StatCard";
 import NodeData from "../components/NodeData/NodeData";
 import { updateNodeInfo } from "../components/services/common_api_calls";
+import AlertBanner from "../components/Alert";
 
 import { FaPlay, FaStop } from "react-icons/fa";
 import { GiCube } from "react-icons/gi";
@@ -30,6 +31,7 @@ export default class Nodes extends Component {
       peers: 0,
       queuedTxns: 0,
       pendingTxns: 0,
+      showPending: false,
     };
   }
 
@@ -42,20 +44,31 @@ export default class Nodes extends Component {
 
   async nodeInfoHandler(node) {
     // console.log("nodeInfoHandler");
-    const rpcUrl = nodesConfig[node].rpcUrl;
-    const res = await updateNodeInfo(rpcUrl);
-    this.setState({
-      client: nodesConfig[node].client,
-      selectedNode: node,
-      statusText: res.statusText,
-      nodeId: res.nodeId,
-      nodeName: res.nodeName,
-      enode: res.enode,
-      ip: res.ip,
-      rpcUrl: rpcUrl,
-      blocks: res.blocks,
-      peers: res.peers,
-    });
+    try {
+      const rpcUrl = nodesConfig[node].rpcUrl;
+      const res = await updateNodeInfo(rpcUrl);
+      this.setState({
+        client: nodesConfig[node].client,
+        selectedNode: node,
+        statusText: res.statusText,
+        nodeId: res.nodeId,
+        nodeName: res.nodeName,
+        enode: res.enode,
+        ip: res.ip,
+        rpcUrl: rpcUrl,
+        blocks: res.blocks,
+        peers: res.peers,
+        showPending: false,
+      });
+    } catch (e) {
+      console.log(
+        "Node is unreachable. Ensure ports are open and client is running!"
+      );
+      this.setState({
+        showPending: true,
+      });
+    }
+
     // console.log('State: '+ JSON.stringify(this.state, null, 2));
   }
 
@@ -85,9 +98,9 @@ export default class Nodes extends Component {
     const cards = [
       {
         label: "Status",
-        value: this.state.statusText === "OK" ? "Running" : "Stopped",
+        value: this.state.showPending === false ? "Running" : "Stopped",
         icon:
-          this.state.statusText === "OK" ? (
+          this.state.showPending === false ? (
             <FaPlay size="1.5em" />
           ) : (
             <FaStop size="1.5em" />
@@ -112,7 +125,12 @@ export default class Nodes extends Component {
     return (
       <>
         <PageHeader HeadingName="Nodes" />
-        <StatCard cards={cards} />
+        <AlertBanner
+          selectedNode={this.state.selectedNode}
+          rpcUrl={this.state.rpcUrl}
+          showPending={this.state.showPending}
+        />
+        <StatCard cards={cards} showPending={this.state.showPending} />
         <NodeData
           childHandler={this.childHandler}
           client={this.state.client}
@@ -121,6 +139,7 @@ export default class Nodes extends Component {
           enode={this.state.enode}
           rpcUrl={this.state.rpcUrl}
           ip={this.state.ip}
+          showPending={this.state.showPending}
         />
       </>
     );

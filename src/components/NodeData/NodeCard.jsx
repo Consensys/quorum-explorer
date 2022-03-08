@@ -1,12 +1,18 @@
 import React from "react";
-import { Box, Heading, Text, Stack } from "@chakra-ui/react";
+import { Box, Heading, Stack, Skeleton, Text } from "@chakra-ui/react";
 
-function NodeCard({ title, desc }) {
+function NodeCard({ title, desc, showPending }) {
   return (
     <>
       <Box p={5} shadow="md" borderWidth="1px">
         <Heading fontSize="xl">{title}</Heading>
-        <Text mt={4}>{desc}</Text>
+        {showPending ? (
+          <Skeleton minH="20px" mt={5} mb={4} />
+        ) : (
+          <Text colorScheme="messenger" mt={4}>
+            {desc}
+          </Text>
+        )}
       </Box>
     </>
   );
@@ -19,16 +25,17 @@ export default function NodeStack({
   enode,
   rpcUrl,
   ip,
+  showPending,
 }) {
   return (
     <>
       <Stack spacing={8}>
-        <NodeCard title="Client" desc={client} />
-        <NodeCard title="Node ID" desc={nodeId} />
-        <NodeCard title="Node Name" desc={nodeName} />
-        <NodeCard title="ENODE" desc={enode} />
-        <NodeCard title="RPC-URL" desc={rpcUrl} />
-        <NodeCard title="IP Address" desc={ip} />
+        <NodeCard title="Client" desc={client} showPending={showPending} />
+        <NodeCard title="Node ID" desc={nodeId} showPending={showPending} />
+        <NodeCard title="Node Name" desc={nodeName} showPending={showPending} />
+        <NodeCard title="ENODE" desc={enode} showPending={showPending} />
+        <NodeCard title="RPC-URL" desc={rpcUrl} showPending={showPending} />
+        <NodeCard title="IP Address" desc={ip} showPending={showPending} />
       </Stack>
     </>
   );
