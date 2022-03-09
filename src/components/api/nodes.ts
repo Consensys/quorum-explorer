@@ -4,7 +4,8 @@ import { NodeDetails } from "../types/api/responses";
 const axios = require('axios');
 
 export async function updateNodeInfo(url: string) {
-  let nodeDetails: NodeDetails = { statusText: "error", nodeId: "", nodeName: "", enode: "", ip: "", blocks: -1, peers: -1, queuedTxns: -1, pendingTxns: -1 }
+  let nodeDetails: NodeDetails =
+    { statusText: "error", nodeId: "", nodeName: "", enode: "", ip: "", blocks: -1, peers: -1, queuedTxns: -1, pendingTxns: -1 }
 
   const adminNodeInfo = await ethApiCall(url, 'admin_nodeInfo');
   const ethBlockNumber = await ethApiCall(url, 'eth_blockNumber');
