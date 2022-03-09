@@ -1,42 +1,54 @@
-import React, { Component } from 'react';
-import {Container, Row, Col, Card} from 'react-bootstrap';
-import { ReactElement } from "react";
+import React from "react";
+import { Box, Heading, Stack, Skeleton, Text } from "@chakra-ui/react";
+import { StackIProps } from "../types/nodes";
 
-interface IProps {
+interface NodeIProps {
   title: string,
-  text: string|number,
-  icon: ReactElement;
+  desc: string,
+  showPending: boolean
 }
 
-interface IState {
+function NodeCard({ title, desc, showPending }:NodeIProps) {
+  return (
+    <>
+      <Box p={5} shadow="md" borderWidth="1px">
+        <Heading fontSize="xl">{title}</Heading>
+        {showPending ? (
+          <>
+            <Skeleton minH="20px" mt={5} mb={3} />
+            <Skeleton minH="20px" mt={1} mb={3} />
+          </>
+        ) : (
+          <Text colorScheme="messenger" mt={4}>
+            {desc}
+          </Text>
+        )}
+      </Box>
+    </>
+  );
 }
 
-class NodeCard extends Component<IProps, IState> {
 
-  constructor(props: IProps){
-    super(props);
-  }
-  
-  render(){
-    return (
-      <Card >
-        <Card.Body>
-          <Row className="cCenterAlign">
-            <Col sm={4}>
-              {this.props.icon}
-            </Col>
-            <Col sm={8}>
-              <Card.Title>{this.props.title}</Card.Title>
-              <Card.Text>{this.props.text}</Card.Text>
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-    );
-  }
+
+export default function NodeStack({
+  client,
+  nodeId,
+  nodeName,
+  enode,
+  rpcUrl,
+  ip,
+  showPending,
+}: StackIProps) {
+  return (
+    <>
+      <Stack spacing={8}>
+        <NodeCard title="Client" desc={client} showPending={showPending} />
+        <NodeCard title="Node ID" desc={nodeId} showPending={showPending} />
+        <NodeCard title="Node Name" desc={nodeName} showPending={showPending} />
+        <NodeCard title="ENODE" desc={enode} showPending={showPending} />
+        <NodeCard title="RPC-URL" desc={rpcUrl} showPending={showPending} />
+        <NodeCard title="IP Address" desc={ip} showPending={showPending} />
+      </Stack>
+    </>
+  );
 }
-
-export default NodeCard;
-
-
-

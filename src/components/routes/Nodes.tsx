@@ -1,80 +1,107 @@
-import React, { Component } from 'react';
-import { Container, Row, Col, Dropdown } from 'react-bootstrap';
-import { Sliders } from 'react-bootstrap-icons';
-import { PlayFill, PatchQuestionFill, PeopleFill, Boxes, ArrowDownUp } from 'react-bootstrap-icons';
-import { NodeStat } from '../types/nodes';
+import React, { Component } from "react";
+import PageHeader from "../header";
+import StatCard from "../card/StatCard";
+import NodeData from "../nodes/NodeData";
+import { updateNodeInfo } from "../api/nodes";
+import AlertBanner from "../alert";
+
+import { FaPlay, FaStop } from "react-icons/fa";
+import { GiCube } from "react-icons/gi";
+import { BsFillPeopleFill } from "react-icons/bs";
+import { VscArrowSwap } from "react-icons/vsc";
+
 import { QuorumConfig, QuorumNode } from '../types/config';
-import { updateNodeInfo } from '../api/nodes';
-import { getNodeKeys, getDetailsByNodeName } from '../api/quorumConfig';
-import NodeDetails from '../nodes/NodeDetails';
-import NodeOverview from '../nodes/NodeOverview';
+import { Cards } from "../types/nodes";
+import { getDetailsByNodeName, getNodeKeys } from "../api/quorumConfig";
+
 
 interface IProps {
   config: QuorumConfig
 }
 
 interface IState {
-    delay: number,
-    client: string,
-    selectedNode: string,
-    nodeId: string,
-    nodeName: string,
-    enode: string,
-    ip: string,
-    rpcUrl: string,
-    statusText: string,
-    blocks: number,
-    peers: number,
-    queuedTxns: number,
-    pendingTxns: number,
+  delay: number,
+  client: string,
+  selectedNode: string,
+  nodeId: string,
+  nodeName: string,
+  enode: string,
+  ip: string,
+  rpcUrl: string,
+  statusText: string,
+  blocks: number,
+  peers: number,
+  queuedTxns: number,
+  pendingTxns: number,
+  showPending: boolean
 }
 
-class Nodes extends Component<IProps, IState> {
-
+export default class Nodes extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
+    this.childHandler = this.childHandler.bind(this);
     this.state = {
-      delay: 10000,
+      delay: 1000,
       client: this.props.config.nodes[0].client,
       selectedNode: this.props.config.nodes[0].name,
-      nodeId: '',
-      nodeName: '',
-      enode: '',
-      ip: '127.0.0.1',
-      rpcUrl: 'http://127.0.0.1:8545',
+      nodeId: "",
+      nodeName: "",
+      enode: "",
+      ip: "127.0.0.1",
+      rpcUrl: "http://127.0.0.1:8545",
       statusText: "error",
       blocks: 0,
       peers: 0,
       queuedTxns: 0,
       pendingTxns: 0,
-    }
+      showPending: false,
+    };
   }
-  //timer
+
   intervalId: number = 0;
   nodeKeys: string[] = getNodeKeys(this.props.config);
 
-  async nodeInfoHandler(name:string) {
-    const needle: QuorumNode = getDetailsByNodeName(this.props.config, name)
-    const rpcUrl: string = needle.rpcUrl;
-    const res = await updateNodeInfo(rpcUrl);
+  childHandler = (dropDownNode:any) => {
+    // console.log(dropDownNode);
     this.setState({
-      client: needle.client,
-      selectedNode: name,
-      statusText: res.statusText,
-      nodeId: res.nodeId,
-      nodeName: res.nodeName,
-      enode: res.enode,
-      ip: res.ip,
-      rpcUrl: rpcUrl,
-      blocks: res.blocks,
-      peers: res.peers,
-    })
+      selectedNode: dropDownNode.target.value,
+    });
+  };
+
+  async nodeInfoHandler(node:string) {
+    // console.log("nodeInfoHandler");
+    try {
+      const needle: QuorumNode = getDetailsByNodeName(this.props.config, node)
+      const rpcUrl:string = needle.rpcUrl;
+      const res = await updateNodeInfo(rpcUrl);
+      this.setState({
+        client: needle.client,
+        selectedNode: node,
+        statusText: res.statusText,
+        nodeId: res.nodeId,
+        nodeName: res.nodeName,
+        enode: res.enode,
+        ip: res.ip,
+        rpcUrl: rpcUrl,
+        blocks: res.blocks,
+        peers: res.peers,
+        showPending: false,
+      });
+    } catch (e) {
+      console.log(
+        "Node is unreachable. Ensure ports are open and client is running!"
+      );
+      this.setState({
+        showPending: true,
+      });
+    }
+
     // console.log('State: '+ JSON.stringify(this.state, null, 2));
   }
 
   tick = () => {
     this.nodeInfoHandler(this.state.selectedNode);
-  }
+  };
 
   // content visible on screen
   async componentDidMount() {
@@ -95,82 +122,54 @@ class Nodes extends Component<IProps, IState> {
   }
 
   render() {
-  //stats
-    const stats : NodeStat[] = [
+    const cards: Cards[] = [
       {
-        title: "Status",
-        text: this.state.statusText === "OK" ? "Running" : "Stopped",
+        label: "Status",
+        value: this.state.showPending === false ? "Running" : "Stopped",
         icon:
-          this.state.statusText === "OK" ? (
-            <PlayFill color="green" size={48} />
+          this.state.showPending === false ? (
+            <FaPlay size="1.5em" />
           ) : (
-            <PatchQuestionFill color="red" size={48} />
+            <FaStop size="1.5em" />
           ),
       },
       {
-        title: "Blocks",
-        text: this.state.blocks,
-        icon: <Boxes color="RoyalBlue" size={48} />,
+        label: "Blocks",
+        value: this.state.blocks,
+        icon: <GiCube size="2em" />,
       },
       {
-        title: "Peers",
-        text: this.state.peers,
-        icon: <PeopleFill color="DimGray" size={48} />,
+        label: "Peers",
+        value: this.state.peers,
+        icon: <BsFillPeopleFill size="2em" />,
       },
       {
-        title: "Queued",
-        text: this.state.queuedTxns,
-        icon: <ArrowDownUp color="orangered" size={48} />,
+        label: "Queued",
+        value: this.state.queuedTxns,
+        icon: <VscArrowSwap size="2em" />,
       },
     ];
-
-    const handleSelectNode = (e:any) => {
-      console.log(e);
-      this.nodeInfoHandler(e);
-    }
     return (
-      <Container className="container-fluid vh-100">
-        <br />
-        <Row>
-          <Row>
-            <Col sm={11}>
-              <h2>Nodes</h2>
-            </Col>
-            <Col sm={1}>
-              <Dropdown onSelect={handleSelectNode}>
-                <Dropdown.Toggle variant="secondary" id="dropdown-node-menu" >
-                  <Sliders size={20} />
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {this.nodeKeys.map((node) => (
-                    <Dropdown.Item key={node} eventKey={node}>{node}</Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            </Col>
-          </Row>
-        </Row>
-        <br />
-        <Row>
-          <br />
-          <Row>
-            <Col>
-              <NodeOverview stats={stats}></NodeOverview>
-            </Col>
-          </Row>
-
-          <Row><p> </p></Row>
-
-          <Row>
-            <Col>
-              <NodeDetails client={this.state.client} nodeId={this.state.nodeId} nodeName={this.state.nodeName} enode={this.state.enode} rpcUrl={this.state.rpcUrl} ip={this.state.ip} />
-            </Col>
-          </Row>
-        </Row>
-
-      </Container>
+      <>
+        <PageHeader HeadingName="Nodes" />
+        <AlertBanner
+          selectedNode={this.state.selectedNode}
+          rpcUrl={this.state.rpcUrl}
+          showPending={this.state.showPending}
+        />
+        <StatCard cards={cards} showPending={this.state.showPending} />
+        <NodeData
+          config={this.props.config}
+          childHandler={this.childHandler}
+          client={this.state.client}
+          nodeId={this.state.nodeId}
+          nodeName={this.state.nodeName}
+          enode={this.state.enode}
+          rpcUrl={this.state.rpcUrl}
+          ip={this.state.ip}
+          showPending={this.state.showPending}
+        />
+      </>
     );
   }
 }
-
-export default Nodes;

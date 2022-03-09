@@ -1,36 +1,67 @@
-import React, { Component } from 'react';
-import {Container, Row, Col, Card, Nav} from 'react-bootstrap';
+import {
+  Container,
+  Stack,
+  IconButton,
+  ButtonGroup,
+  Text,
+  Divider,
+  Box,
+} from "@chakra-ui/react";
+import { ConsensysIcon } from "./assets/Consensys";
+import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 
-interface IProps {
-}
 
-interface IState {
-}
-
-class Footer extends Component<IProps, IState> {
-
-  constructor(props: IProps){
-    super(props);
-  }
-  
-  render (){
-    return (
-      <div className="bg-dark text-white">
-      <Container fluid="md">
-        <Row >
-        <Nav className="me-auto ">
-          <Nav.Link className="bg-dark text-white" href="https://besu.hyperledger.org/en/latest/"> Hyperledger Besu </Nav.Link>
-          <Nav.Link className="bg-dark text-white" href="https://consensys.net/docs/goquorum/en/latest/"> GoQuorum </Nav.Link> 
-          <Nav.Link className="bg-dark text-white" href="https://docs.tessera.consensys.net/en/latest/"> Tessera </Nav.Link>
-          <Nav.Link className="bg-dark text-white" href="https://docs.orchestrate.consensys.net/en/latest/"> Codefi Orchestrate </Nav.Link>
-          <Nav.Link className="bg-dark text-white" href="https://discord.com/channels/697535391594446898/"> Discord </Nav.Link>
-          <Nav.Link className="bg-dark text-white" href="https://consensys.net/contact/"> Contact </Nav.Link>
-          <Nav.Link className="bg-dark text-white alignRight" href="#">    Ⓒ Copyright ConsenSys 2022. </Nav.Link>
-        </Nav>
-        </Row>
+function Footer() {
+  return (
+    <>
+      <Box mt={20}>
+        <Divider />
+      </Box>
+      <Container
+        as="footer"
+        role="contentinfo"
+        py={{ base: "12", md: "12" }}
+        maxW={{ base: "container.sm", md: "container.lg" }}
+      >
+        <Stack spacing={{ base: "4", md: "5" }}>
+          <Stack
+            justify="space-between"
+            direction={{ base: "column", md: "row" }}
+            align="center"
+          >
+            <ConsensysIcon boxSize="10em" />
+            <ButtonGroup variant="ghost">
+              <IconButton
+                as="a"
+                href="https://www.linkedin.com/company/consensus-systems-consensys-/"
+                aria-label="LinkedIn"
+                icon={<FaLinkedin fontSize="1.25rem" />}
+              />
+              <IconButton
+                as="a"
+                href="https://github.com/ConsenSys/quorum-explorer"
+                aria-label="GitHub"
+                icon={<FaGithub fontSize="1.25rem" />}
+              />
+              <IconButton
+                as="a"
+                href="https://twitter.com/ConsenSys"
+                aria-label="Twitter"
+                icon={<FaTwitter fontSize="1.25rem" />}
+              />
+            </ButtonGroup>
+          </Stack>
+          <Text
+            align={{ base: "center", md: "left" }}
+            fontSize="sm"
+            color="subtle"
+          >
+            &copy; {new Date().getFullYear()} ConsenSys Software, Inc. All
+            rights reserved.
+          </Text>
+        </Stack>
       </Container>
-      </div>
-    );
-  }
-};
+    </>
+  );
+}
 export default Footer;
