@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Drawer,
   DrawerBody,
@@ -9,30 +9,30 @@ import {
   DrawerCloseButton,
   Flex,
   Text,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 
 interface IProps {
-  placement?: any,
-  width?: number,
-  isOpen: boolean,
-  children: any,
-  onClose: any,
-  btnRef?: any,
-  title?: string,
-  footer?: any,
-  finalFocusRef?: any
+  placement?: any;
+  width?: number;
+  isOpen: boolean;
+  children: React.ReactNode;
+  onClose: any;
+  btnRef?: any;
+  title?: string;
+  footer?: any;
+  finalFocusRef?: any;
 }
 
-export default function MobileDrawer({placement = 'right',
+export default function MobileDrawer({
+  placement = "right",
   width,
   isOpen,
   children,
   onClose,
   btnRef,
-  title = 'Menu',
+  title = "Menu",
   footer,
-  
-}:IProps) {
+}: IProps) {
   const p = 15;
   return (
     <Flex w={width}>
