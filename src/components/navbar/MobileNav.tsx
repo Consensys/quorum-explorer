@@ -7,13 +7,13 @@ import React from "react";
 
 export default function MobileNav() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef<HTMLButtonElement>(null);
+  const btnRef = React.useRef(null);
   return (
     <Flex display={{ base: "flex", md: "none" }}>
       <Button ref={btnRef} onClick={onOpen}>
         <IoMdMenu size="26px" />
       </Button>
-      <MobileDrawer isOpen={isOpen} onClose={onClose} finalFocusRef={btnRef}>
+      <MobileDrawer isOpen={isOpen} onClose={onClose}>
         <VStack alignItems="left">
           {headers.map((item, i) => (
             <Link key={i} to={item["label"].toLowerCase()}>

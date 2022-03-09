@@ -12,19 +12,16 @@ import {
 } from "@chakra-ui/react";
 
 interface IProps {
-  placement?: any;
   width?: number;
   isOpen: boolean;
   children: React.ReactNode;
-  onClose: any;
-  btnRef?: any;
+  onClose: () => void;
+  btnRef?: React.MutableRefObject<null>;
   title?: string;
   footer?: any;
-  finalFocusRef?: any;
 }
 
 export default function MobileDrawer({
-  placement = "right",
   width,
   isOpen,
   children,
@@ -36,12 +33,7 @@ export default function MobileDrawer({
   const p = 15;
   return (
     <Flex w={width}>
-      <Drawer
-        isOpen={isOpen}
-        placement={placement}
-        onClose={onClose}
-        finalFocusRef={btnRef}
-      >
+      <Drawer isOpen={isOpen} onClose={onClose} finalFocusRef={btnRef}>
         <DrawerOverlay />
         <DrawerContent alignItems="center">
           <DrawerCloseButton alignSelf="end" mx={p} my={p} />
