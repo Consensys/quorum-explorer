@@ -4,18 +4,26 @@ import {
   AlertDescription,
   Container,
 } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 
 interface alertProps {
-  selectedNode: string,
-  rpcUrl: string,
-  showPending: boolean
+  selectedNode: string;
+  rpcUrl: string;
+  showPending: boolean;
 }
+
+const MotionContainer = motion(Container);
 
 export default function AlertBanner(props: alertProps) {
   const { selectedNode, rpcUrl, showPending } = props;
   return (
     <>
-      <Container mt={7}>
+      <MotionContainer
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        mt={7}
+      >
         {showPending ? (
           <Alert
             status="error"
@@ -43,7 +51,7 @@ export default function AlertBanner(props: alertProps) {
             </AlertDescription>
           </Alert>
         )}
-      </Container>
+      </MotionContainer>
     </>
   );
 }

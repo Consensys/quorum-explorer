@@ -9,15 +9,26 @@ import {
 } from "@chakra-ui/react";
 import { ConsensysIcon } from "./assets/Consensys";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { motion } from "framer-motion";
 
+const MotionBox = motion(Box);
+const MotionContainer = motion(Container);
 
 function Footer() {
   return (
     <>
-      <Box mt={20}>
+      <MotionBox
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.25 }}
+        mt={20}
+      >
         <Divider />
-      </Box>
-      <Container
+      </MotionBox>
+      <MotionContainer
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
         as="footer"
         role="contentinfo"
         py={{ base: "12", md: "12" }}
@@ -60,7 +71,7 @@ function Footer() {
             rights reserved.
           </Text>
         </Stack>
-      </Container>
+      </MotionContainer>
     </>
   );
 }
