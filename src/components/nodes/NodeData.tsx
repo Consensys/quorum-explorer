@@ -2,12 +2,15 @@ import React from "react";
 import { HStack, Container, Flex, Select, Text } from "@chakra-ui/react";
 import NodeStack from "./NodeCard";
 import { StackIProps } from "../types/nodes";
-import { QuorumConfig } from '../types/config';
+import { QuorumConfig } from "../types/config";
+import { motion } from "framer-motion";
 
 interface NodeStackIProp extends StackIProps {
-  childHandler: any,
-  config: QuorumConfig
+  childHandler: any;
+  config: QuorumConfig;
 }
+
+const MotionContainer = motion(Container);
 
 export default function NodeData({
   childHandler,
@@ -18,11 +21,16 @@ export default function NodeData({
   rpcUrl,
   ip,
   showPending,
-  config
+  config,
 }: NodeStackIProp) {
   return (
     <>
-      <Container maxW={{ base: "container.sm", md: "container.md" }}>
+      <MotionContainer
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        maxW={{ base: "container.sm", md: "container.md" }}
+      >
         <Flex justify="flex-end" mb={5}>
           <HStack>
             <Text minW="max" fontSize="lg" color="muted">
@@ -46,7 +54,7 @@ export default function NodeData({
           ip={ip}
           showPending={showPending}
         />
-      </Container>
+      </MotionContainer>
     </>
   );
 }

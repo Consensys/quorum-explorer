@@ -1,18 +1,26 @@
-import React from "react";
 import { Box, Container, SimpleGrid } from "@chakra-ui/react";
 import { Stat } from "./Stat";
 import { Cards } from "../types/nodes";
+import { motion } from "framer-motion";
 
 interface IProps {
-  cards: Cards[],
-  showPending: boolean
+  cards: Cards[];
+  showPending: boolean;
 }
 
-export default function StatCard(props:IProps) {
+const BoxMotion = motion(Box);
+
+export default function StatCard(props: IProps) {
   const { cards, showPending } = props;
   return (
     <>
-      <Box as="section" py={{ base: "4", md: "9" }}>
+      <BoxMotion
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        as="section"
+        py={{ base: "4", md: "9" }}
+      >
         <Container maxW={{ base: "container.sm", md: "container.xl" }}>
           <SimpleGrid columns={{ base: 1, md: 4 }} gap={{ base: "5", md: "7" }}>
             {cards.map(({ label, value, icon }) => (
@@ -26,7 +34,7 @@ export default function StatCard(props:IProps) {
             ))}
           </SimpleGrid>
         </Container>
-      </Box>
+      </BoxMotion>
     </>
   );
 }
