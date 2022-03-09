@@ -19,7 +19,7 @@ export default function NodeData({
   ip,
   showPending,
   config
-}:NodeStackIProp) {
+}: NodeStackIProp) {
   return (
     <>
       <Container maxW={{ base: "container.sm", md: "container.md" }}>

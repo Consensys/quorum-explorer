@@ -5,7 +5,7 @@ import PageHeader from '../header';
 export default function Dashboard() {
   return (
     <>
-      <PageHeader HeadingName="Dashboard" />
+      <PageHeader headingName="Dashboard" />
     </>
   );
 }

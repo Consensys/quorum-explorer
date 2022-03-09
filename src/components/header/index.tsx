@@ -1,13 +1,13 @@
-import { Heading, Divider, Center, Container } from "@chakra-ui/react";
+import { Heading, Divider, Container } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
 interface IProps {
-  HeadingName: string;
+  headingName: string;
 }
 
 const MotionContainer = motion(Container);
 
-export default function PageHeader({ HeadingName }: IProps) {
+export default function PageHeader({ headingName }: IProps) {
   return (
     <>
       <MotionContainer
@@ -16,7 +16,7 @@ export default function PageHeader({ HeadingName }: IProps) {
           transition={{ delay: 0.2 }}
       >
           <Heading as="h1" size="xl" m={3} textAlign="center">
-            {HeadingName}
+            {headingName}
           </Heading>
           <Divider maxW="40vw"/>
       </MotionContainer>

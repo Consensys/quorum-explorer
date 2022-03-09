@@ -151,7 +151,7 @@ export default class Nodes extends Component<IProps, IState> {
     ];
     return (
       <>
-        <PageHeader HeadingName="Nodes" />
+        <PageHeader headingName="Nodes" />
         <AlertBanner
           selectedNode={this.state.selectedNode}
           rpcUrl={this.state.rpcUrl}

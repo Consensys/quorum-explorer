@@ -5,7 +5,7 @@ import PageHeader from '../header/';
 export default function Contracts() {
   return (
     <>
-      <PageHeader HeadingName="Contracts" />
+      <PageHeader headingName="Contracts" />
     </>
   );
 }

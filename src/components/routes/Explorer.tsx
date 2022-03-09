@@ -5,7 +5,7 @@ import PageHeader from '../header';
 export default function Explorer() {
   return (
     <>
-      <PageHeader HeadingName="Explorer" />
+      <PageHeader headingName="Explorer" />
     </>
   );
 }
