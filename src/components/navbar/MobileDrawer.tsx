@@ -20,7 +20,7 @@ interface IProps {
   btnRef?: any,
   title?: string,
   footer?: any,
-  finalFocusRef: any
+  finalFocusRef?: any
 }
 
 export default function MobileDrawer({placement = 'right',
@@ -31,7 +31,6 @@ export default function MobileDrawer({placement = 'right',
   btnRef,
   title = 'Menu',
   footer,
-  finalFocusRef
   
 }:IProps) {
   const p = 15;
