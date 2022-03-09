@@ -1,10 +1,20 @@
-import * as React from 'react';
+import React, { Component } from 'react';
 import {Container, Row, Col, Card, Nav} from 'react-bootstrap';
-const nodesConfig = require('../config/nodes.json');
 
-function Footer() {
+interface IProps {
+}
 
-  return (
+interface IState {
+}
+
+class Footer extends Component<IProps, IState> {
+
+  constructor(props: IProps){
+    super(props);
+  }
+  
+  render (){
+    return (
       <div className="bg-dark text-white">
       <Container fluid="md">
         <Row >
@@ -20,7 +30,7 @@ function Footer() {
         </Row>
       </Container>
       </div>
-
-  );
+    );
+  }
 };
 export default Footer;

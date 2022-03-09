@@ -1,22 +1,10 @@
 
+import { ethApiCall } from './common';
+import { NodeDetails } from "../types/api/responses";
 const axios = require('axios');
 
-export async function ethApiCall(url, method){
-  return axios({
-    method: 'post',
-    url: url,
-    data: {
-        jsonrpc: '2.0',
-        method: method,
-        params: [],
-        id: 1
-    },
-    headers: {'Content-Type': 'application/json'}
-  })
-}
-
-export async function updateNodeInfo(url){
-  let nodeDetails = { status: "error", nodeId: "", nodeName: "", enode: "", ip: "" }
+export async function updateNodeInfo(url:string) {
+  let nodeDetails: NodeDetails= { statusText: "error", nodeId: "", nodeName: "", enode: "", ip: "", blocks: -1, peers: -1, queuedTxns: -1, pendingTxns:-1 }
   try {
     const adminNodeInfo = await ethApiCall(url, 'admin_nodeInfo'); 
     const ethBlockNumber = await ethApiCall(url, 'eth_blockNumber'); 
@@ -37,4 +25,5 @@ export async function updateNodeInfo(url){
     return nodeDetails;
   }
 }
+
 

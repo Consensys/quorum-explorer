@@ -1,11 +1,23 @@
 import React, { Component } from 'react';
 import {Container, Row, Col, Card} from 'react-bootstrap';
 
-class NodeInfo extends Component{
+interface IProps {
+  client: string;
+  nodeId: string;
+  nodeName: string;
+  enode: string;
+  rpcUrl: string;
+  ip: string;
+}
 
-  constructor(props){
+interface IState {
+}
+
+class NodeDetails extends Component<IProps, IState> {
+
+  constructor(props: IProps){
     super(props);
-  }  
+  }
 
   render(){
     return (
@@ -50,7 +62,7 @@ class NodeInfo extends Component{
 
 }
 
-export default NodeInfo;
+export default NodeDetails;
 
 
 
