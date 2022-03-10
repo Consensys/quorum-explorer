@@ -1,4 +1,4 @@
-import { QuorumConfig } from "../types/config"
+import { QuorumConfig } from "../Types/QuorumConfig"
 
 export function getNodeKeys(quorumConfig: QuorumConfig) {
     return quorumConfig.nodes.map(_=>_.name)
