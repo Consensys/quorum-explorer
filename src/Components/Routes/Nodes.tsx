@@ -148,7 +148,7 @@ export default class Nodes extends Component<IProps, IState> {
 
     return (
       <>
-        <Container h="100vh" maxW={{ base: "container.sm", md: "container.xl" }}>
+        <Container maxW={{ base: "container.sm", md: "container.xl" }}>
           <PageHeader
             title="Nodes"
             config={this.props.config}

@@ -57,7 +57,7 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="75%" h="20px" />
+                    <Skeleton w={{ base: "100%", md: "73%" }} h="20px" />
                   </>
                 )}
               </Flex>
@@ -82,7 +82,7 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="75%" h="20px" />
+                    <Skeleton w={{ base: "100%", md: "73%" }} h="20px" />
                   </>
                 )}
               </Flex>
@@ -105,7 +105,7 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="75%" h="20px" />
+                    <Skeleton w={{ base: "100%", md: "73%" }} h="20px" />
                   </>
                 )}
               </Flex>
@@ -130,7 +130,7 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="75%" h="20px" />
+                    <Skeleton w={{ base: "100%", md: "73%" }} h="20px" />
                   </>
                 )}
               </Flex>
@@ -153,7 +153,7 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="75%" h="20px" />
+                    <Skeleton w={{ base: "100%", md: "73%" }} h="20px" />
                   </>
                 )}
               </Flex>
@@ -176,7 +176,7 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="75%" h="20px" />
+                    <Skeleton w={{ base: "100%", md: "73%" }} h="20px" />
                   </>
                 )}
               </Flex>
