@@ -32,20 +32,22 @@ class NodeDetails extends Component<IProps, IState> {
   render() {
     return (
       <>
+
+
+      
         <MotionContainer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
-          maxW={{ base: "container.sm", md: "container.lg" }}
+          maxW={{ base: "container.sm", md: "container.xl" }}
         >
           <Flex flexDirection="column" borderRadius="lg" borderWidth={2}>
             <Box m={5}>
               <Flex
                 flexDirection="row"
-                justifyContent="space-between"
                 flexWrap="wrap"
               >
-                <Text>Client:</Text>
+                <Text as='b' width={"200px"}>Client:</Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     MotionText
@@ -68,10 +70,9 @@ class NodeDetails extends Component<IProps, IState> {
             <Box m={5}>
               <Flex
                 flexDirection="row"
-                justifyContent="space-between"
                 flexWrap="wrap"
               >
-                <Text>Node ID:</Text>
+                <Text as='b' width={"200px"}>Node ID:</Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     key={this.props.nodeId}
@@ -95,10 +96,9 @@ class NodeDetails extends Component<IProps, IState> {
             <Box m={5}>
               <Flex
                 flexDirection="row"
-                justifyContent="space-between"
                 flexWrap="wrap"
               >
-                <Text>Node Name:</Text>
+                <Text as='b' width={"200px"}>Node Name:</Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     key={this.props.nodeName}
@@ -120,10 +120,9 @@ class NodeDetails extends Component<IProps, IState> {
             <Box m={5}>
               <Flex
                 flexDirection="row"
-                justifyContent="space-between"
                 flexWrap="wrap"
               >
-                <Text>Enode:</Text>
+                <Text as='b' width={"200px"}>Enode:</Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     key={this.props.enode}
@@ -132,7 +131,7 @@ class NodeDetails extends Component<IProps, IState> {
                     transition={{ duration: 1 }}
                     end={{ opacity: 0 }}
                     textAlign="right"
-                    maxW="60%"
+                    maxW="80%"
                   >
                     {this.props.enode}
                   </MotionText>
@@ -147,10 +146,9 @@ class NodeDetails extends Component<IProps, IState> {
             <Box m={5}>
               <Flex
                 flexDirection="row"
-                justifyContent="space-between"
                 flexWrap="wrap"
               >
-                <Text>RPC Url:</Text>
+                <Text as='b' width={"200px"}>RPC Url:</Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     key={this.props.rpcUrl}
@@ -172,10 +170,9 @@ class NodeDetails extends Component<IProps, IState> {
             <Box m={5}>
               <Flex
                 flexDirection="row"
-                justifyContent="space-between"
                 flexWrap="wrap"
               >
-                <Text>IP Address:</Text>
+                <Text as='b' width={"200px"}>IP Address:</Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     key={this.props.ip}

@@ -11,7 +11,7 @@ interface IState {
   delay: number;
 }
 
-export class Dashboard extends Component<IProps, IState> {
+export class Validators extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
@@ -28,9 +28,9 @@ export class Dashboard extends Component<IProps, IState> {
   render() {
     return (
       <>
-        <Container maxW={{ base: "container.sm", md: "container.xl" }}>
+        <Container h="100vh" maxW={{ base: "container.sm", md: "container.xl" }}>
           <PageHeader
-            title="Dashboard"
+            title="Validators"
             config={this.props.config}
             selectNodeHandler={this.handleSelectNode}
           />
@@ -40,4 +40,4 @@ export class Dashboard extends Component<IProps, IState> {
   }
 }
 
-export default Dashboard;
+export default Validators;

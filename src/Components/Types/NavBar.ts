@@ -1,5 +1,5 @@
 
-import { faDesktop, faServer, faCompass, faFileAlt } from "@fortawesome/free-solid-svg-icons";
+import { faUsers, faServer, faCompass, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 
 export type NavItem = {
   label: string,
@@ -8,12 +8,12 @@ export type NavItem = {
 
 export const NavItems: NavItem[] = [
   {
-    label: 'Dashboard',
-    icon: faDesktop
-  },
-  {
     label: 'Nodes',
     icon: faServer,
+  },
+  {
+    label: 'Validators',
+    icon: faUsers
   },
   {
     label: 'Explorer',
