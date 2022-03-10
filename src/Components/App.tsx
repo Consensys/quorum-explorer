@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container } from '@chakra-ui/react'
 import Router from './Router';
-import { QuorumConfig } from './types/config';
+import { QuorumConfig } from './Types/QuorumConfig';
 const config = require('../Config/config.json');
 
 interface IProps {

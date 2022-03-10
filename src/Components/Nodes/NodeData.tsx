@@ -1,8 +1,8 @@
 import React from "react";
 import { HStack, Container, Flex, Select, Text } from "@chakra-ui/react";
 import NodeStack from "./NodeCard";
-import { StackIProps } from "../types/nodes";
-import { QuorumConfig } from "../types/config";
+import { StackIProps } from "../Types/Nodes";
+import { QuorumConfig } from "../Types/QuorumConfig";
 import { motion } from "framer-motion";
 
 interface NodeStackIProp extends StackIProps {

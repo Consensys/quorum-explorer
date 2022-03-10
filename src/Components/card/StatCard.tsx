@@ -1,6 +1,6 @@
 import { Box, Container, SimpleGrid } from "@chakra-ui/react";
 import { Stat } from "./Stat";
-import { Cards } from "../types/nodes";
+import { Cards } from "../Types/Nodes";
 import { motion } from "framer-motion";
 
 interface IProps {

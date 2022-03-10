@@ -1,5 +1,5 @@
 import { Box, Heading, Divider, Skeleton, Text } from "@chakra-ui/react";
-import { StackIProps } from "../types/nodes";
+import { StackIProps } from "../Types/Nodes";
 
 interface NodeIProps {
   title: string,

@@ -1,6 +1,6 @@
 
-import { ethApiCall } from './common';
-import { NodeDetails } from "../types/api/responses";
+import { ethApiCall } from './Common';
+import { NodeDetails } from "../Types/API/Responses";
 const axios = require('axios');
 
 export async function updateNodeInfo(url: string) {

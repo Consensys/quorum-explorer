@@ -1,18 +1,15 @@
 import React, { Component } from "react";
 import PageHeader from "../header";
 import StatCard from "../card/StatCard";
-import NodeData from "../nodes/NodeData";
-import { updateNodeInfo } from "../api/nodes";
-import AlertBanner from "../alert";
-
+import NodeData from "../Nodes/NodeData";
+import { updateNodeInfo } from "../API/Nodes";
 import { FaPlay, FaStop } from "react-icons/fa";
 import { GiCube } from "react-icons/gi";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { VscArrowSwap } from "react-icons/vsc";
-
-import { QuorumConfig, QuorumNode } from '../types/config';
-import { Cards } from "../types/nodes";
-import { getDetailsByNodeName, getNodeKeys } from "../api/quorumConfig";
+import { QuorumConfig, QuorumNode } from '../Types/QuorumConfig';
+import { Cards } from "../Types/Nodes";
+import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
 
 
 interface IProps {
@@ -152,11 +149,6 @@ export default class Nodes extends Component<IProps, IState> {
     return (
       <>
         <PageHeader headingName="Nodes" />
-        <AlertBanner
-          selectedNode={this.state.selectedNode}
-          rpcUrl={this.state.rpcUrl}
-          showPending={this.state.showPending}
-        />
         <StatCard cards={cards} showPending={this.state.showPending} />
         <NodeData
           config={this.props.config}

@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Button, HStack, Divider, chakra } from "@chakra-ui/react";
 import { QuorumIcon } from "./QuorumIcon";
 import { Link } from "react-router-dom";
-import { NavItems } from "../types/navbar";
+import { NavItems } from "../Types/NavBar";
 import MobileNav from "./MobileNav";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
 import { motion } from "framer-motion";

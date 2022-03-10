@@ -1,6 +1,6 @@
 
-import { ethApiCall } from './common';
-import { BlockDetails } from '../types/api/responses';
+import { ethApiCall } from './Common';
+import { BlockDetails } from '../Types/API/Responses';
 const axios = require('axios');
 
 export async function getBlockByNumber(url:string, blockNumber:string|number) {

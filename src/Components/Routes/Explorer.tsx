@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Heading } from "@chakra-ui/react";
 import PageHeader from "../header";
-import { QuorumConfig, QuorumNode } from "../types/config";
-import { getDetailsByNodeName, getNodeKeys } from "../api/quorumConfig";
-import { getBlockByNumber } from "../api/explorer";
+import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
+import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
+import { getBlockByNumber } from "../API/Explorer";
 
 interface IProps {
   config: QuorumConfig;

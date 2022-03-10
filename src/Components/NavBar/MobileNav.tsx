@@ -3,7 +3,7 @@ import { useDisclosure, Flex, Button, VStack } from "@chakra-ui/react";
 import MobileDrawer from "./MobileDrawer";
 import { IoMdMenu } from "react-icons/io";
 import { Link } from "react-router-dom";
-import { NavItems } from "../types/navbar";
+import { NavItems } from "../Types/NavBar";
 import React from "react";
 
 export default function MobileNav() {
