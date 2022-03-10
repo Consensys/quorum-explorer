@@ -8,7 +8,7 @@ export const ConsensysIcon = ({ ...rest }) => {
 
   return (
     <>
-      <Icon height="100px" width="250px" viewBox="0 0 4793.76 1081.72">
+      <Icon height="60px" width="200px" viewBox="0 0 4793.76 1081.72">
         <svg xmlns="http://www.w3.org/2000/svg">
           <path
             fill={iconFill}

@@ -1,8 +1,9 @@
 import { useDisclosure, Flex, Button, VStack } from "@chakra-ui/react";
+//uses MobileNav as a sub component
 import MobileDrawer from "./MobileDrawer";
 import { IoMdMenu } from "react-icons/io";
 import { Link } from "react-router-dom";
-import { headers } from "./header";
+import { NavItems } from "../types/navbar";
 import React from "react";
 
 export default function MobileNav() {
@@ -15,7 +16,7 @@ export default function MobileNav() {
       </Button>
       <MobileDrawer isOpen={isOpen} onClose={onClose}>
         <VStack alignItems="left">
-          {headers.map((item, i) => (
+          {NavItems.map((item, i) => (
             <Link key={i} to={item["label"].toLowerCase()}>
               <Button
                 leftIcon={React.createElement(item["icon"])}

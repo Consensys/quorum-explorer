@@ -6,12 +6,12 @@ import {
 import { FaServer } from 'react-icons/fa';
 import { IconType } from 'react-icons';
 
-interface dataType {
+export type NavItem = {
   label: string,
   icon: IconType
 }
 
-export const headers: dataType[] = [
+export const NavItems: NavItem[] = [
   {
     label: 'Dashboard',
     icon: MdSpaceDashboard,

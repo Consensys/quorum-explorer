@@ -1,12 +1,11 @@
 import React from "react";
-import { Flex, Button, HStack, chakra } from "@chakra-ui/react";
-import { QuorumIcon } from "../assets/Quorum";
+import { Flex, Button, HStack, Divider, chakra } from "@chakra-ui/react";
+import { QuorumIcon } from "./QuorumIcon";
 import { Link } from "react-router-dom";
-import { headers } from "./header";
+import { NavItems } from "../types/navbar";
 import MobileNav from "./MobileNav";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
 import { motion } from "framer-motion";
-
 const MotionFlex = motion(Flex);
 
 export default function NavBar() {
@@ -23,8 +22,9 @@ export default function NavBar() {
         justify="space-between"
       >
         <QuorumIcon />
+        {/* TODO: fix me up to avoid duplication of items  */}
         <HStack spacing="5" display={{ base: "none", md: "flex" }}>
-          {headers.map((item, i) => (
+          {NavItems.map((item, i) => (
             <Link key={i} to={item["label"].toLowerCase()}>
               <Button
                 leftIcon={React.createElement(item["icon"])}
@@ -40,6 +40,7 @@ export default function NavBar() {
           <ColorModeSwitcher justifySelf="flex-end" />
         </HStack>
       </MotionFlex>
+      <Divider />
     </chakra.header>
   );
 }

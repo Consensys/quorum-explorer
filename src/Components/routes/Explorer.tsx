@@ -34,7 +34,10 @@ export default class Explorer extends Component<IProps, IState> {
 
   //get the latest n elements in an array
   updateArray = <T,>(arr: T[], elem: T, len: number) => {
-    arr.unshift(elem);
+    if (arr[0] === elem) {
+    } else {
+      arr.unshift(elem);
+    }
     return arr.slice(0, len);
   };
 

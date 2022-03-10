@@ -5,8 +5,8 @@ import Explorer from "./routes/Explorer";
 import Contracts from "./routes/Contracts";
 import Nodes from "./routes/Nodes";
 import { QuorumConfig } from "./types/config";
-import NavBar from "../components/navbar/index";
-import Footer from "../components/Footer";
+import NavBar from "./NavBar/NavBar";
+import Footer from "./Footer/Footer";
 
 interface IProps {
   config: QuorumConfig;
