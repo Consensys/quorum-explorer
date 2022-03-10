@@ -141,7 +141,6 @@ class NodeDetails extends Component<IProps, IState> {
                 )}
               </Flex>
             </Box>
-            <Divider />
           </Flex>
         </MotionContainer>
       </>
