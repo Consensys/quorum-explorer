@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { QuorumConfig, QuorumNode } from '../Types/QuorumConfig';
+import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import PageHeader from "../Misc/PageHeader";
 import NodeOverview from "../Nodes/NodeOverview";
 import NodeDetails from "../Nodes/NodeDetails";
@@ -13,24 +13,24 @@ import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
 import { Container } from "@chakra-ui/react";
 
 interface IProps {
-  config: QuorumConfig
+  config: QuorumConfig;
 }
 
 interface IState {
-  delay: number,
-  client: string,
-  selectedNode: string,
-  nodeId: string,
-  nodeName: string,
-  enode: string,
-  ip: string,
-  rpcUrl: string,
-  statusText: string,
-  blocks: number,
-  peers: number,
-  queuedTxns: number,
-  pendingTxns: number,
-  showPending: boolean
+  delay: number;
+  client: string;
+  selectedNode: string;
+  nodeId: string;
+  nodeName: string;
+  enode: string;
+  ip: string;
+  rpcUrl: string;
+  statusText: string;
+  blocks: number;
+  peers: number;
+  queuedTxns: number;
+  pendingTxns: number;
+  showPending: boolean;
 }
 
 export default class Nodes extends Component<IProps, IState> {
@@ -58,18 +58,18 @@ export default class Nodes extends Component<IProps, IState> {
   intervalId: number = 0;
   nodeKeys: string[] = getNodeKeys(this.props.config);
 
-  childHandler = (dropDownNode:any) => {
+  childHandler = (dropDownNode: any) => {
     // console.log(dropDownNode);
     this.setState({
       selectedNode: dropDownNode.target.value,
     });
   };
 
-  async nodeInfoHandler(node:string) {
+  async nodeInfoHandler(node: string) {
     // console.log("nodeInfoHandler");
     try {
-      const needle: QuorumNode = getDetailsByNodeName(this.props.config, node)
-      const rpcUrl:string = needle.rpcUrl;
+      const needle: QuorumNode = getDetailsByNodeName(this.props.config, node);
+      const rpcUrl: string = needle.rpcUrl;
       const res = await updateNodeInfo(rpcUrl);
       this.setState({
         client: needle.client,
@@ -118,10 +118,13 @@ export default class Nodes extends Component<IProps, IState> {
     clearInterval(this.intervalId);
   }
 
-  handleSelectNode = (e:any) => {
+  handleSelectNode = (e: any) => {
     console.log(e);
-    this.nodeInfoHandler(e);
-  }
+    this.setState({
+      selectedNode: e.target.value,
+    });
+    // this.nodeInfoHandler(e);
+  };
 
   render() {
     const stats: Cards[] = [
@@ -154,18 +157,25 @@ export default class Nodes extends Component<IProps, IState> {
 
     return (
       <>
-      <Container maxW={{ base: "container.sm", md: "container.xl" }} h="100vh" >
-        <PageHeader title="Nodes" config={this.props.config} selectNodeHandler={this.handleSelectNode} />
-        <NodeOverview stats={stats} showPending={this.state.showPending} />
-        <NodeDetails
-          client={this.state.client}
-          nodeId={this.state.nodeId}
-          nodeName={this.state.nodeName}
-          enode={this.state.enode}
-          rpcUrl={this.state.rpcUrl}
-          ip={this.state.ip}
-        />
-      </Container>
+        <Container
+          maxW={{ base: "container.sm", md: "container.xl" }}
+          h="100vh"
+        >
+          <PageHeader
+            title="Nodes"
+            config={this.props.config}
+            selectNodeHandler={this.handleSelectNode}
+          />
+          <NodeOverview stats={stats} showPending={this.state.showPending} />
+          <NodeDetails
+            client={this.state.client}
+            nodeId={this.state.nodeId}
+            nodeName={this.state.nodeName}
+            enode={this.state.enode}
+            rpcUrl={this.state.rpcUrl}
+            ip={this.state.ip}
+          />
+        </Container>
       </>
     );
   }
