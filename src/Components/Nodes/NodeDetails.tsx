@@ -79,6 +79,8 @@ class NodeDetails extends Component<IProps, IState> {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1 }}
                     end={{ opacity: 0 }}
+                    textAlign="right"
+                    maxW="60%"
                   >
                     {this.props.nodeId}
                   </MotionText>
