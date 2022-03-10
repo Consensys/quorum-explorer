@@ -25,19 +25,18 @@ class NodeCard extends Component<IProps, IState> {
           py={{ base: "5", md: "6" }}
           borderRadius="lg"
           borderWidth={2}
-          // boxShadow={useColorModeValue("xs", "2xl")}
         >
-          <VStack>
-            <HStack mb={3}>
-              <Box>{this.props.icon}</Box>
+          <HStack spacing={10}>
+            <Box>{this.props.icon}</Box>
+            <VStack mb={3}>
               <Heading fontSize={{ base: "md", md: "2xl" }}>
                 {this.props.title}
               </Heading>
-            </HStack>
             <Text fontSize="lg" color="muted">
               {this.props.text}
             </Text>
-          </VStack>
+            </VStack>
+          </HStack>
         </Flex>
       </>
     );

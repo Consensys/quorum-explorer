@@ -28,7 +28,6 @@ interface IState {
   peers: number;
   queuedTxns: number;
   pendingTxns: number;
-  showPending: boolean;
 }
 
 export default class Nodes extends Component<IProps, IState> {
@@ -49,7 +48,6 @@ export default class Nodes extends Component<IProps, IState> {
       peers: 0,
       queuedTxns: 0,
       pendingTxns: 0,
-      showPending: false,
     };
   }
 
@@ -65,32 +63,21 @@ export default class Nodes extends Component<IProps, IState> {
 
   async nodeInfoHandler(node: string) {
     // console.log("nodeInfoHandler");
-    try {
-      const needle: QuorumNode = getDetailsByNodeName(this.props.config, node);
-      const rpcUrl: string = needle.rpcUrl;
-      const res = await updateNodeInfo(rpcUrl);
-      this.setState({
-        client: needle.client,
-        selectedNode: node,
-        statusText: res.statusText,
-        nodeId: res.nodeId,
-        nodeName: res.nodeName,
-        enode: res.enode,
-        ip: res.ip,
-        rpcUrl: rpcUrl,
-        blocks: res.blocks,
-        peers: res.peers,
-        showPending: false,
-      });
-    } catch (e) {
-      console.log(
-        "Node is unreachable. Ensure ports are open and client is running!"
-      );
-      this.setState({
-        showPending: true,
-      });
-    }
-
+    const needle: QuorumNode = getDetailsByNodeName(this.props.config, node);
+    const rpcUrl: string = needle.rpcUrl;
+    const res = await updateNodeInfo(rpcUrl);
+    this.setState({
+      client: needle.client,
+      selectedNode: node,
+      statusText: res.statusText,
+      nodeId: res.nodeId,
+      nodeName: res.nodeName,
+      enode: res.enode,
+      ip: res.ip,
+      rpcUrl: rpcUrl,
+      blocks: res.blocks,
+      peers: res.peers
+    });
     // console.log('State: '+ JSON.stringify(this.state, null, 2));
   }
 
@@ -121,35 +108,35 @@ export default class Nodes extends Component<IProps, IState> {
     this.setState({
       selectedNode: e.target.value,
     });
-    // this.nodeInfoHandler(e);
+    this.nodeInfoHandler(e);
   };
 
   render() {
     const stats: Cards[] = [
       {
         label: "Status",
-        value: this.state.showPending === false ? "Running" : "Stopped",
+        value: this.state.statusText === "OK" ? "Running" : "Stopped",
         icon:
-          this.state.showPending === false ? (
-            <FontAwesomeIcon icon={faPlay}  fontSize="1.5rem" />
+          this.state.statusText === "OK" ? (
+            <FontAwesomeIcon icon={faPlay} size="2x" color="green" />
           ) : (
-            <FontAwesomeIcon icon={faStop}  fontSize="1.5rem" />
+            <FontAwesomeIcon icon={faStop} size="2x" color="red" />
           ),
       },
       {
         label: "Blocks",
         value: this.state.blocks,
-        icon: <FontAwesomeIcon icon={faCubes}  fontSize="1.5rem" />,
+        icon: <FontAwesomeIcon icon={faCubes} size="2x" color="steelBlue" />
       },
       {
         label: "Peers",
         value: this.state.peers,
-        icon: <FontAwesomeIcon icon={faUsers}  fontSize="1.5rem" />,
+        icon: <FontAwesomeIcon icon={faUsers} size="2x" color="dimGray" />
       },
       {
         label: "Queued",
         value: this.state.queuedTxns,
-        icon: <FontAwesomeIcon icon={faExchangeAlt}  fontSize="1.5rem" />,
+        icon: <FontAwesomeIcon icon={faExchangeAlt} size="2x" color="coral" />
       },
     ];
 
@@ -164,7 +151,7 @@ export default class Nodes extends Component<IProps, IState> {
             config={this.props.config}
             selectNodeHandler={this.handleSelectNode}
           />
-          <NodeOverview stats={stats} showPending={this.state.showPending} />
+          <NodeOverview stats={stats} />
           <NodeDetails
             client={this.state.client}
             nodeId={this.state.nodeId}

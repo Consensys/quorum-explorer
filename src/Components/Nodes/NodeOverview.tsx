@@ -7,7 +7,6 @@ const BoxMotion = motion(Box);
 
 interface IProps {
   stats: Cards[];
-  showPending: boolean;
 }
 
 interface IState {

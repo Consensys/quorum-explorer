@@ -3,17 +3,21 @@ import {
   Heading,
   Divider,
   Container,
-  Center,
   HStack,
   Box,
   Flex,
+  Spacer,
+  Icon,
   Select,
   Text,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { QuorumConfig } from "../Types/QuorumConfig";
 import { getNodeKeys, getDetailsByNodeName } from "../API/QuorumConfig";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 const MotionContainer = motion(Container);
+
 
 interface IProps {
   title: string;
@@ -38,21 +42,20 @@ class PageHeader extends Component<IProps, IState> {
           transition={{ delay: 0.2 }}
           maxW={{ base: "container.sm", md: "container.xl" }}
         >
-          <Flex flexDirection="column">
+          <Flex flexDirection="row" justifyContent="space-between" mt={5}>
             <Box>
-              <Heading as="h1" size="xl" m={3} textAlign="center">
+              <Heading as="h1" size="lg" textAlign="center">
                 {this.props.title}
               </Heading>
-              <Center>
-                <Divider maxW="40vw" alignContent="center" />
-              </Center>
             </Box>
-            <Box alignSelf="flex-end" mt={5}>
-              <HStack>
+            <Spacer />
+            <Box alignItems="center">
+              <HStack > 
                 <Text minW="max" fontSize="lg" color="muted">
-                  Node:
+                <FontAwesomeIcon icon={faSlidersH} fontSize="lg" />
                 </Text>
-                <Select
+                <Select 
+                  size="lg"
                   variant="filled"
                   onChange={this.props.selectNodeHandler}
                 >
@@ -63,6 +66,7 @@ class PageHeader extends Component<IProps, IState> {
                   ))}
                 </Select>
               </HStack>
+
             </Box>
           </Flex>
         </MotionContainer>

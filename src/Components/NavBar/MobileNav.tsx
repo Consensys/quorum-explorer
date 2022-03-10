@@ -20,7 +20,7 @@ export default function MobileNav() {
           {NavItems.map((item, i) => (
             <Link key={i} to={item["label"].toLowerCase()}>
               <Button
-                leftIcon={React.createElement(item["icon"])}
+                leftIcon={item["icon"]}
                 variant="text"
                 onClick={onClose}
               >
