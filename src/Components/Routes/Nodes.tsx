@@ -4,10 +4,8 @@ import PageHeader from "../Misc/PageHeader";
 import NodeOverview from "../Nodes/NodeOverview";
 import NodeDetails from "../Nodes/NodeDetails";
 import { updateNodeInfo } from "../API/Nodes";
-import { FaPlay, FaStop } from "react-icons/fa";
-import { GiCube } from "react-icons/gi";
-import { BsFillPeopleFill } from "react-icons/bs";
-import { VscArrowSwap } from "react-icons/vsc";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlay, faStop, faCubes, faUsers, faExchangeAlt } from "@fortawesome/free-solid-svg-icons";
 import { Cards } from "../Types/Nodes";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
 import { Container } from "@chakra-ui/react";
@@ -120,8 +118,11 @@ export default class Nodes extends Component<IProps, IState> {
 
   handleSelectNode = (e:any) => {
     console.log(e);
+    this.setState({
+      selectedNode: e.target.value,
+    });
     this.nodeInfoHandler(e);
-  }
+  };
 
   render() {
     const stats: Cards[] = [
@@ -130,25 +131,25 @@ export default class Nodes extends Component<IProps, IState> {
         value: this.state.showPending === false ? "Running" : "Stopped",
         icon:
           this.state.showPending === false ? (
-            <FaPlay size="1.5em" />
+            <FontAwesomeIcon icon={faPlay}  fontSize="1.5rem" />
           ) : (
-            <FaStop size="1.5em" />
+            <FontAwesomeIcon icon={faStop}  fontSize="1.5rem" />
           ),
       },
       {
         label: "Blocks",
         value: this.state.blocks,
-        icon: <GiCube size="2em" />,
+        icon: <FontAwesomeIcon icon={faCubes}  fontSize="1.5rem" />,
       },
       {
         label: "Peers",
         value: this.state.peers,
-        icon: <BsFillPeopleFill size="2em" />,
+        icon: <FontAwesomeIcon icon={faUsers}  fontSize="1.5rem" />,
       },
       {
         label: "Queued",
         value: this.state.queuedTxns,
-        icon: <VscArrowSwap size="2em" />,
+        icon: <FontAwesomeIcon icon={faExchangeAlt}  fontSize="1.5rem" />,
       },
     ];
 

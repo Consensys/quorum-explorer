@@ -1,11 +1,14 @@
 import { useColorMode, useColorModeValue, IconButton } from '@chakra-ui/react';
-import { FaMoon, FaSun } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import React from 'react';
 
 export const ColorModeSwitcher = ({...props}) => {
   const { toggleColorMode } = useColorMode();
   const text = useColorModeValue('dark', 'light');
-  const SwitchIcon = useColorModeValue(FaMoon, FaSun);
+  const moonElement = <FontAwesomeIcon icon={faMoon}/>
+  const sunElement = <FontAwesomeIcon icon={faSun}/>
+  const SwitchIcon = useColorModeValue(moonElement, sunElement);
 
   return (
     <>
@@ -17,7 +20,7 @@ export const ColorModeSwitcher = ({...props}) => {
         color="current"
         marginLeft="2"
         onClick={toggleColorMode}
-        icon={React.createElement(SwitchIcon)}
+        icon={SwitchIcon}
         {...props}
       />
     </>

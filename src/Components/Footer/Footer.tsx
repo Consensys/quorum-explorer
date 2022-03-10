@@ -10,9 +10,9 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { ConsensysIcon } from "./ConsensysIcon";
-import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTwitter, faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { motion } from "framer-motion";
-
 const MotionBox = motion(Box);
 const MotionContainer = motion(Container);
 
@@ -48,19 +48,19 @@ function Footer() {
                 as="a"
                 href="https://www.linkedin.com/company/consensus-systems-consensys-/"
                 aria-label="LinkedIn"
-                icon={<FaLinkedin fontSize="1.25rem" />}
+                icon={<FontAwesomeIcon icon={faLinkedin} fontSize="1.25rem" />}
               />
               <IconButton
                 as="a"
                 href="https://github.com/ConsenSys/quorum-explorer"
                 aria-label="GitHub"
-                icon={<FaGithub fontSize="1.25rem" />}
+                icon={<FontAwesomeIcon icon={faGithub} fontSize="1.25rem" />}
               />
               <IconButton
                 as="a"
                 href="https://twitter.com/ConsenSys"
                 aria-label="Twitter"
-                icon={<FaTwitter fontSize="1.25rem" />}
+                icon={<FontAwesomeIcon icon={faTwitter} fontSize="1.25rem" />}
               />
             </ButtonGroup>
           </Stack>

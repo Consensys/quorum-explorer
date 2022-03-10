@@ -1,5 +1,6 @@
 import React from "react";
 import { Flex, Button, HStack, Divider, chakra } from "@chakra-ui/react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { QuorumIcon } from "./QuorumIcon";
 import { Link } from "react-router-dom";
 import { NavItems } from "../Types/NavBar";
@@ -27,7 +28,7 @@ export default function NavBar() {
           {NavItems.map((item, i) => (
             <Link key={i} to={item["label"].toLowerCase()}>
               <Button
-                leftIcon={React.createElement(item["icon"])}
+                leftIcon={<FontAwesomeIcon icon={item["icon"]} fontSize="1.25rem" />}
                 variant="ghost"
               >
                 {item.label}

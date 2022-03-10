@@ -1,7 +1,8 @@
 import { useDisclosure, Flex, Button, VStack } from "@chakra-ui/react";
 //uses MobileNav as a sub component
 import MobileDrawer from "./MobileDrawer";
-import { IoMdMenu } from "react-icons/io";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { NavItems } from "../Types/NavBar";
 import React from "react";
@@ -12,7 +13,7 @@ export default function MobileNav() {
   return (
     <Flex display={{ base: "flex", md: "none" }}>
       <Button ref={btnRef} onClick={onOpen}>
-        <IoMdMenu size="26px" />
+        <FontAwesomeIcon icon={faBars} fontSize="26px" />
       </Button>
       <MobileDrawer isOpen={isOpen} onClose={onClose}>
         <VStack alignItems="left">

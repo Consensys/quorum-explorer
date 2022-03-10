@@ -1,31 +1,29 @@
-import {
-  MdSpaceDashboard,
-  MdOutlineExplore,
-  MdDescription,
-} from 'react-icons/md';
-import { FaServer } from 'react-icons/fa';
-import { IconType } from 'react-icons';
+
+
+
+
+import { faDesktop, faServer, faCompass, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 
 export type NavItem = {
   label: string,
-  icon: IconType
+  icon: any
 }
 
 export const NavItems: NavItem[] = [
   {
     label: 'Dashboard',
-    icon: MdSpaceDashboard,
+    icon: faDesktop
   },
   {
     label: 'Nodes',
-    icon: FaServer,
+    icon: faServer,
   },
   {
     label: 'Explorer',
-    icon: MdOutlineExplore,
+    icon: faCompass,
   },
   {
     label: 'Contracts',
-    icon: MdDescription,
+    icon: faFileAlt,
   },
 ];
