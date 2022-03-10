@@ -1,13 +1,17 @@
 import React, { Component, ReactElement } from "react";
-import { Box, Heading, Text, HStack, VStack, Flex } from "@chakra-ui/react";
-
+import { Box, Heading, Skeleton, HStack, VStack, Flex } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 interface IProps {
   title: string;
   text: string | number;
   icon: ReactElement;
+  statusText: string;
 }
 
 interface IState {}
+
+const MotionHeading = motion(Heading);
+const MotionBox = motion(Box);
 
 class NodeCard extends Component<IProps, IState> {
   constructor(props: IProps) {
@@ -25,19 +29,45 @@ class NodeCard extends Component<IProps, IState> {
           py={{ base: "5", md: "6" }}
           borderRadius="lg"
           borderWidth={2}
-          // boxShadow={useColorModeValue("xs", "2xl")}
         >
-          <VStack>
-            <HStack mb={3}>
-              <Box>{this.props.icon}</Box>
-              <Heading fontSize={{ base: "md", md: "2xl" }}>
+          <HStack spacing={10}>
+            <MotionBox
+              key={this.props.statusText}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+              end={{ opacity: 0 }}
+            >
+              {this.props.icon}
+            </MotionBox>
+            <VStack mb={3}>
+              <MotionHeading
+                key={this.props.title}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
+                end={{ opacity: 0 }}
+                fontSize={{ base: "md", md: "2xl" }}
+              >
                 {this.props.title}
-              </Heading>
-            </HStack>
-            <Text fontSize="lg" color="muted">
-              {this.props.text}
-            </Text>
-          </VStack>
+              </MotionHeading>
+              {this.props.statusText === "OK" ? (
+                <MotionHeading
+                  key={this.props.text}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1 }}
+                  end={{ opacity: 0 }}
+                  fontSize="lg"
+                  color="muted"
+                >
+                  {this.props.text}
+                </MotionHeading>
+              ) : (
+                <Skeleton h="30px" w="40px" />
+              )}
+            </VStack>
+          </HStack>
         </Flex>
       </>
     );

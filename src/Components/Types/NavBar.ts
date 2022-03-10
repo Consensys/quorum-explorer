@@ -1,7 +1,4 @@
 
-
-
-
 import { faDesktop, faServer, faCompass, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 
 export type NavItem = {
