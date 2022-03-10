@@ -14,10 +14,9 @@ import {
 import { motion } from "framer-motion";
 import { QuorumConfig } from "../Types/QuorumConfig";
 import { getNodeKeys, getDetailsByNodeName } from "../API/QuorumConfig";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 const MotionContainer = motion(Container);
-
 
 interface IProps {
   title: string;
@@ -48,13 +47,12 @@ class PageHeader extends Component<IProps, IState> {
                 {this.props.title}
               </Heading>
             </Box>
-            <Spacer />
             <Box alignItems="center">
-              <HStack > 
+              <HStack>
                 <Text minW="max" fontSize="lg" color="muted">
-                <FontAwesomeIcon icon={faSlidersH} fontSize="lg" />
+                  <FontAwesomeIcon icon={faSlidersH} fontSize="lg" />
                 </Text>
-                <Select 
+                <Select
                   size="lg"
                   variant="filled"
                   onChange={this.props.selectNodeHandler}
@@ -66,7 +64,6 @@ class PageHeader extends Component<IProps, IState> {
                   ))}
                 </Select>
               </HStack>
-
             </Box>
           </Flex>
         </MotionContainer>
