@@ -37,7 +37,12 @@ class PageHeader extends Component<IProps, IState> {
           transition={{ delay: 0.2 }}
           maxW={{ base: "container.sm", md: "container.xl" }}
         >
-          <Flex flexDirection="row" justifyContent="space-between" mt={5}>
+          <Flex
+            flexDirection="row"
+            justifyContent="space-between"
+            alignItems="center"
+            mt={5}
+          >
             <Box>
               <Heading as="h1" size="lg" textAlign="center">
                 {this.props.title}
