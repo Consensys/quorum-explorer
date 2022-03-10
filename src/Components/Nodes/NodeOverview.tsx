@@ -7,6 +7,7 @@ const BoxMotion = motion(Box);
 
 interface IProps {
   stats: Cards[];
+  statusText: string;
 }
 
 interface IState {}
@@ -37,7 +38,7 @@ class NodeOverview extends Component<IProps, IState> {
                   title={label}
                   text={value}
                   icon={icon}
-                  showPending={this.props.showPending}
+                  statusText={this.props.statusText}
                 />
               ))}
             </SimpleGrid>

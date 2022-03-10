@@ -154,7 +154,7 @@ export default class Nodes extends Component<IProps, IState> {
             config={this.props.config}
             selectNodeHandler={this.handleSelectNode}
           />
-          <NodeOverview stats={stats} />
+          <NodeOverview stats={stats} statusText={this.state.statusText} />
           <NodeDetails
             client={this.state.client}
             nodeId={this.state.nodeId}
@@ -162,7 +162,7 @@ export default class Nodes extends Component<IProps, IState> {
             enode={this.state.enode}
             rpcUrl={this.state.rpcUrl}
             ip={this.state.ip}
-            // showPending={this.state.showPending}
+            statusText={this.state.statusText}
           />
         </Container>
       </>

@@ -21,8 +21,9 @@ export async function updateNodeInfo(url: string) {
     nodeDetails['peers'] = parseInt(netPeerCount.data.result, 16);
     nodeDetails['queuedTxns'] = parseInt(txPoolStatus.data.result.queued, 16);
     nodeDetails['pendingTxns'] = parseInt(txPoolStatus.data.result.pending, 16);
-  }catch (e) {
+  } catch (e) {
     console.error("Node is unreachable. Ensure ports are open and client is running!")
+    nodeDetails['statusText'] = "error";
     console.error(e);
   } finally {
     return nodeDetails;

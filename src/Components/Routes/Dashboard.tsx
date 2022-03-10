@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { QuorumConfig, QuorumNode } from '../Types/QuorumConfig';
+import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import PageHeader from "../Misc/PageHeader";
-import { Heading, Divider,  Th, Thead, Container} from '@chakra-ui/react';
+import { Heading, Divider, Th, Thead, Container } from "@chakra-ui/react";
 
 interface IProps {
   config: QuorumConfig;
@@ -20,18 +20,21 @@ export class Dashboard extends Component<IProps, IState> {
   }
   intervalId: number = 0;
 
-  handleSelectNode = (e:any) => {
+  handleSelectNode = (e: any) => {
     console.log(e);
     // this.nodeInfoHandler(e);
-  }
+  };
 
-  render(){
+  render() {
     return (
       <>
-      <Container maxW={{ base: "container.sm", md: "container.xl"}} h="100vh">
-        <PageHeader title="Dashboard" config={this.props.config} selectNodeHandler={this.handleSelectNode} />
-
-      </Container>
+        <Container maxW={{ base: "container.sm", md: "container.xl" }}>
+          <PageHeader
+            title="Dashboard"
+            config={this.props.config}
+            selectNodeHandler={this.handleSelectNode}
+          />
+        </Container>
       </>
     );
   }

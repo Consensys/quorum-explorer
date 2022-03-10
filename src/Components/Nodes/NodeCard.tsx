@@ -5,7 +5,7 @@ interface IProps {
   title: string;
   text: string | number;
   icon: ReactElement;
-  showPending: boolean;
+  statusText: string;
 }
 
 interface IState {}
@@ -33,7 +33,7 @@ class NodeCard extends Component<IProps, IState> {
               <Heading fontSize={{ base: "md", md: "2xl" }}>
                 {this.props.title}
               </Heading>
-              {!this.props.showPending ? (
+              {this.props.statusText === "OK" ? (
                 <Heading fontSize="lg" color="muted">
                   {this.props.text}
                 </Heading>

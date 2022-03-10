@@ -79,18 +79,21 @@ export class Explorer extends Component<IProps, IState> {
   // shouldComponentUpdate(){}
   // getSnapshotBeforeUpdate(){}
 
-
-  handleSelectNode = (e:any) => {
+  handleSelectNode = (e: any) => {
     console.log(e);
     // this.nodeInfoHandler(e);
-  }
+  };
 
   render() {
     return (
       <>
-      <Container maxW={{ base: "container.sm", md: "container.xl"}} h="100vh">
-        <PageHeader title="Explorer" config={this.props.config} selectNodeHandler={this.handleSelectNode} />
-      </Container>
+        <Container maxW={{ base: "container.sm", md: "container.xl" }}>
+          <PageHeader
+            title="Explorer"
+            config={this.props.config}
+            selectNodeHandler={this.handleSelectNode}
+          />
+        </Container>
       </>
     );
   }

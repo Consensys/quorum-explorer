@@ -18,7 +18,7 @@ interface IProps {
   enode: string;
   rpcUrl: string;
   ip: string;
-  showPending?: boolean;
+  statusText?: string;
 }
 
 interface IState {}
@@ -45,7 +45,7 @@ class NodeDetails extends Component<IProps, IState> {
                 flexWrap="wrap"
               >
                 <Text>Client:</Text>
-                {!this.props.showPending ? (
+                {this.props.statusText === "OK" ? (
                   <Text>{this.props.client}</Text>
                 ) : (
                   <>
@@ -62,7 +62,7 @@ class NodeDetails extends Component<IProps, IState> {
                 flexWrap="wrap"
               >
                 <Text>Node ID:</Text>
-                {!this.props.showPending ? (
+                {this.props.statusText === "OK" ? (
                   <Text>{this.props.nodeId}</Text>
                 ) : (
                   <>
@@ -79,7 +79,7 @@ class NodeDetails extends Component<IProps, IState> {
                 flexWrap="wrap"
               >
                 <Text>Node Name:</Text>
-                {!this.props.showPending ? (
+                {this.props.statusText === "OK" ? (
                   <Text>{this.props.nodeName}</Text>
                 ) : (
                   <>
@@ -96,7 +96,7 @@ class NodeDetails extends Component<IProps, IState> {
                 flexWrap="wrap"
               >
                 <Text>Enode:</Text>
-                {!this.props.showPending ? (
+                {this.props.statusText === "OK" ? (
                   <Text textAlign="right" maxW="60%">
                     {this.props.enode}
                   </Text>
@@ -115,7 +115,7 @@ class NodeDetails extends Component<IProps, IState> {
                 flexWrap="wrap"
               >
                 <Text>RPC Url:</Text>
-                {!this.props.showPending ? (
+                {this.props.statusText === "OK" ? (
                   <Text>{this.props.rpcUrl}</Text>
                 ) : (
                   <>
@@ -132,7 +132,7 @@ class NodeDetails extends Component<IProps, IState> {
                 flexWrap="wrap"
               >
                 <Text>IP Address:</Text>
-                {!this.props.showPending ? (
+                {this.props.statusText === "OK" ? (
                   <Text>{this.props.ip}</Text>
                 ) : (
                   <>
