@@ -1,51 +1,49 @@
-import { Box, Heading, Divider, Skeleton, Text } from "@chakra-ui/react";
-import { StackIProps } from "../Types/Nodes";
+import React, { Component, ReactElement } from "react";
+import { Box, Heading, Text, HStack, VStack, Flex } from "@chakra-ui/react";
 
-interface NodeIProps {
+interface IProps {
   title: string,
-  desc: string,
-  showPending: boolean
-  divider: boolean
+  text: string|number,
+  icon: ReactElement;
 }
 
-function NodeCard({ title, desc, showPending, divider }: NodeIProps) {
-  return (
-    <>
-      <Heading fontSize="xl">{title}</Heading>
-      {showPending ? (
-        <>
-          <Skeleton minH="20px" mt={5} mb={3} />
-          <Skeleton minH="20px" mt={1} mb={3} />
-        </>
-      ) : (
-        <Text colorScheme="messenger" mt={4}>
-          {desc}
-        </Text>
-      )}
-      {divider && <Divider mt={5} mb={5} />}
-    </>
-  );
+interface IState {
 }
 
-export default function NodeStack({
-  client,
-  nodeId,
-  nodeName,
-  enode,
-  rpcUrl,
-  ip,
-  showPending,
-}: StackIProps) {
-  return (
-    <>
-      <Box p={5} shadow="md" borderWidth="1px" borderRadius="lg">
-        <NodeCard title="Client" desc={client} showPending={showPending} divider={true} />
-        <NodeCard title="Node ID" desc={nodeId} showPending={showPending} divider={true} />
-        <NodeCard title="Node Name" desc={nodeName} showPending={showPending} divider={true} />
-        <NodeCard title="ENODE" desc={enode} showPending={showPending} divider={true} />
-        <NodeCard title="RPC-URL" desc={rpcUrl} showPending={showPending} divider={true} />
-        <NodeCard title="IP Address" desc={ip} showPending={showPending} divider={false} />
-      </Box>
-    </>
-  );
+class NodeCard extends Component<IProps, IState> {
+
+  constructor(props: IProps){
+    super(props);
+  }
+
+  render(){
+    return (
+      <>
+          
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        flexDirection={{ base: "column", md: "row" }}
+        px={{ base: "5", md: "6" }}
+        py={{ base: "5", md: "6" }}
+        borderRadius="lg"
+        borderWidth={2}
+        // boxShadow={useColorModeValue("xs", "2xl")}
+      >
+        <VStack>
+          <HStack mb={3}>
+            <Box>{this.props.icon}</Box>
+            <Heading>{this.props.title}</Heading>
+            <Text fontSize="lg" color="muted">
+              {this.props.text}
+            </Text>
+          </HStack>
+        </VStack>
+      </Flex>
+
+      </>
+    );
+  }
 }
+
+export default NodeCard;

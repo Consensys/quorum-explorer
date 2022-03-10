@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Heading } from "@chakra-ui/react";
-import PageHeader from "../header";
+import { Heading, Container } from "@chakra-ui/react";
+import PageHeader from "../Misc/PageHeader";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
 import { getBlockByNumber } from "../API/Explorer";
@@ -17,7 +17,7 @@ interface IState {
   selectedNode: string;
 }
 
-export default class Explorer extends Component<IProps, IState> {
+export class Explorer extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
@@ -79,11 +79,21 @@ export default class Explorer extends Component<IProps, IState> {
   // shouldComponentUpdate(){}
   // getSnapshotBeforeUpdate(){}
 
+
+  handleSelectNode = (e:any) => {
+    console.log(e);
+    // this.nodeInfoHandler(e);
+  }
+
   render() {
     return (
       <>
-        <PageHeader headingName="Explorer" />
+      <Container maxW={{ base: "container.sm", md: "container.xl"}} h="100vh">
+        <PageHeader title="Explorer" config={this.props.config} selectNodeHandler={this.handleSelectNode} />
+      </Container>
       </>
     );
   }
 }
+
+export default Explorer;

@@ -1,16 +1,16 @@
 import React, { Component } from "react";
-import PageHeader from "../header";
-import StatCard from "../card/StatCard";
-import NodeData from "../Nodes/NodeData";
+import { QuorumConfig, QuorumNode } from '../Types/QuorumConfig';
+import PageHeader from "../Misc/PageHeader";
+import NodeOverview from "../Nodes/NodeOverview";
+import NodeDetails from "../Nodes/NodeDetails";
 import { updateNodeInfo } from "../API/Nodes";
 import { FaPlay, FaStop } from "react-icons/fa";
 import { GiCube } from "react-icons/gi";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { VscArrowSwap } from "react-icons/vsc";
-import { QuorumConfig, QuorumNode } from '../Types/QuorumConfig';
 import { Cards } from "../Types/Nodes";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
-
+import { Container } from "@chakra-ui/react";
 
 interface IProps {
   config: QuorumConfig
@@ -118,8 +118,13 @@ export default class Nodes extends Component<IProps, IState> {
     clearInterval(this.intervalId);
   }
 
+  handleSelectNode = (e:any) => {
+    console.log(e);
+    this.nodeInfoHandler(e);
+  }
+
   render() {
-    const cards: Cards[] = [
+    const stats: Cards[] = [
       {
         label: "Status",
         value: this.state.showPending === false ? "Running" : "Stopped",
@@ -146,21 +151,21 @@ export default class Nodes extends Component<IProps, IState> {
         icon: <VscArrowSwap size="2em" />,
       },
     ];
+
     return (
       <>
-        <PageHeader headingName="Nodes" />
-        <StatCard cards={cards} showPending={this.state.showPending} />
-        <NodeData
-          config={this.props.config}
-          childHandler={this.childHandler}
+      <Container maxW={{ base: "container.sm", md: "container.xl" }} h="100vh" >
+        <PageHeader title="Nodes" config={this.props.config} selectNodeHandler={this.handleSelectNode} />
+        <NodeOverview stats={stats} showPending={this.state.showPending} />
+        <NodeDetails
           client={this.state.client}
           nodeId={this.state.nodeId}
           nodeName={this.state.nodeName}
           enode={this.state.enode}
           rpcUrl={this.state.rpcUrl}
           ip={this.state.ip}
-          showPending={this.state.showPending}
         />
+      </Container>
       </>
     );
   }

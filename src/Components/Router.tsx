@@ -15,18 +15,16 @@ interface IProps {
 interface IState {}
 
 class Router extends Component<IProps, IState> {
+
   render() {
     return (
       <BrowserRouter>
         <NavBar />
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route
-            path="/explorer"
-            element={<Explorer config={this.props.config} />}
-          />
-          <Route path="/contracts" element={<Contracts />} />
+          <Route path="/" element={<Dashboard config={this.props.config} />} />
+          <Route path="/dashboard" element={<Dashboard config={this.props.config}/>} />
+          <Route path="/explorer"  element={<Explorer config={this.props.config} />} />
+          <Route path="/contracts" element={<Contracts config={this.props.config} />} />
           <Route path="/nodes" element={<Nodes config={this.props.config} />} />
         </Routes>
         <Footer />
