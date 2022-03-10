@@ -1,10 +1,11 @@
 import React, { Component, ReactElement } from "react";
-import { Box, Heading, Text, HStack, VStack, Flex } from "@chakra-ui/react";
+import { Box, Heading, Skeleton, HStack, VStack, Flex } from "@chakra-ui/react";
 
 interface IProps {
   title: string;
   text: string | number;
   icon: ReactElement;
+  showPending: boolean;
 }
 
 interface IState {}
@@ -32,9 +33,13 @@ class NodeCard extends Component<IProps, IState> {
               <Heading fontSize={{ base: "md", md: "2xl" }}>
                 {this.props.title}
               </Heading>
-            <Text fontSize="lg" color="muted">
-              {this.props.text}
-            </Text>
+              {!this.props.showPending ? (
+                <Heading fontSize="lg" color="muted">
+                  {this.props.text}
+                </Heading>
+              ) : (
+                <Skeleton h="30px" w="40px" />
+              )}
             </VStack>
           </HStack>
         </Flex>

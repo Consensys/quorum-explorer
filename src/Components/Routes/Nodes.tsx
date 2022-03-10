@@ -4,8 +4,14 @@ import PageHeader from "../Misc/PageHeader";
 import NodeOverview from "../Nodes/NodeOverview";
 import NodeDetails from "../Nodes/NodeDetails";
 import { updateNodeInfo } from "../API/Nodes";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlay, faStop, faCubes, faUsers, faExchangeAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPlay,
+  faStop,
+  faCubes,
+  faUsers,
+  faExchangeAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { Cards } from "../Types/Nodes";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
 import { Container } from "@chakra-ui/react";
@@ -76,7 +82,7 @@ export default class Nodes extends Component<IProps, IState> {
       ip: res.ip,
       rpcUrl: rpcUrl,
       blocks: res.blocks,
-      peers: res.peers
+      peers: res.peers,
     });
     // console.log('State: '+ JSON.stringify(this.state, null, 2));
   }
@@ -108,7 +114,7 @@ export default class Nodes extends Component<IProps, IState> {
     this.setState({
       selectedNode: e.target.value,
     });
-    this.nodeInfoHandler(e);
+    // this.nodeInfoHandler(e);
   };
 
   render() {
@@ -126,26 +132,23 @@ export default class Nodes extends Component<IProps, IState> {
       {
         label: "Blocks",
         value: this.state.blocks,
-        icon: <FontAwesomeIcon icon={faCubes} size="2x" color="steelBlue" />
+        icon: <FontAwesomeIcon icon={faCubes} size="2x" color="steelBlue" />,
       },
       {
         label: "Peers",
         value: this.state.peers,
-        icon: <FontAwesomeIcon icon={faUsers} size="2x" color="dimGray" />
+        icon: <FontAwesomeIcon icon={faUsers} size="2x" color="dimGray" />,
       },
       {
         label: "Queued",
         value: this.state.queuedTxns,
-        icon: <FontAwesomeIcon icon={faExchangeAlt} size="2x" color="coral" />
+        icon: <FontAwesomeIcon icon={faExchangeAlt} size="2x" color="coral" />,
       },
     ];
 
     return (
       <>
-        <Container
-          maxW={{ base: "container.sm", md: "container.xl" }}
-          h="100vh"
-        >
+        <Container maxW={{ base: "container.sm", md: "container.xl" }}>
           <PageHeader
             title="Nodes"
             config={this.props.config}
@@ -159,6 +162,7 @@ export default class Nodes extends Component<IProps, IState> {
             enode={this.state.enode}
             rpcUrl={this.state.rpcUrl}
             ip={this.state.ip}
+            // showPending={this.state.showPending}
           />
         </Container>
       </>
