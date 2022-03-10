@@ -32,9 +32,6 @@ class NodeDetails extends Component<IProps, IState> {
   render() {
     return (
       <>
-
-
-      
         <MotionContainer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -43,11 +40,10 @@ class NodeDetails extends Component<IProps, IState> {
         >
           <Flex flexDirection="column" borderRadius="lg" borderWidth={2}>
             <Box m={5}>
-              <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-              >
-                <Text as='b' width={"200px"}>Client:</Text>
+              <Flex flexDirection="row" flexWrap="wrap">
+                <Text as="b" width={"200px"}>
+                  Client:
+                </Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     MotionText
@@ -61,18 +57,17 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="50%" h="20px" />
+                    <Skeleton w="75%" h="20px" />
                   </>
                 )}
               </Flex>
             </Box>
             <Divider />
             <Box m={5}>
-              <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-              >
-                <Text as='b' width={"200px"}>Node ID:</Text>
+              <Flex flexDirection="row" flexWrap="wrap">
+                <Text as="b" width={"200px"}>
+                  Node ID:
+                </Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     key={this.props.nodeId}
@@ -87,18 +82,17 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="50%" h="20px" />
+                    <Skeleton w="75%" h="20px" />
                   </>
                 )}
               </Flex>
             </Box>
             <Divider />
             <Box m={5}>
-              <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-              >
-                <Text as='b' width={"200px"}>Node Name:</Text>
+              <Flex flexDirection="row" flexWrap="wrap">
+                <Text as="b" width={"200px"}>
+                  Node Name:
+                </Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     key={this.props.nodeName}
@@ -111,18 +105,17 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="50%" h="20px" />
+                    <Skeleton w="75%" h="20px" />
                   </>
                 )}
               </Flex>
             </Box>
             <Divider />
             <Box m={5}>
-              <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-              >
-                <Text as='b' width={"200px"}>Enode:</Text>
+              <Flex flexDirection="row" flexWrap="wrap">
+                <Text as="b" width={"200px"}>
+                  Enode:
+                </Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     key={this.props.enode}
@@ -137,18 +130,17 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="50%" h="20px" />
+                    <Skeleton w="75%" h="20px" />
                   </>
                 )}
               </Flex>
             </Box>
             <Divider />
             <Box m={5}>
-              <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-              >
-                <Text as='b' width={"200px"}>RPC Url:</Text>
+              <Flex flexDirection="row" flexWrap="wrap">
+                <Text as="b" width={"200px"}>
+                  RPC Url:
+                </Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     key={this.props.rpcUrl}
@@ -161,18 +153,17 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="50%" h="20px" />
+                    <Skeleton w="75%" h="20px" />
                   </>
                 )}
               </Flex>
             </Box>
             <Divider />
             <Box m={5}>
-              <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-              >
-                <Text as='b' width={"200px"}>IP Address:</Text>
+              <Flex flexDirection="row" flexWrap="wrap">
+                <Text as="b" width={"200px"}>
+                  IP Address:
+                </Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
                     key={this.props.ip}
@@ -185,7 +176,7 @@ class NodeDetails extends Component<IProps, IState> {
                   </MotionText>
                 ) : (
                   <>
-                    <Skeleton w="50%" h="20px" />
+                    <Skeleton w="75%" h="20px" />
                   </>
                 )}
               </Flex>
