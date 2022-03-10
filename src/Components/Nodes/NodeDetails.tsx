@@ -10,6 +10,7 @@ import {
 import { motion } from "framer-motion";
 
 const MotionContainer = motion(Container);
+const MotionText = motion(Text);
 
 interface IProps {
   client: string;
@@ -46,7 +47,16 @@ class NodeDetails extends Component<IProps, IState> {
               >
                 <Text>Client:</Text>
                 {this.props.statusText === "OK" ? (
-                  <Text>{this.props.client}</Text>
+                  <MotionText
+                    MotionText
+                    key={this.props.client}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                    end={{ opacity: 0 }}
+                  >
+                    {this.props.client}
+                  </MotionText>
                 ) : (
                   <>
                     <Skeleton w="50%" h="20px" />
@@ -63,7 +73,15 @@ class NodeDetails extends Component<IProps, IState> {
               >
                 <Text>Node ID:</Text>
                 {this.props.statusText === "OK" ? (
-                  <Text>{this.props.nodeId}</Text>
+                  <MotionText
+                    key={this.props.nodeId}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                    end={{ opacity: 0 }}
+                  >
+                    {this.props.nodeId}
+                  </MotionText>
                 ) : (
                   <>
                     <Skeleton w="50%" h="20px" />
@@ -80,7 +98,15 @@ class NodeDetails extends Component<IProps, IState> {
               >
                 <Text>Node Name:</Text>
                 {this.props.statusText === "OK" ? (
-                  <Text>{this.props.nodeName}</Text>
+                  <MotionText
+                    key={this.props.nodeName}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                    end={{ opacity: 0 }}
+                  >
+                    {this.props.nodeName}
+                  </MotionText>
                 ) : (
                   <>
                     <Skeleton w="50%" h="20px" />
@@ -97,9 +123,17 @@ class NodeDetails extends Component<IProps, IState> {
               >
                 <Text>Enode:</Text>
                 {this.props.statusText === "OK" ? (
-                  <Text textAlign="right" maxW="60%">
+                  <MotionText
+                    key={this.props.enode}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                    end={{ opacity: 0 }}
+                    textAlign="right"
+                    maxW="60%"
+                  >
                     {this.props.enode}
-                  </Text>
+                  </MotionText>
                 ) : (
                   <>
                     <Skeleton w="50%" h="20px" />
@@ -116,7 +150,15 @@ class NodeDetails extends Component<IProps, IState> {
               >
                 <Text>RPC Url:</Text>
                 {this.props.statusText === "OK" ? (
-                  <Text>{this.props.rpcUrl}</Text>
+                  <MotionText
+                    key={this.props.rpcUrl}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                    end={{ opacity: 0 }}
+                  >
+                    {this.props.rpcUrl}
+                  </MotionText>
                 ) : (
                   <>
                     <Skeleton w="50%" h="20px" />
@@ -133,7 +175,15 @@ class NodeDetails extends Component<IProps, IState> {
               >
                 <Text>IP Address:</Text>
                 {this.props.statusText === "OK" ? (
-                  <Text>{this.props.ip}</Text>
+                  <MotionText
+                    key={this.props.ip}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                    end={{ opacity: 0 }}
+                  >
+                    {this.props.ip}
+                  </MotionText>
                 ) : (
                   <>
                     <Skeleton w="50%" h="20px" />
@@ -149,40 +199,3 @@ class NodeDetails extends Component<IProps, IState> {
 }
 
 export default NodeDetails;
-
-// <MotionTable
-//   initial={{ opacity: 0 }}
-//   animate={{ opacity: 1 }}
-//   transition={{ duration: 1 }}
-//   variant="simple"
-//   size="sm"
-// >
-//   <Tbody>
-//     <Tr>
-//       <Td>Client</Td>
-//       <Td className="text-truncate cCapitalize">{this.props.client}</Td>
-//     </Tr>
-//     <Tr>
-//       <Td>Node ID</Td>
-//       <Td className="text-truncate">{this.props.nodeId}</Td>
-//     </Tr>
-//     <Tr>
-//       <Td>Node Name</Td>
-//       <Td className="text-truncate cCapitalize">{this.props.nodeName}</Td>
-//     </Tr>
-//     <Tr>
-//       <Td>Enode</Td>
-//       <Td>
-//         <Text isTruncated>{this.props.enode}</Text>
-//       </Td>
-//     </Tr>
-//     <Tr>
-//       <Td>RPC Url</Td>
-//       <Td className="text-truncate">{this.props.rpcUrl}</Td>
-//     </Tr>
-//     <Tr>
-//       <Td>IP</Td>
-//       <Td className="text-truncate cCapitalize">{this.props.ip}</Td>
-//     </Tr>
-//   </Tbody>
-// </MotionTable>

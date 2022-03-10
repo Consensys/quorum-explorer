@@ -1,6 +1,6 @@
 import React, { Component, ReactElement } from "react";
 import { Box, Heading, Skeleton, HStack, VStack, Flex } from "@chakra-ui/react";
-
+import { motion } from "framer-motion";
 interface IProps {
   title: string;
   text: string | number;
@@ -9,6 +9,9 @@ interface IProps {
 }
 
 interface IState {}
+
+const MotionHeading = motion(Heading);
+const MotionBox = motion(Box);
 
 class NodeCard extends Component<IProps, IState> {
   constructor(props: IProps) {
@@ -28,15 +31,38 @@ class NodeCard extends Component<IProps, IState> {
           borderWidth={2}
         >
           <HStack spacing={10}>
-            <Box>{this.props.icon}</Box>
+            <MotionBox
+              key={this.props.statusText}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+              end={{ opacity: 0 }}
+            >
+              {this.props.icon}
+            </MotionBox>
             <VStack mb={3}>
-              <Heading fontSize={{ base: "md", md: "2xl" }}>
+              <MotionHeading
+                key={this.props.title}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
+                end={{ opacity: 0 }}
+                fontSize={{ base: "md", md: "2xl" }}
+              >
                 {this.props.title}
-              </Heading>
+              </MotionHeading>
               {this.props.statusText === "OK" ? (
-                <Heading fontSize="lg" color="muted">
+                <MotionHeading
+                  key={this.props.text}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1 }}
+                  end={{ opacity: 0 }}
+                  fontSize="lg"
+                  color="muted"
+                >
                   {this.props.text}
-                </Heading>
+                </MotionHeading>
               ) : (
                 <Skeleton h="30px" w="40px" />
               )}

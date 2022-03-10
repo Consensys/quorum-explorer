@@ -1,15 +1,11 @@
 import React, { Component } from "react";
 import {
   Heading,
-  Divider,
   Container,
   HStack,
   Box,
   Flex,
-  Spacer,
-  Icon,
   Select,
-  Text,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { QuorumConfig } from "../Types/QuorumConfig";
@@ -49,9 +45,7 @@ class PageHeader extends Component<IProps, IState> {
             </Box>
             <Box alignItems="center">
               <HStack>
-                <Text minW="max" fontSize="lg" color="muted">
-                  <FontAwesomeIcon icon={faSlidersH} fontSize="lg" />
-                </Text>
+                <FontAwesomeIcon icon={faSlidersH} fontSize="lg" />
                 <Select
                   size="lg"
                   variant="filled"
