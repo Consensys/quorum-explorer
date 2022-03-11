@@ -36,7 +36,6 @@ function Footer() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
         as="footer"
-        role="contentinfo"
         py={{ base: "5", md: "5" }}
         maxW={{ base: "container.sm", md: "container.xl" }}
       >
