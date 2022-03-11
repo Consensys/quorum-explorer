@@ -46,7 +46,6 @@ class NodeDetails extends Component<IProps, IState> {
                 </Text>
                 {this.props.statusText === "OK" ? (
                   <MotionText
-                    MotionText
                     key={this.props.client}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
