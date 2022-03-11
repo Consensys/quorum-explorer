@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Container, Accordion, AccordionButton, AccordionItem, AccordionPanel, AccordionIcon, Box, Text, HStack } from "@chakra-ui/react";
-import { Flex, Spacer, Center } from '@chakra-ui/react'
+import { Container } from "@chakra-ui/react";
+import { Flex, Spacer, Center } from "@chakra-ui/react";
 import ExplorerBlocks from "../Explorer/ExplorerBlocks";
 import PageHeader from "../Misc/PageHeader";
 import { QuorumBlock } from "../Types/Explorer";
@@ -84,21 +84,22 @@ export class Explorer extends Component<IProps, IState> {
 
   handleSelectNode = (e: any) => {
     console.log(e);
+    this.setState({
+      selectedNode: e.target.value,
+    });
     // this.nodeInfoHandler(e);
   };
 
   render() {
     return (
       <>
-
         <Container maxW={{ base: "container.sm", md: "container.xl" }}>
           <PageHeader
             title="Explorer"
             config={this.props.config}
             selectNodeHandler={this.handleSelectNode}
           />
-          <ExplorerBlocks blocks={this.state.blocks}  />
-         
+          <ExplorerBlocks blocks={this.state.blocks} />
         </Container>
       </>
     );

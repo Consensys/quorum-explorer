@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Box, Container, SimpleGrid } from "@chakra-ui/react";
 import ExplorerCard from "./ExplorerCard";
-import { QuorumBlock } from '../Types/Explorer'
+import { QuorumBlock } from "../Types/Explorer";
 import { motion } from "framer-motion";
 const BoxMotion = motion(Box);
 
@@ -29,10 +29,10 @@ class ExplorerBlocks extends Component<IProps, IState> {
           <Container maxW={{ base: "container.sm", md: "container.xl" }}>
             <SimpleGrid
               columns={{ base: 1, md: 4 }}
-              gap={{ base: "5", md: "7" }}
+              gap={{ base: "5", md: "6" }}
             >
               {this.props.blocks.map((block) => (
-                <ExplorerCard block = {block} />
+                <ExplorerCard block={block} />
               ))}
             </SimpleGrid>
           </Container>
