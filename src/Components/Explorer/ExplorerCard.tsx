@@ -38,7 +38,7 @@ class ExplorerCard extends Component<IProps, IState> {
             <Text fontSize="sm" textAlign="left">
               {this.props.block.transactions.length} Transactions, 
             </Text>
-            <Text fontSize="xs" align="center">
+            <Text fontSize="xs" align="center" >
               Validator: {this.props.block.miner}
             </Text>
           </VStack>

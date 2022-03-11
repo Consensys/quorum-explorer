@@ -72,3 +72,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 
 https://fontawesome.com/v5/cheatsheet/free/solid
+
+- timestamp to relative time.,.,
+- fix validator to '0xabcd....xyz'
