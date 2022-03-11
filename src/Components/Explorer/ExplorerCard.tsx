@@ -41,8 +41,8 @@ class ExplorerCard extends Component<IProps, IState> {
               <Tooltip
                 fontSize="md"
                 as="b"
-                label="Hey, I'm here!"
-                aria-label="A tooltip"
+                label={this.props.block.number}
+                aria-label="Block number"
               >
                 {this.props.block.number}
               </Tooltip>
