@@ -52,6 +52,7 @@ class NodeDetails extends Component<IProps, IState> {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1 }}
                     end={{ opacity: 0 }}
+                    w={{ base: "100%", md: "73%" }}
                   >
                     {this.props.client}
                   </MotionText>
@@ -75,8 +76,8 @@ class NodeDetails extends Component<IProps, IState> {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1 }}
                     end={{ opacity: 0 }}
-                    textAlign="right"
-                    maxW="60%"
+                    // textAlign="right"
+                    w={{ base: "100%", md: "73%" }}
                   >
                     {this.props.nodeId}
                   </MotionText>
@@ -100,6 +101,7 @@ class NodeDetails extends Component<IProps, IState> {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1 }}
                     end={{ opacity: 0 }}
+                    w={{ base: "100%", md: "73%" }}
                   >
                     {this.props.nodeName}
                   </MotionText>
@@ -123,8 +125,8 @@ class NodeDetails extends Component<IProps, IState> {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1 }}
                     end={{ opacity: 0 }}
-                    textAlign="right"
-                    maxW="80%"
+                    // textAlign="right"
+                    w={{ base: "100%", md: "73%" }}
                   >
                     {this.props.enode}
                   </MotionText>
@@ -148,6 +150,7 @@ class NodeDetails extends Component<IProps, IState> {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1 }}
                     end={{ opacity: 0 }}
+                    w={{ base: "100%", md: "73%" }}
                   >
                     {this.props.rpcUrl}
                   </MotionText>
@@ -171,6 +174,7 @@ class NodeDetails extends Component<IProps, IState> {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1 }}
                     end={{ opacity: 0 }}
+                    w={{ base: "100%", md: "73%" }}
                   >
                     {this.props.ip}
                   </MotionText>
