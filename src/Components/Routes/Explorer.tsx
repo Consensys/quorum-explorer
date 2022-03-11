@@ -24,7 +24,7 @@ export class Explorer extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      delay: 5000,
+      delay: 500,
       blockNumber: 0,
       transactions: [],
       blocks: [],
@@ -36,8 +36,8 @@ export class Explorer extends Component<IProps, IState> {
   nodeKeys: string[] = getNodeKeys(this.props.config);
 
   //get the latest n elements in an array
-  updateArray = <T,>(arr: T[], elem: T, len: number) => {
-    if (arr[0] === elem) {
+  updateArray = (arr: QuorumBlock[], elem: QuorumBlock, len: number) => {
+    if (arr.length > 0 && arr[0]["number"] === elem["number"]) {
     } else {
       arr.unshift(elem);
     }
