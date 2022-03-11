@@ -53,7 +53,6 @@ function Footer() {
                 href="https://www.linkedin.com/company/consensus-systems-consensys-/"
               >
                 <IconButton
-                  as="a"
                   aria-label="LinkedIn"
                   icon={
                     <FontAwesomeIcon icon={faLinkedin} fontSize="1.25rem" />
@@ -65,14 +64,12 @@ function Footer() {
                 href="https://github.com/ConsenSys/quorum-explorer"
               >
                 <IconButton
-                  as="a"
                   aria-label="GitHub"
                   icon={<FontAwesomeIcon icon={faGithub} fontSize="1.25rem" />}
                 />
               </Link>
               <Link isExternal href="https://twitter.com/ConsenSys">
                 <IconButton
-                  as="a"
                   aria-label="Twitter"
                   icon={<FontAwesomeIcon icon={faTwitter} fontSize="1.25rem" />}
                 />
