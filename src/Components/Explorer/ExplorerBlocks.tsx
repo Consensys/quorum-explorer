@@ -1,18 +1,17 @@
 import React, { Component } from "react";
 import { Box, Container, SimpleGrid } from "@chakra-ui/react";
-import NodeCard from "./NodeCard";
-import { QuorumStatCard } from "../Types/Nodes";
+import ExplorerCard from "./ExplorerCard";
+import { QuorumBlock } from '../Types/Explorer'
 import { motion } from "framer-motion";
 const BoxMotion = motion(Box);
 
 interface IProps {
-  stats: QuorumStatCard[];
-  statusText: string;
+  blocks: QuorumBlock[];
 }
 
 interface IState {}
 
-class NodeOverview extends Component<IProps, IState> {
+class ExplorerBlocks extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
   }
@@ -32,14 +31,8 @@ class NodeOverview extends Component<IProps, IState> {
               columns={{ base: 1, md: 4 }}
               gap={{ base: "5", md: "7" }}
             >
-              {this.props.stats.map(({ label, value, icon }) => (
-                <NodeCard
-                  key={label}
-                  title={label}
-                  text={value}
-                  icon={icon}
-                  statusText={this.props.statusText}
-                />
+              {this.props.blocks.map((block) => (
+                <ExplorerCard block = {block} />
               ))}
             </SimpleGrid>
           </Container>
@@ -49,4 +42,4 @@ class NodeOverview extends Component<IProps, IState> {
   }
 }
 
-export default NodeOverview;
+export default ExplorerBlocks;

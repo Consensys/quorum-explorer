@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Container, Accordion, AccordionButton, AccordionItem, AccordionPanel, AccordionIcon, Box, Text, HStack } from "@chakra-ui/react";
 import { Flex, Spacer, Center } from '@chakra-ui/react'
-import BlockAccordianItem from "../Explorer/BlockAccordianItem";
+import ExplorerBlocks from "../Explorer/ExplorerBlocks";
 import PageHeader from "../Misc/PageHeader";
 import { QuorumBlock } from "../Types/Explorer";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
@@ -48,7 +48,7 @@ export class Explorer extends Component<IProps, IState> {
     const needle: QuorumNode = getDetailsByNodeName(this.props.config, name);
     const rpcUrl: string = needle.rpcUrl;
     const quorumBlock = await getBlockByNumber(rpcUrl, "latest");
-    var tmpBlocks = this.updateArray(this.state.blocks, quorumBlock, 5);
+    var tmpBlocks = this.updateArray(this.state.blocks, quorumBlock, 4);
     this.setState({
       selectedNode: name,
       blockNumber: quorumBlock.number,
@@ -90,48 +90,16 @@ export class Explorer extends Component<IProps, IState> {
   render() {
     return (
       <>
-        <Container h="100vh" maxW={{ base: "container.sm", md: "container.xl" }}>
+
+        <Container maxW={{ base: "container.sm", md: "container.xl" }}>
           <PageHeader
             title="Explorer"
             config={this.props.config}
             selectNodeHandler={this.handleSelectNode}
           />
-          <HStack h="50vh" mt={10}>
-          <Flex 
-          h="50vh"
-          width="40%"
-          justifyContent="center"
-          // flexDirection={{ base: "column", md: "row" }}
-          px={{ base: "5", md: "6" }}
-          py={{ base: "5", md: "6" }}
-          borderRadius="lg"
-          borderWidth={2}>
-
-          <Accordion allowMultiple>
-          {this.state.blocks.map((block) => (
-            <BlockAccordianItem block={block} />
-          ))}
-          </Accordion>
-          </Flex>
-
-          <Flex 
-          h="50vh"
-          width="60%"
-          justifyContent="center"
-          // flexDirection={{ base: "column", md: "row" }}
-          px={{ base: "5", md: "6" }}
-          py={{ base: "5", md: "6" }}
-          borderRadius="lg"
-          borderWidth={2}>
-           <Text fontSize='xl'>(xl) In love with React & Next</Text>
-            <Text fontSize='lg'>(lg) In love with React & Next</Text>
-            <Text fontSize='md'>(md) In love with React & Next</Text>
-            <Text fontSize='sm'>(sm) In love with React & Next</Text>
-            <Text fontSize='xs'>(xs) In love with React & Next</Text>
-          </Flex>
-          </HStack>
-          
-          </Container>
+          <ExplorerBlocks blocks={this.state.blocks}  />
+         
+        </Container>
       </>
     );
   }
