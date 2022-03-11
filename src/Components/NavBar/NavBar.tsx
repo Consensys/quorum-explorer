@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Button, HStack, Divider, chakra } from "@chakra-ui/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { QuorumIcon } from "./QuorumIcon";
-import { Link } from '@chakra-ui/react'
+import { Link } from "react-router-dom";
 import { NavItems } from "../Types/NavBar";
 import MobileNav from "./MobileNav";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
@@ -26,7 +26,7 @@ export default function NavBar() {
         {/* TODO: fix me up to avoid duplication of items  */}
         <HStack spacing="5" display={{ base: "none", md: "flex" }}>
           {NavItems.map((item, i) => (
-            <Link key={i} href={item["label"].toLowerCase()}>
+            <Link key={i} to={item["label"].toLowerCase()}>
               <Button
                 leftIcon={<FontAwesomeIcon icon={item["icon"]} fontSize="1.25rem" />}
                 variant="ghost"
