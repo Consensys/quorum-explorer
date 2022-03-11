@@ -4,7 +4,7 @@ import ExplorerBlockDetails from "./ExplorerBlockDetails";
 import {
   Box,
   Heading,
-  HStack,
+  Divider,
   VStack,
   Flex,
   Text,
@@ -31,7 +31,8 @@ class ExplorerCard extends Component<IProps, IState> {
           justifyContent="center"
           flexDirection={{ base: "column", md: "column" }}
           px={{ base: "5", md: "8" }}
-          py={{ base: "5", md: "6" }}
+          pt={{ base: "5", md: "2" }}
+          pb={{ base: "5", md: "5" }}
           borderRadius="lg"
           borderWidth={2}
           overflow="hidden"
@@ -47,6 +48,7 @@ class ExplorerCard extends Component<IProps, IState> {
                 {this.props.block.number}
               </Tooltip>
             </Text>
+            <Divider />
             <Text fontSize="sm" textAlign="left">
               {this.props.block.transactions.length} Transactions
             </Text>

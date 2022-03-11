@@ -35,6 +35,11 @@ class ExplorerBlocks extends Component<IProps, IState> {
                 <ExplorerCard block={block} />
               ))}
             </SimpleGrid>
+            <Box mt={5}>
+              {this.props.blocks.map((block) => (
+                <></>
+              ))}
+            </Box>
           </Container>
         </BoxMotion>
       </>
