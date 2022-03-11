@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Box, Container, SimpleGrid } from "@chakra-ui/react";
 import NodeCard from "./NodeCard";
-import { Cards } from "../Types/Nodes";
+import { QuorumCard } from "../Types/Nodes";
 import { motion } from "framer-motion";
 const BoxMotion = motion(Box);
 
 interface IProps {
-  stats: Cards[];
+  stats: QuorumCard[];
   statusText: string;
 }
 

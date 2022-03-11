@@ -1,6 +1,9 @@
 import React, { Component } from "react";
-import { Heading, Container } from "@chakra-ui/react";
+import { Container, Accordion, AccordionButton, AccordionItem, AccordionPanel, AccordionIcon, Box, Text, HStack } from "@chakra-ui/react";
+import { Flex, Spacer, Center } from '@chakra-ui/react'
+import BlockAccordianItem from "../Explorer/BlockAccordianItem";
 import PageHeader from "../Misc/PageHeader";
+import { QuorumBlock } from "../Types/Explorer";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
 import { getBlockByNumber } from "../API/Explorer";
@@ -13,7 +16,7 @@ interface IState {
   delay: number;
   blockNumber: number;
   transactions: string[];
-  blocks: number[];
+  blocks: QuorumBlock[];
   selectedNode: string;
 }
 
@@ -44,11 +47,11 @@ export class Explorer extends Component<IProps, IState> {
   async nodeInfoHandler(name: string) {
     const needle: QuorumNode = getDetailsByNodeName(this.props.config, name);
     const rpcUrl: string = needle.rpcUrl;
-    const res = await getBlockByNumber(rpcUrl, "latest");
-    var tmpBlocks = this.updateArray(this.state.blocks, res.number, 5);
+    const quorumBlock = await getBlockByNumber(rpcUrl, "latest");
+    var tmpBlocks = this.updateArray(this.state.blocks, quorumBlock, 5);
     this.setState({
       selectedNode: name,
-      blockNumber: res.number,
+      blockNumber: quorumBlock.number,
       blocks: tmpBlocks,
     });
     console.log("State: " + JSON.stringify(this.state, null, 2));
@@ -93,7 +96,42 @@ export class Explorer extends Component<IProps, IState> {
             config={this.props.config}
             selectNodeHandler={this.handleSelectNode}
           />
-        </Container>
+          <HStack h="50vh" mt={10}>
+          <Flex 
+          h="50vh"
+          width="40%"
+          justifyContent="center"
+          // flexDirection={{ base: "column", md: "row" }}
+          px={{ base: "5", md: "6" }}
+          py={{ base: "5", md: "6" }}
+          borderRadius="lg"
+          borderWidth={2}>
+
+          <Accordion allowMultiple>
+          {this.state.blocks.map((block) => (
+            <BlockAccordianItem block={block} />
+          ))}
+          </Accordion>
+          </Flex>
+
+          <Flex 
+          h="50vh"
+          width="60%"
+          justifyContent="center"
+          // flexDirection={{ base: "column", md: "row" }}
+          px={{ base: "5", md: "6" }}
+          py={{ base: "5", md: "6" }}
+          borderRadius="lg"
+          borderWidth={2}>
+           <Text fontSize='xl'>(xl) In love with React & Next</Text>
+            <Text fontSize='lg'>(lg) In love with React & Next</Text>
+            <Text fontSize='md'>(md) In love with React & Next</Text>
+            <Text fontSize='sm'>(sm) In love with React & Next</Text>
+            <Text fontSize='xs'>(xs) In love with React & Next</Text>
+          </Flex>
+          </HStack>
+          
+          </Container>
       </>
     );
   }

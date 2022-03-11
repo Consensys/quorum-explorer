@@ -12,7 +12,7 @@ import {
   faUsers,
   faExchangeAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { Cards } from "../Types/Nodes";
+import { QuorumCard } from "../Types/Nodes";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
 import { Container } from "@chakra-ui/react";
 
@@ -118,7 +118,7 @@ export default class Nodes extends Component<IProps, IState> {
   };
 
   render() {
-    const stats: Cards[] = [
+    const stats: QuorumCard[] = [
       {
         label: "Status",
         value: this.state.statusText === "OK" ? "Running" : "Stopped",

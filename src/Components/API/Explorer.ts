@@ -1,30 +1,30 @@
 
 import { ethApiCall } from './Common';
-import { BlockDetails } from '../Types/API/Responses';
+import { QuorumBlock } from '../Types/Explorer';
 const axios = require('axios');
 
 export async function getBlockByNumber(url:string, blockNumber:string|number) {
-  let blockDetails: BlockDetails = { statusText: "error", number: -1 , hash: "", transactionsRoot: "", stateRoot: "", receiptsRoot: "", miner: "",  extraData: "", size: "", gasUsed: "", gasLimit: "" ,"timestamp": "", uncles: [], transactions: [] }
+  let quorumBlock: QuorumBlock = { statusText: "error", number: -1 , hash: "", transactionsRoot: "", stateRoot: "", receiptsRoot: "", miner: "",  extraData: "", size: "", gasUsed: "", gasLimit: "" ,"timestamp": "", uncles: [], transactions: [] }
   try {
     const ethBlockByNumber = await ethApiCall(url, 'eth_getBlockByNumber', [blockNumber, true]); 
-    blockDetails['statusText'] = ethBlockByNumber.statusText;
-    blockDetails['number'] = ethBlockByNumber.data.result.number;
-    blockDetails['hash'] = ethBlockByNumber.data.result.hash;
-    blockDetails['transactionsRoot'] = ethBlockByNumber.data.result.transactionsRoot;
-    blockDetails['stateRoot'] = ethBlockByNumber.data.result.stateRoot;
-    blockDetails['receiptsRoot'] = ethBlockByNumber.data.result.receiptsRoot;
-    blockDetails['miner'] = ethBlockByNumber.data.miner;
-    blockDetails['extraData'] = ethBlockByNumber.data.extraData;
-    blockDetails['size'] = ethBlockByNumber.data.result.size;
-    blockDetails['gasUsed'] = ethBlockByNumber.data.result.gasUsed;
-    blockDetails['gasLimit'] = ethBlockByNumber.data.result.gasLimit;
-    blockDetails['timestamp'] = ethBlockByNumber.data.result.timestamp;
-    blockDetails['uncles'] = ethBlockByNumber.data.result.uncles;
-    blockDetails['transactions'] = ethBlockByNumber.data.result.transactions;
+    quorumBlock['statusText'] = ethBlockByNumber.statusText;
+    quorumBlock['number'] = ethBlockByNumber.data.result.number;
+    quorumBlock['hash'] = ethBlockByNumber.data.result.hash;
+    quorumBlock['transactionsRoot'] = ethBlockByNumber.data.result.transactionsRoot;
+    quorumBlock['stateRoot'] = ethBlockByNumber.data.result.stateRoot;
+    quorumBlock['receiptsRoot'] = ethBlockByNumber.data.result.receiptsRoot;
+    quorumBlock['miner'] = ethBlockByNumber.data.result.miner;
+    quorumBlock['extraData'] = ethBlockByNumber.data.extraData;
+    quorumBlock['size'] = ethBlockByNumber.data.result.size;
+    quorumBlock['gasUsed'] = ethBlockByNumber.data.result.gasUsed;
+    quorumBlock['gasLimit'] = ethBlockByNumber.data.result.gasLimit;
+    quorumBlock['timestamp'] = ethBlockByNumber.data.result.timestamp;
+    quorumBlock['uncles'] = ethBlockByNumber.data.result.uncles;
+    quorumBlock['transactions'] = ethBlockByNumber.data.result.transactions;
   } catch (e) {
     console.error(e);
   } finally {
-    return blockDetails;
+    return quorumBlock;
   }
 }
 
