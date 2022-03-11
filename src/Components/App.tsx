@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { Container } from '@chakra-ui/react'
 import Router from './Router';
 import { QuorumConfig } from './Types/QuorumConfig';
+import NavBar from "./NavBar/NavBar";
+import Footer from "./Footer/Footer";
 const config = require('../Config/config.json');
+
 
 interface IProps {
 }
@@ -19,7 +22,9 @@ class App extends Component<IProps, IState> {
   render(){
     return (
       <div className="App">
+          <NavBar />
           <Router config={this.quorumConfig}/>
+          <Footer />
       </div>
     );
   }
