@@ -8,8 +8,9 @@ import {
   VStack,
   Flex,
   Text,
+  Spacer,
   Container,
-  Tooltip,
+  Button
 } from "@chakra-ui/react";
 
 interface IProps {
@@ -22,6 +23,7 @@ class ExplorerCard extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
   }
+  
 
   render() {
     return (
@@ -39,29 +41,16 @@ class ExplorerCard extends Component<IProps, IState> {
         >
           <VStack>
             <Text fontSize="md" as="b">
-              <Tooltip
-                fontSize="md"
-                as="b"
-                label={this.props.block.number}
-                aria-label="Block number"
-              >
-                {this.props.block.number}
-              </Tooltip>
+              {this.props.block.number}
+              &nbsp;&nbsp;&nbsp;
+              <ExplorerBlockDetails block={this.props.block}/>
             </Text>
             <Divider />
             <Text fontSize="sm" textAlign="left">
-              {this.props.block.transactions.length} Transactions
+              {this.props.block.transactions.length} Transactions, 
             </Text>
             <Text fontSize="xs" align="center">
-              Validator:{" "}
-              <Tooltip
-                fontSize="md"
-                as="b"
-                label={this.props.block.miner}
-                aria-label="A tooltip"
-              >
-                {this.props.block.miner}
-              </Tooltip>
+              Validator: {this.props.block.miner}
             </Text>
           </VStack>
         </Flex>
@@ -69,5 +58,7 @@ class ExplorerCard extends Component<IProps, IState> {
     );
   }
 }
+
+
 
 export default ExplorerCard;

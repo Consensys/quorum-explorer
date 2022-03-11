@@ -32,14 +32,9 @@ class ExplorerBlocks extends Component<IProps, IState> {
               gap={{ base: "5", md: "6" }}
             >
               {this.props.blocks.map((block) => (
-                <ExplorerCard block={block} />
+                <ExplorerCard key={block.number} block={block} />
               ))}
             </SimpleGrid>
-            <Box mt={5}>
-              {this.props.blocks.map((block) => (
-                <></>
-              ))}
-            </Box>
           </Container>
         </BoxMotion>
       </>

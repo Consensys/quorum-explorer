@@ -1,6 +1,20 @@
 import React, { Component, ReactElement } from "react";
 import { QuorumBlock } from '../Types/Explorer'
-import { Box, Heading, HStack, VStack, Flex, Text, } from "@chakra-ui/react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor,
+  Button,
+  Text, 
+} from '@chakra-ui/react'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExpand } from "@fortawesome/free-solid-svg-icons"; 
 
 interface IProps {
   block: QuorumBlock
@@ -16,31 +30,28 @@ class ExplorerBlockDetails extends Component<IProps, IState> {
   render() {
     return (
       <>
-        <Flex
-          alignItems="center"
-          justifyContent="center"
-          flexDirection={{ base: "column", md: "row" }}
-          px={{ base: "5", md: "6" }}
-          py={{ base: "5", md: "6" }}
-          borderRadius="lg"
-          borderWidth={2}
-        >
-          <VStack>
-            <Text fontSize='md' as='b'>
-              {this.props.block.number}
-            </Text>
-            <Text fontSize='sm' textAlign="left">
-              {this.props.block.transactions.length} Transactions
-            </Text>
-            <Text fontSize='sm' textAlign="left">
-              {this.props.block.hash} hash
-            </Text>
-            <Text fontSize='xs' align="left">
-              Validator: {this.props.block.miner}
-            </Text>
-          </VStack>
-
-        </Flex>
+      <Popover>
+        <PopoverTrigger>
+          <Button p={0} m={0}><FontAwesomeIcon icon={faExpand} /></Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <PopoverArrow />
+          <PopoverCloseButton />
+          <PopoverHeader>Block: {this.props.block.number}!</PopoverHeader>
+          <PopoverBody>
+            <Text fontSize="xs" isTruncated textAlign="left">Miner:&nbsp; {this.props.block.miner}</Text>
+            <Text fontSize="xs" isTruncated textAlign="left">Hash:&nbsp; {this.props.block.hash}</Text>
+            <Text fontSize="xs" isTruncated textAlign="left">Transactions:&nbsp; {this.props.block.transactions.length}</Text>
+            <Text fontSize="xs" isTruncated textAlign="left">Uncles:&nbsp; {this.props.block.uncles.length}</Text>
+            <Text fontSize="xs" isTruncated textAlign="left">Size:&nbsp; {this.props.block.size}</Text>
+            <Text fontSize="xs" isTruncated textAlign="left">Gas Used:&nbsp; {this.props.block.gasUsed}</Text>
+            <Text fontSize="xs" isTruncated textAlign="left">Timestamp:&nbsp; {this.props.block.timestamp}</Text>
+            <Text fontSize="xs" isTruncated textAlign="left">State Root:&nbsp; {this.props.block.stateRoot}</Text>
+            <Text fontSize="xs" isTruncated textAlign="left">Receipt Root:&nbsp; {this.props.block.receiptsRoot}</Text>
+            <Text fontSize="xs" isTruncated textAlign="left">Tx Root:&nbsp; {this.props.block.transactionsRoot}</Text>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
       </>
     );
   }
