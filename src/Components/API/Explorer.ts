@@ -1,6 +1,7 @@
 
 import { ethApiCall } from './Common';
-import { QuorumBlock } from '../Types/Explorer';
+import { QuorumBlock, QuorumTxn } from '../Types/Explorer';
+import { faGasPump } from '@fortawesome/free-solid-svg-icons';
 const axios = require('axios');
 
 export async function getBlockByNumber(url:string, blockNumber:string|number) {
@@ -28,3 +29,15 @@ export async function getBlockByNumber(url:string, blockNumber:string|number) {
   }
 }
 
+// export function newQuorumTxShort(txHash: string, blockNumber: number, blockHash: string,  miner: string, ts: string, gas: number, gasPrice: number){
+//   let qtx: QuorumTxShort = {hash: txHash, blockNumber: blockNumber, blockHash: blockHash, miner: miner, timestamp: ts, gas:gas, gasPrice: gasPrice}
+//   return qtx;
+// }
+
+export function getSecsAgo(h: string) {
+  const ago : number = parseInt(h, 10);
+  const now : any = new Date();
+  const d = now - ago;
+  const dts = new Date(d);
+  return dts.getSeconds();
+}

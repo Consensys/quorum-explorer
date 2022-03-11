@@ -1,6 +1,7 @@
 import React, { Component, ReactElement } from "react";
 import { Divider, VStack, Flex, Text, } from "@chakra-ui/react";
 import { QuorumBlock } from "../Types/Explorer";
+import { getSecsAgo } from '../API/Explorer';
 import ExplorerBlockDetails from "./ExplorerBlockDetails";
 
 interface IProps {
@@ -36,7 +37,7 @@ class ExplorerCard extends Component<IProps, IState> {
             </Text>
             <Divider />
             <Text fontSize="sm" textAlign="left">
-              {this.props.block.transactions.length} Transactions, 
+              {this.props.block.transactions.length} Transactions, {getSecsAgo(this.props.block.timestamp)} seconds ago 
             </Text>
             <Text fontSize="xs" align="center" >
               Validator: {this.props.block.miner}

@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Container } from "@chakra-ui/react";
+import { Container, Divider } from "@chakra-ui/react";
 import ExplorerBlocks from "../Explorer/ExplorerBlocks";
 import PageHeader from "../Misc/PageHeader";
-import { QuorumBlock } from "../Types/Explorer";
+import { QuorumBlock, QuorumTxn } from "../Types/Explorer";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
 import { getBlockByNumber } from "../API/Explorer";
+import ExplorerTxns from "../Explorer/ExplorerTxns";
 
 interface IProps {
   config: QuorumConfig;
@@ -14,7 +15,7 @@ interface IProps {
 interface IState {
   delay: number;
   blockNumber: number;
-  transactions: string[];
+  transactions: QuorumTxn[];
   blocks: QuorumBlock[];
   selectedNode: string;
 }
@@ -24,7 +25,7 @@ export class Explorer extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      delay: 500,
+      delay: 5000,
       blockNumber: 0,
       transactions: [],
       blocks: [],
@@ -36,7 +37,7 @@ export class Explorer extends Component<IProps, IState> {
   nodeKeys: string[] = getNodeKeys(this.props.config);
 
   //get the latest n elements in an array
-  updateArray = (arr: QuorumBlock[], elem: QuorumBlock, len: number) => {
+  updateBlockArray = (arr: QuorumBlock[], elem: QuorumBlock, len: number) => {
     if (arr.length > 0 && arr[0]["number"] === elem["number"]) {
     } else {
       arr.unshift(elem);
@@ -44,17 +45,29 @@ export class Explorer extends Component<IProps, IState> {
     return arr.slice(0, len);
   };
 
+  updateTxnArray = (arr: QuorumTxn[], elems: QuorumTxn[], len: number) => {
+    elems.map(_=> arr.unshift(_));
+    var set = new Set(arr);
+    arr = Array.from(set);
+    return arr.slice(0, len);
+  };
+
   async nodeInfoHandler(name: string) {
     const needle: QuorumNode = getDetailsByNodeName(this.props.config, name);
     const rpcUrl: string = needle.rpcUrl;
     const quorumBlock = await getBlockByNumber(rpcUrl, "latest");
-    var tmpBlocks = this.updateArray(this.state.blocks, quorumBlock, 4);
+    var tmpTxns: QuorumTxn[] = this.state.transactions;
+    if (quorumBlock.transactions.length > 0) {
+      this.updateTxnArray(this.state.transactions, quorumBlock.transactions, 4)
+    }
+    var tmpBlocks = this.updateBlockArray(this.state.blocks, quorumBlock, 4);
     this.setState({
       selectedNode: name,
       blockNumber: quorumBlock.number,
       blocks: tmpBlocks,
+      transactions: tmpTxns,
     });
-    console.log("State: " + JSON.stringify(this.state, null, 2));
+    console.log("State: " + JSON.stringify(this.state.transactions, null, 2));
   }
 
   tick = () => {
@@ -100,6 +113,9 @@ export class Explorer extends Component<IProps, IState> {
             selectNodeHandler={this.handleSelectNode}
           />
           <ExplorerBlocks blocks={this.state.blocks} />
+          <Divider />
+          <ExplorerTxns txns={this.state.transactions} />
+          <Divider />
         </Container>
       </>
     );
