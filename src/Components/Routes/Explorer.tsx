@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Container } from "@chakra-ui/react";
-import { Flex, Spacer, Center } from "@chakra-ui/react";
 import ExplorerBlocks from "../Explorer/ExplorerBlocks";
 import PageHeader from "../Misc/PageHeader";
 import { QuorumBlock } from "../Types/Explorer";
@@ -21,6 +20,7 @@ interface IState {
 }
 
 export class Explorer extends Component<IProps, IState> {
+  
   constructor(props: IProps) {
     super(props);
     this.state = {

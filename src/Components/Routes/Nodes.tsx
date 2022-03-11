@@ -1,20 +1,14 @@
 import React, { Component } from "react";
-import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
+import { Container } from "@chakra-ui/react";
 import PageHeader from "../Misc/PageHeader";
 import NodeOverview from "../Nodes/NodeOverview";
 import NodeDetails from "../Nodes/NodeDetails";
-import { updateNodeInfo } from "../API/Nodes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlay,
-  faStop,
-  faCubes,
-  faUsers,
-  faExchangeAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlay, faStop, faCubes, faUsers, faExchangeAlt,} from "@fortawesome/free-solid-svg-icons";
 import { QuorumStatCard } from "../Types/Nodes";
+import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
-import { Container } from "@chakra-ui/react";
+import { updateNodeInfo } from "../API/Nodes";
 
 interface IProps {
   config: QuorumConfig;
@@ -37,6 +31,7 @@ interface IState {
 }
 
 export default class Nodes extends Component<IProps, IState> {
+  
   constructor(props: IProps) {
     super(props);
     this.childHandler = this.childHandler.bind(this);

@@ -1,5 +1,5 @@
-import { useColorModeValue, useColorMode, Icon } from "@chakra-ui/react";
 import React from "react";
+import { useColorModeValue, useColorMode, Icon } from "@chakra-ui/react";
 
 export const QuorumIcon = ({ ...rest }) => {
   const { colorMode } = useColorMode();

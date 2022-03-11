@@ -1,21 +1,7 @@
-import {
-  Container,
-  Stack,
-  VStack,
-  IconButton,
-  ButtonGroup,
-  Text,
-  Divider,
-  Box,
-  Link,
-} from "@chakra-ui/react";
+import { Container, Stack, VStack, IconButton, ButtonGroup, Text, Divider, Box, Link, } from "@chakra-ui/react";
 import { ConsensysIcon } from "./ConsensysIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTwitter,
-  faGithub,
-  faLinkedin,
-} from "@fortawesome/free-brands-svg-icons";
+import { faTwitter, faGithub, faLinkedin, } from "@fortawesome/free-brands-svg-icons";
 import { motion } from "framer-motion";
 const MotionBox = motion(Box);
 const MotionContainer = motion(Container);

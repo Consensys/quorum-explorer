@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
-import PageHeader from "../Misc/PageHeader";
 import { Heading, Container } from "@chakra-ui/react";
+import PageHeader from "../Misc/PageHeader";
+import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 
 interface IProps {
   config: QuorumConfig;
@@ -10,6 +10,7 @@ interface IProps {
 interface IState {}
 
 export class Contracts extends Component<IProps, IState> {
+  
   constructor(props: IProps) {
     super(props);
     this.state = {

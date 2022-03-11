@@ -1,14 +1,6 @@
 import React, { Component } from "react";
-import {
-  Text,
-  Skeleton,
-  Container,
-  Flex,
-  Box,
-  Divider,
-} from "@chakra-ui/react";
+import { Text, Skeleton, Container, Flex, Box, Divider, } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-
 const MotionContainer = motion(Container);
 const MotionText = motion(Text);
 
@@ -25,6 +17,7 @@ interface IProps {
 interface IState {}
 
 class NodeDetails extends Component<IProps, IState> {
+  
   constructor(props: IProps) {
     super(props);
   }

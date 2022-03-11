@@ -1,17 +1,10 @@
 import React, { Component } from "react";
-import {
-  Heading,
-  Container,
-  HStack,
-  Box,
-  Flex,
-  Select,
-} from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { QuorumConfig } from "../Types/QuorumConfig";
-import { getNodeKeys, getDetailsByNodeName } from "../API/QuorumConfig";
+import { Heading, Container, HStack, Box, Flex, Select, } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
+import { QuorumConfig } from "../Types/QuorumConfig";
+import { getNodeKeys, getDetailsByNodeName } from "../API/QuorumConfig";
+import { motion } from "framer-motion";
 const MotionContainer = motion(Container);
 
 interface IProps {

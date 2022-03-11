@@ -1,6 +1,9 @@
 import React, { Component, ReactElement } from "react";
 import { Box, Heading, Skeleton, HStack, VStack, Flex } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+const MotionHeading = motion(Heading);
+const MotionBox = motion(Box);
+
 interface IProps {
   title: string;
   text: string | number;
@@ -9,9 +12,6 @@ interface IProps {
 }
 
 interface IState {}
-
-const MotionHeading = motion(Heading);
-const MotionBox = motion(Box);
 
 class NodeCard extends Component<IProps, IState> {
   constructor(props: IProps) {

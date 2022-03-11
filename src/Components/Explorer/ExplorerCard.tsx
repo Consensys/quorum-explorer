@@ -1,17 +1,7 @@
 import React, { Component, ReactElement } from "react";
+import { Divider, VStack, Flex, Text, } from "@chakra-ui/react";
 import { QuorumBlock } from "../Types/Explorer";
 import ExplorerBlockDetails from "./ExplorerBlockDetails";
-import {
-  Box,
-  Heading,
-  Divider,
-  VStack,
-  Flex,
-  Text,
-  Spacer,
-  Container,
-  Button
-} from "@chakra-ui/react";
 
 interface IProps {
   block: QuorumBlock;
@@ -22,8 +12,7 @@ interface IState {}
 class ExplorerCard extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
-  }
-  
+  }  
 
   render() {
     return (
@@ -58,7 +47,5 @@ class ExplorerCard extends Component<IProps, IState> {
     );
   }
 }
-
-
 
 export default ExplorerCard;

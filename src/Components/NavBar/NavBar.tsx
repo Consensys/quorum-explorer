@@ -1,11 +1,12 @@
+
 import React from "react";
-import { Flex, Button, HStack, Divider, chakra } from "@chakra-ui/react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { QuorumIcon } from "./QuorumIcon";
 import { Link } from "react-router-dom";
-import { NavItems } from "../Types/NavBar";
+import { Flex, Button, HStack, Divider, chakra } from "@chakra-ui/react";
 import MobileNav from "./MobileNav";
+import { QuorumIcon } from "./QuorumIcon";
+import { NavItems } from "../Types/NavBar";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { motion } from "framer-motion";
 const MotionFlex = motion(Flex);
 

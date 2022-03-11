@@ -1,20 +1,8 @@
 import React, { Component, ReactElement } from "react";
-import { QuorumBlock } from '../Types/Explorer'
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
-  Button,
-  Text, 
-} from '@chakra-ui/react'
+import { Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverArrow, PopoverCloseButton, Button, Text } from '@chakra-ui/react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExpand } from "@fortawesome/free-solid-svg-icons"; 
+import { QuorumBlock } from '../Types/Explorer'
 
 interface IProps {
   block: QuorumBlock
