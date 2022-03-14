@@ -1,7 +1,8 @@
 import React, { Component, useState } from "react";
-import { Box, Container, SimpleGrid, Text, Input, HStack, Spacer, Button} from "@chakra-ui/react";
+import { Box, Container, SimpleGrid, Text, Input, HStack, Spacer } from "@chakra-ui/react";
 import { useToast } from '@chakra-ui/react'
 import ExplorerBlockCard from "./ExplorerBlockCard";
+import ExplorerBlockToast from "./ExplorerBlockToast";
 import { QuorumBlock } from "../Types/Explorer";
 import { getBlockByNumber } from "../API/Explorer";
 import { motion } from "framer-motion";
@@ -13,37 +14,34 @@ interface IProps {
 }
 
 export default function ExplorerBlocks({blocks, url}: IProps) {
-  const [blockSearch, setBlockSearch] = useState(0);
-
+  const [blockSearch, setBlockSearch] = useState("");
   const toast = useToast()
   const toastIdRef : any = React.useRef()
-
-  const onChange = (e:any) => {
-    setBlockSearch(e.target.value);
-    console.log(blockSearch);
-  }
 
   const closeToast = () => {
     if (toastIdRef.current) {
       toast.close(toastIdRef.current)
     }
   }
+  
+  const onChange = (e:any) => {
+    setBlockSearch(e.target.value);
+    console.log(blockSearch);
+  }
 
   const onSubmit = async (e:any) => {
     e.preventDefault();
     const block = await getBlockByNumber(url, blockSearch)
-    console.log(block);    
+    // console.log(block);    
     toastIdRef.current =  toast({
       position: 'top-right',
       isClosable: true,
-      duration: 9000,
+      duration: 10000,
       render: () => (
-        <Box color='white' p={3} bg='blue.500'>
-          Hello World
-          <Button onClick={closeToast} p={0} m={0} type='button' variant='outline'>x</Button>  
-        </Box>
+        <ExplorerBlockToast block={block} closeToast={closeToast}/>
       ),
-    })  }
+    })  
+  }
 
   return (
       <>
@@ -60,7 +58,7 @@ export default function ExplorerBlocks({blocks, url}: IProps) {
             <Spacer />
             <form onSubmit={onSubmit}>
               <Input
-                placeholder={'Search by block hash or number'}
+                placeholder={'Search by block number or hash'}
                 onInput={onChange}
                 onSubmit={onSubmit}
                 size='md'

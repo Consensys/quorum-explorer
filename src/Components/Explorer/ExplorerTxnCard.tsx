@@ -24,9 +24,7 @@ class ExplorerTxnCard extends Component<IProps, IState> {
           alignItems="left"
           justifyContent="center"
           flexDirection={{ base: "column", md: "column" }}
-          px={{ base: "5", md: "8" }}
-          pt={{ base: "5", md: "4" }}
-          pb={{ base: "5", md: "4" }}
+          p={{ base: "2", md: "2" }}
           borderRadius="lg"
           borderWidth={2}
           overflow="hidden"
@@ -35,16 +33,15 @@ class ExplorerTxnCard extends Component<IProps, IState> {
           <HStack spacing={10}>
               {/* contract deployment */}
               {this.props.txn.to === null ? (
-              <Box h={"100%"} maxW={"100"} borderRadius="md" borderWidth={1} bg="darkOrange" >
+              <Box h={"100%"} maxW={125} borderRadius="md" borderWidth={1} bg="darkOrange" >
                 <Text fontSize="sm" textAlign="center"> Contract Deployment </Text>
               </Box>
               ) : (
-                <Box h={"100%"} maxW={"100"} borderRadius="md" borderWidth={1} bg="limeGreen" >
-
+              <Box h={"100%"} maxW={125} borderRadius="md" borderWidth={1} bg="limeGreen" >
                 <Text fontSize="sm" textAlign="center" > Regular Transaction </Text>
-                </Box>
+              </Box>
               )}
-            <VStack direction={['column', 'row']} >
+            <VStack >
               {this.props.txn.hash !== null ? (
                 <>
                   {" "}

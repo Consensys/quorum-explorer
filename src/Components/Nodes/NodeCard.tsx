@@ -25,8 +25,8 @@ class NodeCard extends Component<IProps, IState> {
           alignItems="center"
           justifyContent="center"
           flexDirection={{ base: "column", md: "row" }}
-          px={{ base: "5", md: "6" }}
-          py={{ base: "5", md: "6" }}
+          px={{ base: "5", md: "5" }}
+          py={{ base: "5", md: "5" }}
           borderRadius="lg"
           borderWidth={2}
         >
