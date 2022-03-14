@@ -112,9 +112,9 @@ export class Explorer extends Component<IProps, IState> {
             config={this.props.config}
             selectNodeHandler={this.handleSelectNode}
           />
-          <ExplorerBlocks blocks={this.state.blocks} />
+          <ExplorerBlocks blocks={this.state.blocks} url={getDetailsByNodeName(this.props.config, this.state.selectedNode).rpcUrl}/>
           <Divider />
-          <ExplorerTxns txns={this.state.transactions} />
+          <ExplorerTxns txns={this.state.transactions} url={getDetailsByNodeName(this.props.config, this.state.selectedNode).rpcUrl}/>
           <Divider />
         </Container>
       </>
