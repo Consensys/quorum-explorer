@@ -25,7 +25,7 @@ class ExplorerBlockDetails extends Component<IProps, IState> {
         <PopoverContent>
           <PopoverArrow />
           <PopoverCloseButton />
-          <PopoverHeader>Block: {this.props.block.number}!</PopoverHeader>
+          <PopoverHeader>Block: {this.props.block.number}</PopoverHeader>
           <PopoverBody>
             <Text fontSize="xs" isTruncated textAlign="left">Miner:&nbsp; {this.props.block.miner}</Text>
             <Text fontSize="xs" isTruncated textAlign="left">Hash:&nbsp; {this.props.block.hash}</Text>

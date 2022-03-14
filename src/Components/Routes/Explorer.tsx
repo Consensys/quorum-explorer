@@ -58,7 +58,7 @@ export class Explorer extends Component<IProps, IState> {
     const quorumBlock = await getBlockByNumber(rpcUrl, "latest");
     var tmpTxns: QuorumTxn[] = this.state.transactions;
     if (quorumBlock.transactions.length > 0) {
-      this.updateTxnArray(this.state.transactions, quorumBlock.transactions, 4)
+      tmpTxns =this.updateTxnArray(this.state.transactions, quorumBlock.transactions, 4)
     }
     var tmpBlocks = this.updateBlockArray(this.state.blocks, quorumBlock, 4);
     this.setState({
@@ -67,7 +67,7 @@ export class Explorer extends Component<IProps, IState> {
       blocks: tmpBlocks,
       transactions: tmpTxns,
     });
-    console.log("State: " + JSON.stringify(this.state.transactions, null, 2));
+    // console.log("State: " + JSON.stringify(this.state.transactions, null, 2));
   }
 
   tick = () => {

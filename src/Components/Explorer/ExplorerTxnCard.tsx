@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Divider, VStack, HStack, Flex, Text, Skeleton, Box} from "@chakra-ui/react";
+import ExplorerTxnDetails from "./ExplorerTxnDetails";
 import { QuorumTxn } from "../Types/Explorer";
 import { getSecsAgo, abbreviateValidator } from '../API/Explorer';
 
@@ -20,7 +21,7 @@ class ExplorerTxnCard extends Component<IProps, IState> {
     return (
       <>
         <Flex
-          alignItems="center"
+          alignItems="left"
           justifyContent="center"
           flexDirection={{ base: "column", md: "column" }}
           px={{ base: "5", md: "8" }}
@@ -34,22 +35,23 @@ class ExplorerTxnCard extends Component<IProps, IState> {
           <HStack spacing={10}>
               {/* contract deployment */}
               {this.props.txn.to === null ? (
-              <Box maxW={100} color="lightGreen" > 
-                <Text fontSize="sm" textAlign="left"> Contract Deployment </Text>
+              <Box h={"100%"} maxW={"100"} borderRadius="md" borderWidth={1} bg="darkOrange" >
+                <Text fontSize="sm" textAlign="center"> Contract Deployment </Text>
               </Box>
               ) : (
-                <Box maxW={100} bgColor="green" > 
+                <Box h={"100%"} maxW={"100"} borderRadius="md" borderWidth={1} bg="limeGreen" >
 
-                <Text fontSize="sm" textAlign="left"  > Regular Transaction </Text>
+                <Text fontSize="sm" textAlign="center" > Regular Transaction </Text>
                 </Box>
               )}
-            <VStack>
+            <VStack direction={['column', 'row']} >
               {this.props.txn.hash !== null ? (
                 <>
                   {" "}
-                  <Text fontSize="md" as="b">
+                  <Text fontSize="md" as="b" >
                     {this.props.txn.hash}
                     &nbsp;&nbsp;&nbsp;
+                   <ExplorerTxnDetails txn={this.props.txn} />
                   </Text>
                   <Divider />
                   <Text fontSize="sm" textAlign="left">
@@ -64,10 +66,11 @@ class ExplorerTxnCard extends Component<IProps, IState> {
                 </>
               ) : (
                 <>
-                  <Skeleton h="20px" w="130px" />
+                  <Skeleton h="20px" w="180px" />
                   <Divider />
-                  <Skeleton h="20px" w="130px" />
-                  <Skeleton h="20px" w="130px" />
+                  <Skeleton h="20px" w="180px" />
+                  <Skeleton h="20px" w="180px" />
+                  <Skeleton h="20px" w="180px" />
                 </>
               )}
             </VStack>
