@@ -4,7 +4,13 @@ import PageHeader from "../Misc/PageHeader";
 import NodeOverview from "../Nodes/NodeOverview";
 import NodeDetails from "../Nodes/NodeDetails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faStop, faCubes, faUsers, faExchangeAlt,} from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlay,
+  faStop,
+  faCubes,
+  faUsers,
+  faExchangeAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { QuorumStatCard } from "../Types/Nodes";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
@@ -31,10 +37,8 @@ interface IState {
 }
 
 export default class Nodes extends Component<IProps, IState> {
-  
   constructor(props: IProps) {
     super(props);
-    this.childHandler = this.childHandler.bind(this);
     this.state = {
       delay: 1000,
       client: this.props.config.nodes[0].client,
@@ -54,13 +58,6 @@ export default class Nodes extends Component<IProps, IState> {
 
   intervalId: number = 0;
   nodeKeys: string[] = getNodeKeys(this.props.config);
-
-  childHandler = (dropDownNode: any) => {
-    // console.log(dropDownNode);
-    this.setState({
-      selectedNode: dropDownNode.target.value,
-    });
-  };
 
   async nodeInfoHandler(node: string) {
     // console.log("nodeInfoHandler");
