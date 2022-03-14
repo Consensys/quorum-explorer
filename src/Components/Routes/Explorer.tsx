@@ -21,7 +21,6 @@ interface IState {
 }
 
 export class Explorer extends Component<IProps, IState> {
-  
   constructor(props: IProps) {
     super(props);
     this.state = {
@@ -46,7 +45,7 @@ export class Explorer extends Component<IProps, IState> {
   };
 
   updateTxnArray = (arr: QuorumTxn[], elems: QuorumTxn[], len: number) => {
-    elems.map(_=> arr.unshift(_));
+    elems.map((_) => arr.unshift(_));
     var set = new Set(arr);
     arr = Array.from(set);
     return arr.slice(0, len);
@@ -58,7 +57,11 @@ export class Explorer extends Component<IProps, IState> {
     const quorumBlock = await getBlockByNumber(rpcUrl, "latest");
     var tmpTxns: QuorumTxn[] = this.state.transactions;
     if (quorumBlock.transactions.length > 0) {
-      tmpTxns =this.updateTxnArray(this.state.transactions, quorumBlock.transactions, 4)
+      tmpTxns = this.updateTxnArray(
+        this.state.transactions,
+        quorumBlock.transactions,
+        4
+      );
     }
     var tmpBlocks = this.updateBlockArray(this.state.blocks, quorumBlock, 4);
     this.setState({
@@ -106,16 +109,27 @@ export class Explorer extends Component<IProps, IState> {
   render() {
     return (
       <>
-        <Container maxW={{ base: "container.sm", md: "container.xl" }}>
+        <Container maxW={{ base: "container.sm", md: "container.xl" }} p={0}>
           <PageHeader
             title="Explorer"
             config={this.props.config}
             selectNodeHandler={this.handleSelectNode}
           />
-          <ExplorerBlocks blocks={this.state.blocks} url={getDetailsByNodeName(this.props.config, this.state.selectedNode).rpcUrl}/>
+          <ExplorerBlocks
+            blocks={this.state.blocks}
+            url={
+              getDetailsByNodeName(this.props.config, this.state.selectedNode)
+                .rpcUrl
+            }
+          />
           <Divider />
-          <ExplorerTxns txns={this.state.transactions} url={getDetailsByNodeName(this.props.config, this.state.selectedNode).rpcUrl}/>
-
+          <ExplorerTxns
+            txns={this.state.transactions}
+            url={
+              getDetailsByNodeName(this.props.config, this.state.selectedNode)
+                .rpcUrl
+            }
+          />
         </Container>
       </>
     );
