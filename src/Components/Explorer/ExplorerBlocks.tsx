@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Box, Container, SimpleGrid, Text } from "@chakra-ui/react";
-import ExplorerCard from "./ExplorerCard";
+import ExplorerBlockCard from "./ExplorerBlockCard";
 import { QuorumBlock } from "../Types/Explorer";
 import { motion } from "framer-motion";
 const BoxMotion = motion(Box);
@@ -33,7 +33,7 @@ class ExplorerBlocks extends Component<IProps, IState> {
               gap={{ base: "5", md: "6" }}
             >
               {this.props.blocks.map((block) => (
-                <ExplorerCard key={block.number} block={block} />
+                <ExplorerBlockCard key={block.number} block={block} />
               ))}
             </SimpleGrid>
           </Container>

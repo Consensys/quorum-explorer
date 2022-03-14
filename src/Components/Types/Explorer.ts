@@ -8,7 +8,7 @@ export type QuorumTxn = {
   hash: string;
   input: string;
   nonce: number;
-  to: any,
+  to?: any,
   transactionIndex: number,
   value: string,
   v: string,

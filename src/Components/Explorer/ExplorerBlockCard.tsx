@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Divider, VStack, Flex, Text, Skeleton } from "@chakra-ui/react";
 import { QuorumBlock } from "../Types/Explorer";
-import { getSecsAgo } from '../API/Explorer';
+import { getSecsAgo, abbreviateValidator } from '../API/Explorer';
 import ExplorerBlockDetails from "./ExplorerBlockDetails";
 
 interface IProps {
@@ -10,7 +10,7 @@ interface IProps {
 
 interface IState {}
 
-class ExplorerCard extends Component<IProps, IState> {
+class ExplorerBlockCard extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
   }
@@ -42,8 +42,8 @@ class ExplorerCard extends Component<IProps, IState> {
                 <Text fontSize="sm" textAlign="left">
                 {this.props.block.transactions.length} Transactions, {getSecsAgo(this.props.block.timestamp)} seconds ago 
                 </Text>
-                <Text fontSize="xs" align="center">
-                  Validator: {this.props.block.miner}
+                <Text fontSize="sm" align="center">
+                  Validator: {abbreviateValidator(this.props.block.miner)}
                 </Text>{" "}
               </>
             ) : (
@@ -61,4 +61,4 @@ class ExplorerCard extends Component<IProps, IState> {
   }
 }
 
-export default ExplorerCard;
+export default ExplorerBlockCard;

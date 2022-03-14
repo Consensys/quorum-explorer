@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { Box, Container, VStack, Text } from "@chakra-ui/react";
+import { Box, Container, VStack, Text, SimpleGrid } from "@chakra-ui/react";
 import { QuorumTxn } from "../Types/Explorer";
 import { motion } from "framer-motion";
+import ExplorerTxnCard from "./ExplorerTxnCard";
 const BoxMotion = motion(Box);
 
 interface IProps {
@@ -27,13 +28,16 @@ class ExplorerTxns extends Component<IProps, IState> {
         >
           <Container maxW={{ base: "container.sm", md: "container.xl" }}>
           <Text as="b" fontSize="lg">Transactions</Text>
-            <VStack >
+            <SimpleGrid
+              columns={{ base: 1 }}
+              gap={{ base: "5", md: "6" }}
+            >
               {this.props.txns.map((txn) => (
-                <Text key={txn.hash} >
-                Hash: {txn.hash}  Block: {txn.blockNumber} 
-                </Text>
+                <ExplorerTxnCard key={txn.hash} txn={txn} />
               ))}
-            </VStack>
+            </SimpleGrid>
+
+
           </Container>
         </BoxMotion>
       </>
