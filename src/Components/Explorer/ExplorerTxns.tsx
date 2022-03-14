@@ -80,7 +80,7 @@ export default function ExplorerTxns({ txns, url }: IProps) {
           </Text>
           {/* <Spacer /> */}
           <Container maxW="20%" m={0} p={0}>
-            <FormControl onSubmit={onSubmit}>
+            <FormControl as="form" onSubmit={onSubmit}>
               <Input
                 placeholder={"Search by transaction hash"}
                 onChange={onChange}

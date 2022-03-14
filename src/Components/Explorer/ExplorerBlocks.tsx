@@ -40,7 +40,7 @@ export default function ExplorerBlocks({ blocks, url }: IProps) {
   const onSubmit = async (e: any) => {
     e.preventDefault();
     const block = await getBlockByNumber(url, blockSearch);
-    // console.log(block);
+    console.log(block);
     toastIdRef.current = toast({
       position: "top-right",
       isClosable: true,
@@ -71,7 +71,7 @@ export default function ExplorerBlocks({ blocks, url }: IProps) {
             Blocks
           </Text>
           <Container maxW="20%" m={0} p={0}>
-            <FormControl onSubmit={onSubmit}>
+            <FormControl as="form" onSubmit={onSubmit}>
               <Input
                 placeholder={"Search by block number or hash"}
                 onInput={onChange}
