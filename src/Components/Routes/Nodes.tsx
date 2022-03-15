@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Container } from "@chakra-ui/react";
 import PageHeader from "../Misc/PageHeader";
 import NodeOverview from "../Nodes/NodeOverview";
@@ -21,22 +21,34 @@ interface IProps {
 }
 
 export type NodeViewTmp = {
-  client: string,
-  nodeId: string,
-  nodeName: string,
-  enode: string,
-  ip: string,
-  statusText: string,
-  rpcUrl: string,
-  blocks: number,
-  peers: number,
-  queuedTxns: number,
-  pendingTxns: number,
-}
+  client: string;
+  nodeId: string;
+  nodeName: string;
+  enode: string;
+  ip: string;
+  statusText: string;
+  rpcUrl: string;
+  blocks: number;
+  peers: number;
+  queuedTxns: number;
+  pendingTxns: number;
+};
 
-export default function Nodes ({ config }: IProps ) {
+export default function Nodes({ config }: IProps) {
   const [selectedNode, setSelectedNode] = useState(config.nodes[0].name);
-  const [nodeViewTmp, setNodeViewTmp] = useState<NodeViewTmp>({client:"",  nodeId:"", nodeName: "", enode: "", ip: "", statusText:"", rpcUrl: "", blocks: 0, peers: 0, pendingTxns: 0, queuedTxns:0 });
+  const [nodeViewTmp, setNodeViewTmp] = useState<NodeViewTmp>({
+    client: "",
+    nodeId: "",
+    nodeName: "",
+    enode: "",
+    ip: "",
+    statusText: "",
+    rpcUrl: "",
+    blocks: 0,
+    peers: 0,
+    pendingTxns: 0,
+    queuedTxns: 0,
+  });
   const stats: QuorumStatCard[] = [
     {
       label: "Status",
@@ -65,47 +77,44 @@ export default function Nodes ({ config }: IProps ) {
     },
   ];
 
-
-  const nodeInfoHandler = async (node: string) => {
-    const needle: QuorumNode = getDetailsByNodeName(config, node);
-    const rpcUrl: string = needle.rpcUrl;
-    const res = await updateNodeInfo(rpcUrl);
-    console.log(res);
-    // setSelectedNode(node);
-    setNodeViewTmp({
-      client:needle.client,
-      nodeId:res.nodeId,
-      nodeName: res.nodeName, 
-      enode: res.enode, 
-      ip: res.ip, 
-      statusText: res.statusText, 
-      rpcUrl: rpcUrl, 
-      blocks: res.blocks, 
-      peers: res.peers, 
-      pendingTxns: res.pendingTxns, 
-      queuedTxns: res.queuedTxns });
-   
-  }
+  const nodeInfoHandler = useCallback(
+    async (node: string) => {
+      const needle: QuorumNode = getDetailsByNodeName(config, node);
+      const rpcUrl: string = needle.rpcUrl;
+      const res = await updateNodeInfo(rpcUrl);
+      console.log(res);
+      // setSelectedNode(node);
+      setNodeViewTmp({
+        client: needle.client,
+        nodeId: res.nodeId,
+        nodeName: res.nodeName,
+        enode: res.enode,
+        ip: res.ip,
+        statusText: res.statusText,
+        rpcUrl: rpcUrl,
+        blocks: res.blocks,
+        peers: res.peers,
+        pendingTxns: res.pendingTxns,
+        queuedTxns: res.queuedTxns,
+      });
+    },
+    [config]
+  );
 
   useEffect(() => {
     console.log("component rendered to screen");
+    nodeInfoHandler(selectedNode);
     const interval = setInterval(() => {
-      console.log("yoohoo " + selectedNode)
+      console.log("yoohoo " + selectedNode);
       nodeInfoHandler(selectedNode);
-    }, 10000);
+    }, 1000);
 
-    // return () => clearInterval(interval);
-  }, []);
-
+    return () => clearInterval(interval);
+  }, [nodeInfoHandler, config, selectedNode]);
 
   const handleSelectNode = (e: any) => {
-    console.log("!!!!!!evt")
-    console.log(e);
-    console.log("!!!!!!evt")
     setSelectedNode(e.target.value);
-    console.log(">>>>>>")
-    console.log(selectedNode)
-    console.log(">>>>>>")
+    console.log(selectedNode);
   };
 
   return (
@@ -130,4 +139,3 @@ export default function Nodes ({ config }: IProps ) {
     </>
   );
 }
-

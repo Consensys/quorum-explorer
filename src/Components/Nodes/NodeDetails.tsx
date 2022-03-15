@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { Text, Skeleton, Container, Flex, Box, Divider, } from "@chakra-ui/react";
+import {
+  Text,
+  Skeleton,
+  Container,
+  Flex,
+  Box,
+  Divider,
+} from "@chakra-ui/react";
 import { motion } from "framer-motion";
 const MotionContainer = motion(Container);
 const MotionText = motion(Text);
@@ -16,9 +23,15 @@ interface IProps {
 
 interface IState {}
 
-export default function NodeDetails ({ client, nodeId, nodeName, enode, rpcUrl, ip, statusText } : IProps) {
-  
-
+export default function NodeDetails({
+  client,
+  nodeId,
+  nodeName,
+  enode,
+  rpcUrl,
+  ip,
+  statusText,
+}: IProps) {
   return (
     <>
       <MotionContainer
