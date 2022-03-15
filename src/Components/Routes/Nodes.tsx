@@ -19,25 +19,30 @@ import { updateNodeInfo } from "../API/Nodes";
 interface IProps {
   config: QuorumConfig;
 }
+
+export type NodeViewTmp = {
+  client: string,
+  nodeId: string,
+  nodeName: string,
+  enode: string,
+  ip: string,
+  statusText: string,
+  rpcUrl: string,
+  blocks: number,
+  peers: number,
+  queuedTxns: number,
+  pendingTxns: number,
+}
+
 export default function Nodes ({ config }: IProps ) {
   const [selectedNode, setSelectedNode] = useState(config.nodes[0].name);
-  const [client, setClient] = useState(config.nodes[0].client);
-  const [nodeId, setNodeId] = useState("");
-  const [nodeName, setNodeName] = useState("");
-  const [enode, setEnode] = useState("");
-  const [ip, setIp] = useState("");
-  const [rpcUrl, setRpcUrl] = useState("");
-  const [statusText, setStatusText] = useState("error");
-  const [blocks, setBlocks] = useState(0);
-  const [peers, setPeers] = useState(0);
-  const [queuedTxns, setQueuedTxns] = useState(0);
-  const [pendingTxns, setPendingTxns] = useState(0);
+  const [nodeViewTmp, setNodeViewTmp] = useState<NodeViewTmp>({client:"",  nodeId:"", nodeName: "", enode: "", ip: "", statusText:"", rpcUrl: "", blocks: 0, peers: 0, pendingTxns: 0, queuedTxns:0 });
   const stats: QuorumStatCard[] = [
     {
       label: "Status",
-      value: statusText === "OK" ? "Running" : "Stopped",
+      value: nodeViewTmp.statusText === "OK" ? "Running" : "Stopped",
       icon:
-        statusText === "OK" ? (
+        nodeViewTmp.statusText === "OK" ? (
           <FontAwesomeIcon icon={faPlay} size="2x" color="green" />
         ) : (
           <FontAwesomeIcon icon={faStop} size="2x" color="red" />
@@ -45,17 +50,17 @@ export default function Nodes ({ config }: IProps ) {
     },
     {
       label: "Blocks",
-      value: blocks,
+      value: nodeViewTmp.blocks,
       icon: <FontAwesomeIcon icon={faCubes} size="2x" color="steelBlue" />,
     },
     {
       label: "Peers",
-      value: peers,
+      value: nodeViewTmp.peers,
       icon: <FontAwesomeIcon icon={faUsers} size="2x" color="dimGray" />,
     },
     {
       label: "Queued",
-      value: queuedTxns,
+      value: nodeViewTmp.queuedTxns,
       icon: <FontAwesomeIcon icon={faExchangeAlt} size="2x" color="coral" />,
     },
   ];
@@ -65,17 +70,21 @@ export default function Nodes ({ config }: IProps ) {
     const needle: QuorumNode = getDetailsByNodeName(config, node);
     const rpcUrl: string = needle.rpcUrl;
     const res = await updateNodeInfo(rpcUrl);
-    // console.log(res);
+    console.log(res);
     // setSelectedNode(node);
-    setClient(needle.client);
-    setNodeId(res.nodeId);
-    setNodeName(res.nodeName);
-    setEnode(res.enode);
-    setStatusText(res.statusText);
-    setIp(res.ip);
-    setRpcUrl(rpcUrl);
-    setBlocks(res.blocks);
-    setPeers(res.peers,);
+    setNodeViewTmp({
+      client:needle.client,
+      nodeId:res.nodeId,
+      nodeName: res.nodeName, 
+      enode: res.enode, 
+      ip: res.ip, 
+      statusText: res.statusText, 
+      rpcUrl: rpcUrl, 
+      blocks: res.blocks, 
+      peers: res.peers, 
+      pendingTxns: res.pendingTxns, 
+      queuedTxns: res.queuedTxns });
+   
   }
 
   useEffect(() => {
@@ -83,7 +92,7 @@ export default function Nodes ({ config }: IProps ) {
     const interval = setInterval(() => {
       console.log("yoohoo " + selectedNode)
       nodeInfoHandler(selectedNode);
-    }, 2000);
+    }, 10000);
 
     // return () => clearInterval(interval);
   }, []);
@@ -107,15 +116,15 @@ export default function Nodes ({ config }: IProps ) {
           config={config}
           selectNodeHandler={handleSelectNode}
         />
-        <NodeOverview stats={stats} statusText={statusText} />
+        <NodeOverview stats={stats} statusText={nodeViewTmp.statusText} />
         <NodeDetails
-          client={client}
-          nodeId={nodeId}
-          nodeName={nodeName}
-          enode={enode}
-          rpcUrl={rpcUrl}
-          ip={ip}
-          statusText={statusText}
+          client={nodeViewTmp.client}
+          nodeId={nodeViewTmp.nodeId}
+          nodeName={nodeViewTmp.nodeName}
+          enode={nodeViewTmp.enode}
+          rpcUrl={nodeViewTmp.rpcUrl}
+          ip={nodeViewTmp.ip}
+          statusText={nodeViewTmp.statusText}
         />
       </Container>
     </>
