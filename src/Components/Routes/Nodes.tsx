@@ -4,57 +4,26 @@ import PageHeader from "../Misc/PageHeader";
 import NodeOverview from "../Nodes/NodeOverview";
 import NodeDetails from "../Nodes/NodeDetails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlay,
-  faStop,
-  faCubes,
-  faUsers,
-  faExchangeAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlay, faStop, faCubes, faUsers, faExchangeAlt, } from "@fortawesome/free-solid-svg-icons";
 import { QuorumStatCard } from "../Types/Nodes";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
-import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
+import { QuorumRouteNode, emptyQRNode } from "../Types/Nodes";
+import { getDetailsByNodeName } from "../API/QuorumConfig";
 import { updateNodeInfo } from "../API/Nodes";
 
 interface IProps {
   config: QuorumConfig;
 }
 
-export type NodeViewTmp = {
-  client: string;
-  nodeId: string;
-  nodeName: string;
-  enode: string;
-  ip: string;
-  statusText: string;
-  rpcUrl: string;
-  blocks: number;
-  peers: number;
-  queuedTxns: number;
-  pendingTxns: number;
-};
-
 export default function Nodes({ config }: IProps) {
   const [selectedNode, setSelectedNode] = useState(config.nodes[0].name);
-  const [nodeViewTmp, setNodeViewTmp] = useState<NodeViewTmp>({
-    client: "",
-    nodeId: "",
-    nodeName: "",
-    enode: "",
-    ip: "",
-    statusText: "",
-    rpcUrl: "",
-    blocks: 0,
-    peers: 0,
-    pendingTxns: 0,
-    queuedTxns: 0,
-  });
+  const [qrNode, setQRNode] = useState<QuorumRouteNode>( emptyQRNode );
   const stats: QuorumStatCard[] = [
     {
       label: "Status",
-      value: nodeViewTmp.statusText === "OK" ? "Running" : "Stopped",
+      value: qrNode.statusText === "OK" ? "Running" : "Stopped",
       icon:
-        nodeViewTmp.statusText === "OK" ? (
+      qrNode.statusText === "OK" ? (
           <FontAwesomeIcon icon={faPlay} size="2x" color="green" />
         ) : (
           <FontAwesomeIcon icon={faStop} size="2x" color="red" />
@@ -62,29 +31,29 @@ export default function Nodes({ config }: IProps) {
     },
     {
       label: "Blocks",
-      value: nodeViewTmp.blocks,
+      value: qrNode.blocks,
       icon: <FontAwesomeIcon icon={faCubes} size="2x" color="steelBlue" />,
     },
     {
       label: "Peers",
-      value: nodeViewTmp.peers,
+      value: qrNode.peers,
       icon: <FontAwesomeIcon icon={faUsers} size="2x" color="dimGray" />,
     },
     {
       label: "Queued",
-      value: nodeViewTmp.queuedTxns,
+      value: qrNode.queuedTxns,
       icon: <FontAwesomeIcon icon={faExchangeAlt} size="2x" color="coral" />,
     },
   ];
 
+  // use useCallBack
+  // useEffect is go to re-render and causes a memory leek issue - every time react renders Nodes its re-create the api call, you can prevent this case by using useCallBack,
   const nodeInfoHandler = useCallback(
     async (node: string) => {
       const needle: QuorumNode = getDetailsByNodeName(config, node);
       const rpcUrl: string = needle.rpcUrl;
       const res = await updateNodeInfo(rpcUrl);
-      console.log(res);
-      // setSelectedNode(node);
-      setNodeViewTmp({
+      setQRNode({
         client: needle.client,
         nodeId: res.nodeId,
         nodeName: res.nodeName,
@@ -105,7 +74,6 @@ export default function Nodes({ config }: IProps) {
     console.log("component rendered to screen");
     nodeInfoHandler(selectedNode);
     const interval = setInterval(() => {
-      console.log("yoohoo " + selectedNode);
       nodeInfoHandler(selectedNode);
     }, 1000);
 
@@ -114,7 +82,7 @@ export default function Nodes({ config }: IProps) {
 
   const handleSelectNode = (e: any) => {
     setSelectedNode(e.target.value);
-    console.log(selectedNode);
+    // console.log(selectedNode);
   };
 
   return (
@@ -125,15 +93,15 @@ export default function Nodes({ config }: IProps) {
           config={config}
           selectNodeHandler={handleSelectNode}
         />
-        <NodeOverview stats={stats} statusText={nodeViewTmp.statusText} />
+        <NodeOverview stats={stats} statusText={qrNode.statusText} />
         <NodeDetails
-          client={nodeViewTmp.client}
-          nodeId={nodeViewTmp.nodeId}
-          nodeName={nodeViewTmp.nodeName}
-          enode={nodeViewTmp.enode}
-          rpcUrl={nodeViewTmp.rpcUrl}
-          ip={nodeViewTmp.ip}
-          statusText={nodeViewTmp.statusText}
+          client={qrNode.client}
+          nodeId={qrNode.nodeId}
+          nodeName={qrNode.nodeName}
+          enode={qrNode.enode}
+          rpcUrl={qrNode.rpcUrl}
+          ip={qrNode.ip}
+          statusText={qrNode.statusText}
         />
       </Container>
     </>
