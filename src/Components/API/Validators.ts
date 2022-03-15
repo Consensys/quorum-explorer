@@ -29,11 +29,6 @@ export async function getCurrentValidators(url: string, consensus: string) {
 }
 
 export async function getPendingVotes(url: string, consensus: string) {
-  if (!(consensus in ["qbft", "clique", "raft", "ibft"])) {
-    console.log(
-      "Provided consensus algorithm is out of range. Choose between 'qbft', 'clique', 'raft', or 'ibft'."
-    );
-  }
   const methodDict = {
     qbft: "qbft_getPendingVotes",
     ibft: "ibft_getPendingVotes",
@@ -43,15 +38,19 @@ export async function getPendingVotes(url: string, consensus: string) {
 }
 
 export async function proposeValidator(url: string, consensus: string) {
-  if (!(consensus in ["qbft", "clique", "raft", "ibft"])) {
-    console.log(
-      "Provided consensus algorithm is out of range. Choose between 'qbft', 'clique', 'raft', or 'ibft'."
-    );
-  }
   const methodDict = {
     qbft: "qbft_proposeValidatorVote",
     ibft: "ibft_proposeValidatorVote",
     raft: "raft_addPeer",
     clique: "clique_proposals",
+  };
+}
+
+export async function discardProposal(url: string, consensus: string) {
+  const methodDict = {
+    qbft: "qbft_discardValidatorVote", // istanbul_discard
+    ibft: "ibft_discardValidatorVote", // istanbul_discard
+    raft: "raft_removePeer",
+    clique: "clique_discard",
   };
 }
