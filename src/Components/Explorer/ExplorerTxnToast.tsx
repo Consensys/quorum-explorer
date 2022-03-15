@@ -1,5 +1,6 @@
 
 import { Box, Text, HStack, Spacer, Divider} from "@chakra-ui/react";
+import { Table, Tbody, Tr, Td } from '@chakra-ui/react'
 import { QuorumTxn } from "../Types/Explorer";
 
 interface IProps {
@@ -12,24 +13,30 @@ export default function ExplorerTxnToast({txn, closeToast}: IProps) {
   return(
     <Box color='white' p={3} bg='#2c56dd'>
       <HStack>
-        <Text fontSize="sm" as="b" textAlign="left">Transaction:&nbsp;&nbsp; {txn.hash}</Text>
+        <Text fontSize="sm" as="b" textAlign="left">Transaction:&nbsp;&nbsp; {txn.hash.substring(0,48)+'...'}</Text>
         <Spacer />
         <Box as='button' onClick={closeToast} borderRadius='md' bg='tomato' color='white' px={3} h={8}>x</Box> 
       </HStack>
       <Divider my={4}/>
-      <Text fontSize="sm" textAlign="left">Block Hash:&nbsp; {txn.blockHash}</Text> 
-      <Text fontSize="sm" textAlign="left">Block Number:&nbsp; {txn.blockNumber}</Text> 
-      <Text fontSize="sm" textAlign="left">From:&nbsp; {txn.from}</Text>
-      <Text fontSize="sm" textAlign="left">Gas:&nbsp; {txn.gas}</Text>
-      <Text fontSize="sm" textAlign="left">Gas Price:&nbsp; {txn.gasPrice}</Text>
-      <Text fontSize="sm" textAlign="left">Input:&nbsp; {txn.input}</Text>
-      <Text fontSize="sm" textAlign="left">Nonce:&nbsp; {txn.nonce}</Text>
-      <Text fontSize="sm" textAlign="left">To:&nbsp; {txn.to}</Text>
-      <Text fontSize="sm" textAlign="left">Txn Index:&nbsp; {txn.transactionIndex}</Text>
-      <Text fontSize="sm" textAlign="left">Value:&nbsp; {txn.value}</Text>
-      <Text fontSize="sm" textAlign="left">R:&nbsp; {txn.r}</Text>
-      <Text fontSize="sm" textAlign="left">S:&nbsp; {txn.s}</Text>
-      <Text fontSize="sm" textAlign="left">V:&nbsp; {txn.v}</Text>
+      <Table size='xs'>
+        <Tbody >
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>TxnHash&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.hash} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>BlockHash&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.blockHash} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>BlockNumber&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.blockNumber} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>From&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.from} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>Gas&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.gas} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>GasPrice&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.gasPrice} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>Input&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.input.substring(0,64)} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>To&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.to} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>Nonce&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.nonce} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>TxnIndex&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.transactionIndex} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>Value&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.value} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>R&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.r} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>S&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.s} </Td></Tr>
+          <Tr fontSize='xs'><Td borderBottomColor={'#2c56dd'}>V&nbsp;</Td><Td as="i" borderBottomColor={'#2c56dd'}>{txn.v} </Td></Tr>
+
+        </Tbody>
+      </Table>
     </Box>
   );
   

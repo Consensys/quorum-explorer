@@ -34,13 +34,13 @@ export default function ExplorerBlocks({ blocks, url }: IProps) {
 
   const onChange = (e: any) => {
     setBlockSearch(e.target.value);
-    console.log(blockSearch);
+    // console.log(blockSearch);
   };
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
     const block = await getBlockByNumber(url, blockSearch);
-    console.log(block);
+    // console.log(block);
     toastIdRef.current = toast({
       position: "top-right",
       isClosable: true,

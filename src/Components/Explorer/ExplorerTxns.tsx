@@ -39,7 +39,7 @@ export default function ExplorerTxns({ txns, url }: IProps) {
 
   const onChange = (e: any) => {
     setTxnSearch(e.target.value);
-    console.log(txnSearch);
+    // console.log(txnSearch);
   };
 
   const onSubmit = async (e: any) => {
@@ -54,11 +54,6 @@ export default function ExplorerTxns({ txns, url }: IProps) {
     });
   };
 
-  const txnSearchSubmitHandler = (e: any) => {
-    e.preventDefault();
-    // const txn = await getBlockByNumber(this.props.url, this.state.txnSearch);
-  };
-
   return (
     <>
       <BoxMotion
@@ -67,6 +62,7 @@ export default function ExplorerTxns({ txns, url }: IProps) {
         transition={{ duration: 1 }}
         as="section"
         py={{ base: "4", md: "6" }}
+        h={800}
       >
         <Flex
           justifyContent="space-between"
