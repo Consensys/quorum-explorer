@@ -17,6 +17,22 @@ export function abbreviateValidator(s: string) {
   return s.slice(0,10)+'...'+s.slice(len-6);
 }
 
+//get the latest n elements in an array
+export function updateBlockArray(arr: QuorumBlock[], elem: QuorumBlock, len: number){
+  if (arr.length > 0 && arr[0]["number"] === elem["number"]) {
+  } else {
+    arr.unshift(elem);
+  }
+  return arr.slice(0, len);
+};
+
+//get the latest n elements in an array
+export function updateTxnArray(arr: QuorumTxn[], elems: QuorumTxn[], len: number){
+  elems.map((_) => arr.unshift(_));
+  var set = new Set(arr);
+  arr = Array.from(set);
+  return arr.slice(0, len);
+};
 
 export async function getTxnByHash(url:string, txnHash:string) { 
   let quorumTxn: QuorumTxn = { blockHash: "error", blockNumber: -1 , from: "", gas: -1, gasPrice: -1, hash: "", input: "",  nonce: -1, to: "", transactionIndex: -1, value: "" ,"r": "", s: "", v: ""}

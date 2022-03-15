@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { useState, useEffect } from "react";
 import { Container } from "@chakra-ui/react";
 import PageHeader from "../Misc/PageHeader";
 import NodeOverview from "../Nodes/NodeOverview";
@@ -19,145 +19,106 @@ import { updateNodeInfo } from "../API/Nodes";
 interface IProps {
   config: QuorumConfig;
 }
+export default function Nodes ({ config }: IProps ) {
+  const [selectedNode, setSelectedNode] = useState(config.nodes[0].name);
+  const [client, setClient] = useState(config.nodes[0].client);
+  const [nodeId, setNodeId] = useState("");
+  const [nodeName, setNodeName] = useState("");
+  const [enode, setEnode] = useState("");
+  const [ip, setIp] = useState("");
+  const [rpcUrl, setRpcUrl] = useState("");
+  const [statusText, setStatusText] = useState("error");
+  const [blocks, setBlocks] = useState(0);
+  const [peers, setPeers] = useState(0);
+  const [queuedTxns, setQueuedTxns] = useState(0);
+  const [pendingTxns, setPendingTxns] = useState(0);
+  const stats: QuorumStatCard[] = [
+    {
+      label: "Status",
+      value: statusText === "OK" ? "Running" : "Stopped",
+      icon:
+        statusText === "OK" ? (
+          <FontAwesomeIcon icon={faPlay} size="2x" color="green" />
+        ) : (
+          <FontAwesomeIcon icon={faStop} size="2x" color="red" />
+        ),
+    },
+    {
+      label: "Blocks",
+      value: blocks,
+      icon: <FontAwesomeIcon icon={faCubes} size="2x" color="steelBlue" />,
+    },
+    {
+      label: "Peers",
+      value: peers,
+      icon: <FontAwesomeIcon icon={faUsers} size="2x" color="dimGray" />,
+    },
+    {
+      label: "Queued",
+      value: queuedTxns,
+      icon: <FontAwesomeIcon icon={faExchangeAlt} size="2x" color="coral" />,
+    },
+  ];
 
-interface IState {
-  delay: number;
-  client: string;
-  selectedNode: string;
-  nodeId: string;
-  nodeName: string;
-  enode: string;
-  ip: string;
-  rpcUrl: string;
-  statusText: string;
-  blocks: number;
-  peers: number;
-  queuedTxns: number;
-  pendingTxns: number;
-}
 
-export default class Nodes extends Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      delay: 1000,
-      client: this.props.config.nodes[0].client,
-      selectedNode: this.props.config.nodes[0].name,
-      nodeId: "",
-      nodeName: "",
-      enode: "",
-      ip: "127.0.0.1",
-      rpcUrl: "http://127.0.0.1:8545",
-      statusText: "error",
-      blocks: 0,
-      peers: 0,
-      queuedTxns: 0,
-      pendingTxns: 0,
-    };
-  }
-
-  intervalId: number = 0;
-  nodeKeys: string[] = getNodeKeys(this.props.config);
-
-  async nodeInfoHandler(node: string) {
-    // console.log("nodeInfoHandler");
-    const needle: QuorumNode = getDetailsByNodeName(this.props.config, node);
+  const nodeInfoHandler = async (node: string) => {
+    const needle: QuorumNode = getDetailsByNodeName(config, node);
     const rpcUrl: string = needle.rpcUrl;
     const res = await updateNodeInfo(rpcUrl);
-    this.setState({
-      client: needle.client,
-      selectedNode: node,
-      statusText: res.statusText,
-      nodeId: res.nodeId,
-      nodeName: res.nodeName,
-      enode: res.enode,
-      ip: res.ip,
-      rpcUrl: rpcUrl,
-      blocks: res.blocks,
-      peers: res.peers,
-    });
-    // console.log('State: '+ JSON.stringify(this.state, null, 2));
+    // console.log(res);
+    // setSelectedNode(node);
+    setClient(needle.client);
+    setNodeId(res.nodeId);
+    setNodeName(res.nodeName);
+    setEnode(res.enode);
+    setStatusText(res.statusText);
+    setIp(res.ip);
+    setRpcUrl(rpcUrl);
+    setBlocks(res.blocks);
+    setPeers(res.peers,);
   }
 
-  tick = () => {
-    this.nodeInfoHandler(this.state.selectedNode);
-  };
-
-  // content visible on screen
-  async componentDidMount() {
+  useEffect(() => {
     console.log("component rendered to screen");
-    this.intervalId = window.setInterval(this.tick, this.state.delay);
-    this.nodeInfoHandler(this.state.selectedNode);
-  }
+    const interval = setInterval(() => {
+      console.log("yoohoo " + selectedNode)
+      nodeInfoHandler(selectedNode);
+    }, 2000);
 
-  // sit and wait to updates from setState
-  componentDidUpdate() {
-    console.log("component just updated and re rendered");
-  }
+    // return () => clearInterval(interval);
+  }, []);
 
-  // sit and wait till component is no longer shown
-  componentWillUnmount() {
-    console.log("component gone off screen");
-    clearInterval(this.intervalId);
-  }
 
-  handleSelectNode = (e: any) => {
+  const handleSelectNode = (e: any) => {
+    console.log("!!!!!!evt")
     console.log(e);
-    this.setState({
-      selectedNode: e.target.value,
-    });
-    // this.nodeInfoHandler(e);
+    console.log("!!!!!!evt")
+    setSelectedNode(e.target.value);
+    console.log(">>>>>>")
+    console.log(selectedNode)
+    console.log(">>>>>>")
   };
 
-  render() {
-    const stats: QuorumStatCard[] = [
-      {
-        label: "Status",
-        value: this.state.statusText === "OK" ? "Running" : "Stopped",
-        icon:
-          this.state.statusText === "OK" ? (
-            <FontAwesomeIcon icon={faPlay} size="2x" color="green" />
-          ) : (
-            <FontAwesomeIcon icon={faStop} size="2x" color="red" />
-          ),
-      },
-      {
-        label: "Blocks",
-        value: this.state.blocks,
-        icon: <FontAwesomeIcon icon={faCubes} size="2x" color="steelBlue" />,
-      },
-      {
-        label: "Peers",
-        value: this.state.peers,
-        icon: <FontAwesomeIcon icon={faUsers} size="2x" color="dimGray" />,
-      },
-      {
-        label: "Queued",
-        value: this.state.queuedTxns,
-        icon: <FontAwesomeIcon icon={faExchangeAlt} size="2x" color="coral" />,
-      },
-    ];
-
-    return (
-      <>
-        <Container maxW={{ base: "container.sm", md: "container.xl" }}>
-          <PageHeader
-            title="Nodes"
-            config={this.props.config}
-            selectNodeHandler={this.handleSelectNode}
-          />
-          <NodeOverview stats={stats} statusText={this.state.statusText} />
-          <NodeDetails
-            client={this.state.client}
-            nodeId={this.state.nodeId}
-            nodeName={this.state.nodeName}
-            enode={this.state.enode}
-            rpcUrl={this.state.rpcUrl}
-            ip={this.state.ip}
-            statusText={this.state.statusText}
-          />
-        </Container>
-      </>
-    );
-  }
+  return (
+    <>
+      <Container maxW={{ base: "container.sm", md: "container.xl" }}>
+        <PageHeader
+          title="Nodes"
+          config={config}
+          selectNodeHandler={handleSelectNode}
+        />
+        <NodeOverview stats={stats} statusText={statusText} />
+        <NodeDetails
+          client={client}
+          nodeId={nodeId}
+          nodeName={nodeName}
+          enode={enode}
+          rpcUrl={rpcUrl}
+          ip={ip}
+          statusText={statusText}
+        />
+      </Container>
+    </>
+  );
 }
+
