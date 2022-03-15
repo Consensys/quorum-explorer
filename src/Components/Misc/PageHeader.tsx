@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Heading, Container, HStack, Box, Flex, Select, } from "@chakra-ui/react";
+import {
+  Heading,
+  Container,
+  HStack,
+  Box,
+  Flex,
+  Select,
+  Spinner,
+} from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
@@ -12,6 +20,7 @@ interface IProps {
   title: string;
   config: QuorumConfig;
   selectNodeHandler: any;
+  isLoading?: boolean;
 }
 
 export default function PageHeader({ title, config, selectNodeHandler }: IProps) {
@@ -32,6 +41,7 @@ export default function PageHeader({ title, config, selectNodeHandler }: IProps)
           alignItems="center"
           mt={5}
         >
+<<<<<<< HEAD
           <Box>
             <Heading as="h1" size="lg" textAlign="center">
               {title}
@@ -58,5 +68,40 @@ export default function PageHeader({ title, config, selectNodeHandler }: IProps)
     </>
   );
   
+=======
+          <Flex
+            flexDirection="row"
+            justifyContent="space-between"
+            alignItems="center"
+            mt={5}
+          >
+            <HStack>
+              <Heading as="h1" size="lg" textAlign="center">
+                {this.props.title}
+              </Heading>
+              {this.props.isLoading && <Spinner color="red.500" />}
+            </HStack>
+            <Box alignItems="center">
+              <HStack>
+                <FontAwesomeIcon icon={faSlidersH} fontSize="lg" />
+                <Select
+                  size="lg"
+                  variant="filled"
+                  onChange={this.props.selectNodeHandler}
+                >
+                  {this.nodeKeys.map((node) => (
+                    <option key={node} value={node}>
+                      {node}
+                    </option>
+                  ))}
+                </Select>
+              </HStack>
+            </Box>
+          </Flex>
+        </MotionContainer>
+      </>
+    );
+  }
+>>>>>>> 4261b90 (general layout, need to implement api funcs)
 }
 

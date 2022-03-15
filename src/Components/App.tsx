@@ -1,17 +1,15 @@
-import React, { Component } from 'react';
-import { Container } from '@chakra-ui/react'
-import Router from './Router';
-import { QuorumConfig } from './Types/QuorumConfig';
-const config = require('../Config/config.json');
+import React, { Component } from "react";
+import { Container } from "@chakra-ui/react";
+import Router from "./Router";
+import { QuorumConfig } from "./Types/QuorumConfig";
+const config = require("../Config/config.json");
 
-export default function App () {
-
+export default function App() {
   const quorumConfig: QuorumConfig = config;
-  
+
   return (
     <div className="App">
-      <Router config={quorumConfig}/>
+      <Router config={quorumConfig} />
     </div>
   );
-  
 }

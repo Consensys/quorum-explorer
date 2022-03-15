@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { Container, Divider } from "@chakra-ui/react";
 import ExplorerBlocks from "../Explorer/ExplorerBlocks";
@@ -7,19 +6,21 @@ import { QuorumBlock, QuorumTxn } from "../Types/Explorer";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { QRExplorer, emptyQRExplorer } from "../Types/Routes";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
-import { getBlockByNumber, updateBlockArray, updateTxnArray } from "../API/Explorer";
+import {
+  getBlockByNumber,
+  updateBlockArray,
+  updateTxnArray,
+} from "../API/Explorer";
 import ExplorerTxns from "../Explorer/ExplorerTxns";
 
 interface IProps {
   config: QuorumConfig;
 }
 
-export default function Explorer ({ config }: IProps ) {
-
-  const [qrExplorer, setQRExplorer] = useState<QRExplorer>( emptyQRExplorer );
+export default function Explorer({ config }: IProps) {
+  const [qrExplorer, setQRExplorer] = useState<QRExplorer>(emptyQRExplorer);
   const [selectedNode, setSelectedNode] = useState(config.nodes[0].name);
   const nodeKeys: string[] = getNodeKeys(config);
-
 
   // use useCallBack
   // useEffect is go to re-render and causes a memory leek issue - every time react renders Nodes its re-create the api call, you can prevent this case by using useCallBack,
@@ -36,11 +37,15 @@ export default function Explorer ({ config }: IProps ) {
           4
         );
       }
-      var tmpBlocks: QuorumBlock[] = updateBlockArray(qrExplorer.blocks, quorumBlock, 4);
+      var tmpBlocks: QuorumBlock[] = updateBlockArray(
+        qrExplorer.blocks,
+        quorumBlock,
+        4
+      );
       // setSelectedNode(name);
       setQRExplorer({
         blocks: tmpBlocks,
-        transactions: tmpTxns
+        transactions: tmpTxns,
       });
     },
     [config]
@@ -55,7 +60,6 @@ export default function Explorer ({ config }: IProps ) {
 
     return () => clearInterval(interval);
   }, [nodeInfoHandler, config, selectedNode]);
-
 
   const handleSelectNode = (e: any) => {
     setSelectedNode(e.target.value);
@@ -72,23 +76,14 @@ export default function Explorer ({ config }: IProps ) {
         />
         <ExplorerBlocks
           blocks={qrExplorer.blocks}
-          url={
-            getDetailsByNodeName(config, selectedNode)
-              .rpcUrl
-          }
+          url={getDetailsByNodeName(config, selectedNode).rpcUrl}
         />
         <Divider />
         <ExplorerTxns
           txns={qrExplorer.transactions}
-          url={
-            getDetailsByNodeName(config, selectedNode)
-              .rpcUrl
-          }
+          url={getDetailsByNodeName(config, selectedNode).rpcUrl}
         />
       </Container>
     </>
   );
 }
-
-
-

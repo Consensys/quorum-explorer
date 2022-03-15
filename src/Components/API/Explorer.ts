@@ -5,8 +5,8 @@ import { faGasPump } from '@fortawesome/free-solid-svg-icons';
 const axios = require('axios');
 
 export function getSecsAgo(h: string) {
-  const ago : number = parseInt(h, 10);
-  const now : any = new Date();
+  const ago: number = parseInt(h, 10);
+  const now: any = new Date();
   const d = now - ago;
   const dts = new Date(d);
   return dts.getSeconds();
@@ -14,7 +14,7 @@ export function getSecsAgo(h: string) {
 
 export function abbreviateValidator(s: string) {
   const len = s.length
-  return s.slice(0,10)+'...'+s.slice(len-6);
+  return s.slice(0, 10) + '...' + s.slice(len - 6);
 }
 
 //get the latest n elements in an array
@@ -34,10 +34,10 @@ export function updateTxnArray(arr: QuorumTxn[], elems: QuorumTxn[], len: number
   return arr.slice(0, len);
 };
 
-export async function getTxnByHash(url:string, txnHash:string) { 
-  let quorumTxn: QuorumTxn = { blockHash: "error", blockNumber: -1 , from: "", gas: -1, gasPrice: -1, hash: "", input: "",  nonce: -1, to: "", transactionIndex: -1, value: "" ,"r": "", s: "", v: ""}
+export async function getTxnByHash(url: string, txnHash: string) {
+  let quorumTxn: QuorumTxn = { blockHash: "error", blockNumber: -1, from: "", gas: -1, gasPrice: -1, hash: "", input: "", nonce: -1, to: "", transactionIndex: -1, value: "", "r": "", s: "", v: "" }
   try {
-    const ethTxnByHash = await ethApiCall(url, 'eth_getTransactionByHash', [txnHash]); 
+    const ethTxnByHash = await ethApiCall(url, 'eth_getTransactionByHash', [txnHash]);
     quorumTxn['blockHash'] = ethTxnByHash.data.result.blockHash;
     quorumTxn['blockNumber'] = ethTxnByHash.data.result.blockNumber;
     quorumTxn['from'] = ethTxnByHash.data.result.from;
@@ -59,10 +59,10 @@ export async function getTxnByHash(url:string, txnHash:string) {
   }
 }
 
-export async function getBlockByNumber(url:string, blockNumber:string|number) {
-  let quorumBlock: QuorumBlock = { statusText: "error", number: -1 , hash: "", transactionsRoot: "", stateRoot: "", receiptsRoot: "", miner: "",  extraData: "", size: "", gasUsed: "", gasLimit: "" ,"timestamp": "", uncles: [], transactions: [] }
+export async function getBlockByNumber(url: string, blockNumber: string | number) {
+  let quorumBlock: QuorumBlock = { statusText: "error", number: -1, hash: "", transactionsRoot: "", stateRoot: "", receiptsRoot: "", miner: "", extraData: "", size: "", gasUsed: "", gasLimit: "", "timestamp": "", uncles: [], transactions: [] }
   try {
-    const ethBlockByNumber = await ethApiCall(url, 'eth_getBlockByNumber', [blockNumber, true]); 
+    const ethBlockByNumber = await ethApiCall(url, 'eth_getBlockByNumber', [blockNumber, true]);
     quorumBlock['statusText'] = ethBlockByNumber.statusText;
     quorumBlock['number'] = ethBlockByNumber.data.result.number;
     quorumBlock['hash'] = ethBlockByNumber.data.result.hash;

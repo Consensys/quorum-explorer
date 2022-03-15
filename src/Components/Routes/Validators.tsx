@@ -1,12 +1,21 @@
 import React, { Component } from "react";
-import { Heading, Divider, Container } from "@chakra-ui/react";
+import {
+  Heading,
+  Divider,
+  Container,
+  Box,
+  HStack,
+  Flex,
+  SimpleGrid,
+} from "@chakra-ui/react";
 import PageHeader from "../Misc/PageHeader";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { ValidatorsActive } from "../Validators/ValidatorsActive";
 import { ValidatorsPending } from "../Validators/ValidatorsPending";
 import { ValidatorsPropose } from "../Validators/ValidatorsPropose";
+import ValidatorsAbout from "../Validators/ValidatorAbout";
 import { getCurrentValidators } from "../API/Validators";
-import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
+import { getDetailsByNodeName } from "../API/QuorumConfig";
 import { updateNodeInfo } from "../API/Nodes";
 
 // Check consensus mechanism -- will then depend on what APIs we use
@@ -27,7 +36,7 @@ interface IState {
   rpcUrl: string;
   statusText: string;
   blocks: number;
-  minersList: Set<string>[];
+  minersList: string[];
 }
 
 export default class Validators extends Component<IProps, IState> {
@@ -93,7 +102,6 @@ export default class Validators extends Component<IProps, IState> {
   }
 
   render() {
-    console.log(this.state.selectedNode);
     return (
       <>
         <Container maxW={{ base: "container.sm", md: "container.xl" }}>
@@ -102,12 +110,22 @@ export default class Validators extends Component<IProps, IState> {
             config={this.props.config}
             selectNodeHandler={this.handleSelectNode}
           />
-          <ValidatorsActive
-            config={this.props.config}
-            minersList={this.state.minersList}
-          />
-          <ValidatorsPending />
-          <ValidatorsPropose />
+          <Divider my={8} />
+          <SimpleGrid columns={2} minChildWidth="600px">
+            <ValidatorsAbout />
+            <ValidatorsActive
+              config={this.props.config}
+              minersList={this.state.minersList}
+            />
+            <ValidatorsPending
+              config={this.props.config}
+              minersList={this.state.minersList}
+            />
+            <ValidatorsPropose
+              config={this.props.config}
+              minersList={this.state.minersList}
+            />
+          </SimpleGrid>
         </Container>
       </>
     );
