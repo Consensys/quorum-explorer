@@ -8,45 +8,37 @@ interface IProps {
   txn: QuorumTxn
 }
 
-interface IState {}
+export default function ExplorerTxnDetails({ txn }: IProps) {
+  
+  return (
+    <>
+    <Popover>
+      <PopoverTrigger>
+        <Button p={0} m={0}><FontAwesomeIcon icon={faExpand} /></Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <PopoverArrow />
+        <PopoverCloseButton />
+        <PopoverHeader>Txn: {txn.hash}</PopoverHeader>
+        <PopoverBody>
+          <Text fontSize="xs" isTruncated textAlign="left">Block Number:&nbsp; {txn.blockNumber}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">Block Hash:&nbsp; {txn.blockHash}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">From:&nbsp; {txn.from}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">To:&nbsp; {txn.to}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">Gas:&nbsp; {txn.gas}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">Gas Price:&nbsp; {txn.gasPrice}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">Value:&nbsp; {txn.value}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">Input:&nbsp; {txn.input}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">Nonce:&nbsp; {txn.nonce}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">Txn Index:&nbsp; {txn.transactionIndex}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">R:&nbsp; {txn.r}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">S:&nbsp; {txn.s}</Text>
+          <Text fontSize="xs" isTruncated textAlign="left">V:&nbsp; {txn.v}</Text>
 
-class ExplorerTxnDetails extends Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-  }
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
+    </>
+  );
 
-  render() {
-    return (
-      <>
-      <Popover>
-        <PopoverTrigger>
-          <Button p={0} m={0}><FontAwesomeIcon icon={faExpand} /></Button>
-        </PopoverTrigger>
-        <PopoverContent>
-          <PopoverArrow />
-          <PopoverCloseButton />
-          <PopoverHeader>Txn: {this.props.txn.hash}</PopoverHeader>
-          <PopoverBody>
-            <Text fontSize="xs" isTruncated textAlign="left">Block Number:&nbsp; {this.props.txn.blockNumber}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">Block Hash:&nbsp; {this.props.txn.blockHash}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">From:&nbsp; {this.props.txn.from}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">To:&nbsp; {this.props.txn.to}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">Gas:&nbsp; {this.props.txn.gas}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">Gas Price:&nbsp; {this.props.txn.gasPrice}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">Value:&nbsp; {this.props.txn.value}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">Input:&nbsp; {this.props.txn.input}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">Nonce:&nbsp; {this.props.txn.nonce}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">Txn Index:&nbsp; {this.props.txn.transactionIndex}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">R:&nbsp; {this.props.txn.r}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">S:&nbsp; {this.props.txn.s}</Text>
-            <Text fontSize="xs" isTruncated textAlign="left">V:&nbsp; {this.props.txn.v}</Text>
-
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
-      </>
-    );
-  }
 }
-
-export default ExplorerTxnDetails;

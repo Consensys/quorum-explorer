@@ -1,4 +1,4 @@
-import React, { Component, ReactElement } from "react";
+import { ReactElement } from "react";
 import { Box, Heading, Skeleton, HStack, VStack, Flex } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 const MotionHeading = motion(Heading);
@@ -11,67 +11,60 @@ interface IProps {
   statusText: string;
 }
 
-interface IState {}
+export default function NodeCard ({ title, text, icon, statusText }: IProps) {
 
-class NodeCard extends Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <>
-        <Flex
-          alignItems="center"
-          justifyContent="center"
-          flexDirection={{ base: "column", md: "row" }}
-          px={{ base: "5", md: "5" }}
-          py={{ base: "5", md: "5" }}
-          borderRadius="lg"
-          borderWidth={2}
-        >
-          <HStack spacing={10}>
-            <MotionBox
-              key={this.props.statusText}
+  return (
+    <>
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        flexDirection={{ base: "column", md: "row" }}
+        px={{ base: "5", md: "5" }}
+        py={{ base: "5", md: "5" }}
+        borderRadius="lg"
+        borderWidth={2}
+      >
+        <HStack spacing={10}>
+          <MotionBox
+            key={statusText}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            end={{ opacity: 0 }}
+          >
+            {icon}
+          </MotionBox>
+          <VStack mb={3}>
+            <MotionHeading
+              key={title}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
               end={{ opacity: 0 }}
+              fontSize={{ base: "md", md: "2xl" }}
             >
-              {this.props.icon}
-            </MotionBox>
-            <VStack mb={3}>
+              {title}
+            </MotionHeading>
+            {statusText === "OK" ? (
               <MotionHeading
-                key={this.props.title}
+                key={text}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
                 end={{ opacity: 0 }}
-                fontSize={{ base: "md", md: "2xl" }}
+                fontSize="lg"
+                color="muted"
               >
-                {this.props.title}
+                {text}
               </MotionHeading>
-              {this.props.statusText === "OK" ? (
-                <MotionHeading
-                  key={this.props.text}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 1 }}
-                  end={{ opacity: 0 }}
-                  fontSize="lg"
-                  color="muted"
-                >
-                  {this.props.text}
-                </MotionHeading>
-              ) : (
-                <Skeleton h="30px" w="40px" />
-              )}
-            </VStack>
-          </HStack>
-        </Flex>
-      </>
-    );
-  }
+            ) : (
+              <Skeleton h="30px" w="40px" />
+            )}
+          </VStack>
+        </HStack>
+      </Flex>
+    </>
+  );
 }
 
-export default NodeCard;
+

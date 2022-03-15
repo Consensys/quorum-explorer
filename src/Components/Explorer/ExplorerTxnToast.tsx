@@ -1,6 +1,5 @@
 
-import { Box, Text, HStack, Spacer, Divider} from "@chakra-ui/react";
-import { Table, Tbody, Tr, Td } from '@chakra-ui/react'
+import { Box, Text, HStack, Spacer, Divider, Table, Tbody, Tr, Td} from "@chakra-ui/react";
 import { QuorumTxn } from "../Types/Explorer";
 
 interface IProps {

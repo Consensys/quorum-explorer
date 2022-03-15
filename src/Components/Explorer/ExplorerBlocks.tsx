@@ -1,13 +1,5 @@
-import React, { Component, useState } from "react";
-import {
-  Box,
-  Container,
-  SimpleGrid,
-  Text,
-  Input,
-  Flex,
-  FormControl,
-} from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Box, Container, SimpleGrid, Text, Input, Flex, FormControl, } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import ExplorerBlockCard from "./ExplorerBlockCard";
 import ExplorerBlockToast from "./ExplorerBlockToast";
@@ -22,6 +14,7 @@ interface IProps {
 }
 
 export default function ExplorerBlocks({ blocks, url }: IProps) {
+
   const [blockSearch, setBlockSearch] = useState("");
   const toast = useToast();
   const toastIdRef: any = React.useRef();
@@ -73,7 +66,7 @@ export default function ExplorerBlocks({ blocks, url }: IProps) {
           <Container maxW="20%" m={0} p={0}>
             <FormControl as="form" onSubmit={onSubmit}>
               <Input
-                placeholder={"Search by block number or hash"}
+                placeholder={"Search by block number"}
                 onInput={onChange}
                 onSubmit={onSubmit}
               />

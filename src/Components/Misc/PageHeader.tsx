@@ -13,55 +13,49 @@ interface IProps {
   selectNodeHandler: any;
 }
 
-interface IState {}
+export default function PageHeader({ title, config, selectNodeHandler }: IProps) {
 
-class PageHeader extends Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-  }
-  nodeKeys: string[] = getNodeKeys(this.props.config);
+  const nodeKeys: string[] = getNodeKeys(config);
 
-  render() {
-    return (
-      <>
-        <MotionContainer
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          maxW={{ base: "container.sm", md: "container.xl" }}
+  return (
+    <>
+      <MotionContainer
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        maxW={{ base: "container.sm", md: "container.xl" }}
+      >
+        <Flex
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+          mt={5}
         >
-          <Flex
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-            mt={5}
-          >
-            <Box>
-              <Heading as="h1" size="lg" textAlign="center">
-                {this.props.title}
-              </Heading>
-            </Box>
-            <Box alignItems="center">
-              <HStack>
-                <FontAwesomeIcon icon={faSlidersH} fontSize="lg" />
-                <Select
-                  size="lg"
-                  variant="filled"
-                  onChange={this.props.selectNodeHandler}
-                >
-                  {this.nodeKeys.map((node) => (
-                    <option key={node} value={node}>
-                      {node}
-                    </option>
-                  ))}
-                </Select>
-              </HStack>
-            </Box>
-          </Flex>
-        </MotionContainer>
-      </>
-    );
-  }
+          <Box>
+            <Heading as="h1" size="lg" textAlign="center">
+              {title}
+            </Heading>
+          </Box>
+          <Box alignItems="center">
+            <HStack>
+              <FontAwesomeIcon icon={faSlidersH} fontSize="lg" />
+              <Select
+                size="lg"
+                variant="filled"
+                onChange={selectNodeHandler}
+              >
+                {nodeKeys.map((node) => (
+                  <option key={node} value={node}>
+                    {node}
+                  </option>
+                ))}
+              </Select>
+            </HStack>
+          </Box>
+        </Flex>
+      </MotionContainer>
+    </>
+  );
+  
 }
 
-export default PageHeader;

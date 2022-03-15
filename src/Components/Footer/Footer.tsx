@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 const MotionBox = motion(Box);
 const MotionContainer = motion(Container);
 
-function Footer() {
+export default function Footer() {
   return (
     <>
       <MotionBox
@@ -119,4 +119,4 @@ function Footer() {
     </>
   );
 }
-export default Footer;
+

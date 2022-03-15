@@ -2,30 +2,16 @@ import React, { Component } from 'react';
 import { Container } from '@chakra-ui/react'
 import Router from './Router';
 import { QuorumConfig } from './Types/QuorumConfig';
-
 const config = require('../Config/config.json');
 
+export default function App () {
 
-interface IProps {
-}
-
-interface IState {
-}
-
-class App extends Component<IProps, IState> {
-  constructor(props: IProps){
-    super(props);
-  }
-  quorumConfig: QuorumConfig = config;
+  const quorumConfig: QuorumConfig = config;
   
-  render(){
-    return (
-      <div className="App">
-          <Router config={this.quorumConfig}/>
-      </div>
-    );
-  }
-
+  return (
+    <div className="App">
+      <Router config={quorumConfig}/>
+    </div>
+  );
+  
 }
-
-export default App;

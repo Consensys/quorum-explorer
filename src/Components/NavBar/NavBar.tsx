@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 const MotionFlex = motion(Flex);
 
 export default function NavBar() {
+  
   return (
     <chakra.header id="header">
       <MotionFlex
