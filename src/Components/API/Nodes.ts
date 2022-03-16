@@ -1,9 +1,8 @@
 
 import { ethApiCall } from './Common';
 import { NodeDetails } from "../Types/API/Responses";
-const axios = require('axios');
 
-export async function updateNodeInfo(url: string) {
+export async function updateNodeInfo(url: string, client?: string) {
   let nodeDetails: NodeDetails =
     { statusText: "error", nodeId: "", nodeName: "", enode: "", ip: "", blocks: -1, peers: -1, queuedTxns: -1, pendingTxns: -1 }
 

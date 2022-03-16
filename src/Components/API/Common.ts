@@ -1,17 +1,17 @@
 
-const axios = require('axios');
+import axios from 'axios';
 
-export async function ethApiCall(url:string, method:string, params:any[]=[] ){
+export async function ethApiCall(url: string, method: string, params: any[] = []) {
   return axios({
     method: 'post',
     url: url,
     data: {
-        jsonrpc: '2.0',
-        method: method,
-        params: params,
-        id: 1
+      jsonrpc: '2.0',
+      method: method,
+      params: params,
+      id: 1
     },
-    headers: {'Content-Type': 'application/json'}
+    headers: { 'Content-Type': 'application/json' }
   })
 }
 

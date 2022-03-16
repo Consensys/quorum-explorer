@@ -1,41 +1,31 @@
-import React, { Component } from "react";
-import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
+import { useState, useEffect } from "react";
+import { Container, Divider } from "@chakra-ui/react";
 import PageHeader from "../Misc/PageHeader";
-import { Heading, Container } from "@chakra-ui/react";
+import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 
 interface IProps {
   config: QuorumConfig;
 }
 
-interface IState {}
+export default function Contracts ({ config }: IProps ) {
 
-export class Contracts extends Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      delay: 5000,
-    };
-  }
-  intervalId: number = 0;
+  const [selectedNode, setSelectedNode] = useState(config.nodes[0].name);
 
-  handleSelectNode = (e: any) => {
+  const handleSelectNode = (e: any) => {
     console.log(e);
-    // this.nodeInfoHandler(e);
+    setSelectedNode(e.target.value);
+    //nodeInfoHandler(e);
   };
 
-  render() {
-    return (
-      <>
-        <Container h="100vh" maxW={{ base: "container.sm", md: "container.xl" }}>
-          <PageHeader
-            title="Contracts"
-            config={this.props.config}
-            selectNodeHandler={this.handleSelectNode}
-          />
-        </Container>
-      </>
-    );
-  }
+  return (
+    <>
+      <Container maxW={{ base: "container.sm", md: "container.xl" }}>
+        <PageHeader
+          title="Contracts"
+          config={config}
+          selectNodeHandler={handleSelectNode}
+        />
+      </Container>
+    </>
+  );
 }
-
-export default Contracts;

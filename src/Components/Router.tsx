@@ -12,33 +12,35 @@ interface IProps {
   config: QuorumConfig;
 }
 
-interface IState {}
-
-class Router extends Component<IProps, IState> {
-  render() {
-    return (
-      <BrowserRouter>
-        <NavBar />
-        <Routes>
-          <Route path="/" element={<Nodes config={this.props.config} />} />
-          <Route
-            path="/validators"
-            element={<Validators config={this.props.config} />}
-          />
-          <Route
-            path="/explorer"
-            element={<Explorer config={this.props.config} />}
-          />
-          <Route
-            path="/contracts"
-            element={<Contracts config={this.props.config} />}
-          />
-          <Route path="/nodes" element={<Nodes config={this.props.config} />} />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
-    );
-  }
+export default function Router ({ config } : IProps) {
+  
+  return (
+    <BrowserRouter>
+      <NavBar />
+      <Routes>
+        <Route 
+          path="/" 
+          element={<Nodes config={config} />}
+        />
+        <Route 
+          path="/validators"
+          element={<Validators config={config} />}
+        />
+        <Route
+          path="/explorer"
+          element={<Explorer config={config} />}
+        />
+        <Route
+          path="/contracts"
+          element={<Contracts config={config} />}
+        />
+        <Route
+          path="/nodes" 
+          element={<Nodes config={config} />} 
+        />
+      </Routes>
+      <Footer />
+    </BrowserRouter>
+  );
 }
 
-export default Router;

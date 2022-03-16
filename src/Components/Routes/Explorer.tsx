@@ -1,102 +1,89 @@
-import React, { Component } from "react";
-import { Heading, Container } from "@chakra-ui/react";
+import { useState, useEffect, useCallback } from "react";
+import { Container, Divider } from "@chakra-ui/react";
+import ExplorerBlocks from "../Explorer/ExplorerBlocks";
 import PageHeader from "../Misc/PageHeader";
+import { QuorumBlock, QuorumTxn } from "../Types/Explorer";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
+import { QRExplorer, emptyQRExplorer } from "../Types/Routes";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
-import { getBlockByNumber } from "../API/Explorer";
+import {
+  getBlockByNumber,
+  updateBlockArray,
+  updateTxnArray,
+} from "../API/Explorer";
+import ExplorerTxns from "../Explorer/ExplorerTxns";
 
 interface IProps {
   config: QuorumConfig;
 }
 
-interface IState {
-  delay: number;
-  blockNumber: number;
-  transactions: string[];
-  blocks: number[];
-  selectedNode: string;
-}
+export default function Explorer({ config }: IProps) {
+  const [qrExplorer, setQRExplorer] = useState<QRExplorer>(emptyQRExplorer);
+  const [selectedNode, setSelectedNode] = useState(config.nodes[0].name);
+  const nodeKeys: string[] = getNodeKeys(config);
 
-export class Explorer extends Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      delay: 5000,
-      blockNumber: 0,
-      transactions: [],
-      blocks: [],
-      selectedNode: this.props.config.nodes[0].name,
-    };
-  }
+  // use useCallBack
+  // useEffect is go to re-render and causes a memory leek issue - every time react renders Nodes its re-create the api call, you can prevent this case by using useCallBack,
+  const nodeInfoHandler = useCallback(
+    async (name: string) => {
+      const needle: QuorumNode = getDetailsByNodeName(config, name);
+      const rpcUrl: string = needle.rpcUrl;
+      const quorumBlock = await getBlockByNumber(rpcUrl, "latest");
+      var tmpTxns: QuorumTxn[] = qrExplorer.transactions;
+      if (quorumBlock.transactions.length > 0) {
+        tmpTxns = updateTxnArray(
+          qrExplorer.transactions,
+          quorumBlock.transactions,
+          4
+        );
+      }
+      var tmpBlocks: QuorumBlock[] = updateBlockArray(
+        qrExplorer.blocks,
+        quorumBlock,
+        4
+      );
+      // setSelectedNode(name);
+      setQRExplorer({
+        blocks: tmpBlocks,
+        transactions: tmpTxns,
+      });
+    },
+    [config]
+  );
 
-  intervalId: number = 0;
-  nodeKeys: string[] = getNodeKeys(this.props.config);
-
-  //get the latest n elements in an array
-  updateArray = <T,>(arr: T[], elem: T, len: number) => {
-    if (arr[0] === elem) {
-    } else {
-      arr.unshift(elem);
-    }
-    return arr.slice(0, len);
-  };
-
-  async nodeInfoHandler(name: string) {
-    const needle: QuorumNode = getDetailsByNodeName(this.props.config, name);
-    const rpcUrl: string = needle.rpcUrl;
-    const res = await getBlockByNumber(rpcUrl, "latest");
-    var tmpBlocks = this.updateArray(this.state.blocks, res.number, 5);
-    this.setState({
-      selectedNode: name,
-      blockNumber: res.number,
-      blocks: tmpBlocks,
-    });
-    console.log("State: " + JSON.stringify(this.state, null, 2));
-  }
-
-  tick = () => {
-    this.nodeInfoHandler(this.state.selectedNode);
-  };
-
-  // content visible on screen
-  async componentDidMount() {
+  useEffect(() => {
     console.log("component rendered to screen");
-    this.intervalId = window.setInterval(this.tick, this.state.delay);
-    this.nodeInfoHandler(this.state.selectedNode);
-  }
+    nodeInfoHandler(selectedNode);
+    const interval = setInterval(() => {
+      nodeInfoHandler(selectedNode);
+    }, 5000);
 
-  // sit and wait to updates from setState
-  componentDidUpdate() {
-    console.log("component just updated and re rendered");
-  }
+    return () => clearInterval(interval);
+  }, [nodeInfoHandler, config, selectedNode]);
 
-  // sit and wait till component is no longer shown
-  componentWillUnmount() {
-    console.log("component gone off screen");
-    clearInterval(this.intervalId);
-  }
-
-  // shouldComponentUpdate(){}
-  // getSnapshotBeforeUpdate(){}
-
-  handleSelectNode = (e: any) => {
-    console.log(e);
-    // this.nodeInfoHandler(e);
+  const handleSelectNode = (e: any) => {
+    setSelectedNode(e.target.value);
+    // console.log(selectedNode);
   };
 
-  render() {
-    return (
-      <>
-        <Container h="100vh" maxW={{ base: "container.sm", md: "container.xl" }}>
-          <PageHeader
-            title="Explorer"
-            config={this.props.config}
-            selectNodeHandler={this.handleSelectNode}
-          />
-        </Container>
-      </>
-    );
-  }
+  return (
+    <>
+      <Container maxW={{ base: "container.sm", md: "container.xl" }} p={0}>
+        <PageHeader
+          title="Explorer"
+          config={config}
+          selectNodeHandler={handleSelectNode}
+        />
+        <ExplorerBlocks
+          blocks={qrExplorer.blocks}
+          url={getDetailsByNodeName(config, selectedNode).rpcUrl}
+        />
+        <Divider />
+        <ExplorerTxns
+          txns={qrExplorer.transactions}
+          url={getDetailsByNodeName(config, selectedNode).rpcUrl}
+        />
+      </Container>
+    </>
+  );
 }
-
-export default Explorer;

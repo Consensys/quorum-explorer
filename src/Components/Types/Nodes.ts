@@ -1,8 +1,8 @@
+
 import { ReactElement } from "react";
 
-export interface Cards {
+export type QuorumStatCard = {
     label: string,
     value: string | number,
     icon: ReactElement,
 }
-

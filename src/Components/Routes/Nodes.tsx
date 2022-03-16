@@ -1,171 +1,110 @@
-import React, { Component } from "react";
-import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
+import { useState, useEffect, useCallback } from "react";
+import { Container } from "@chakra-ui/react";
 import PageHeader from "../Misc/PageHeader";
 import NodeOverview from "../Nodes/NodeOverview";
 import NodeDetails from "../Nodes/NodeDetails";
-import { updateNodeInfo } from "../API/Nodes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlay,
-  faStop,
-  faCubes,
-  faUsers,
-  faExchangeAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { Cards } from "../Types/Nodes";
-import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
-import { Container } from "@chakra-ui/react";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { faPlay, faStop, faCubes, faUsers, faExchangeAlt, } from "@fortawesome/free-solid-svg-icons";
+import { QuorumStatCard } from "../Types/Nodes";
+import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
+import { QRNode, emptyQRNode } from "../Types/Routes";
+import { getDetailsByNodeName } from "../API/QuorumConfig";
+import { updateNodeInfo } from "../API/Nodes";
 
 interface IProps {
   config: QuorumConfig;
 }
 
-interface IState {
-  delay: number;
-  client: string;
-  selectedNode: string;
-  nodeId: string;
-  nodeName: string;
-  enode: string;
-  ip: string;
-  rpcUrl: string;
-  statusText: string;
-  blocks: number;
-  peers: number;
-  queuedTxns: number;
-  pendingTxns: number;
-}
+export default function Nodes({ config }: IProps) {
+  const [selectedNode, setSelectedNode] = useState(config.nodes[0].name);
+  const [qrNode, setQRNode] = useState<QRNode>( emptyQRNode );
+  const stats: QuorumStatCard[] = [
+    {
+      label: "Status",
+      value: qrNode.statusText === "OK" ? "Running" : "Stopped",
+      icon:
+      qrNode.statusText === "OK" ? (
+          <FontAwesomeIcon icon={faPlay as IconProp} size="2x" color="green" />
+        ) : (
+          <FontAwesomeIcon icon={faStop as IconProp} size="2x" color="red" />
+        ),
+    },
+    {
+      label: "Blocks",
+      value: qrNode.blocks,
+      icon: <FontAwesomeIcon icon={faCubes as IconProp} size="2x" color="steelBlue" />,
+    },
+    {
+      label: "Peers",
+      value: qrNode.peers,
+      icon: <FontAwesomeIcon icon={faUsers as IconProp} size="2x" color="dimGray" />,
+    },
+    {
+      label: "Queued",
+      value: qrNode.queuedTxns,
+      icon: <FontAwesomeIcon icon={faExchangeAlt as IconProp} size="2x" color="coral" />,
+    },
+  ];
 
-export default class Nodes extends Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-    this.childHandler = this.childHandler.bind(this);
-    this.state = {
-      delay: 1000,
-      client: this.props.config.nodes[0].client,
-      selectedNode: this.props.config.nodes[0].name,
-      nodeId: "",
-      nodeName: "",
-      enode: "",
-      ip: "127.0.0.1",
-      rpcUrl: "http://127.0.0.1:8545",
-      statusText: "error",
-      blocks: 0,
-      peers: 0,
-      queuedTxns: 0,
-      pendingTxns: 0,
-    };
-  }
+  // use useCallBack
+  // useEffect is go to re-render and causes a memory leek issue - every time react renders Nodes its re-create the api call, you can prevent this case by using useCallBack,
+  const nodeInfoHandler = useCallback(
+    async (node: string) => {
+      const needle: QuorumNode = getDetailsByNodeName(config, node);
+      const rpcUrl: string = needle.rpcUrl;
+      const res = await updateNodeInfo(rpcUrl);
+      setQRNode({
+        client: needle.client,
+        nodeId: res.nodeId,
+        nodeName: res.nodeName,
+        enode: res.enode,
+        ip: res.ip,
+        statusText: res.statusText,
+        rpcUrl: rpcUrl,
+        blocks: res.blocks,
+        peers: res.peers,
+        pendingTxns: res.pendingTxns,
+        queuedTxns: res.queuedTxns,
+      });
+    },
+    [config]
+  );
 
-  intervalId: number = 0;
-  nodeKeys: string[] = getNodeKeys(this.props.config);
-
-  childHandler = (dropDownNode: any) => {
-    // console.log(dropDownNode);
-    this.setState({
-      selectedNode: dropDownNode.target.value,
-    });
-  };
-
-  async nodeInfoHandler(node: string) {
-    // console.log("nodeInfoHandler");
-    const needle: QuorumNode = getDetailsByNodeName(this.props.config, node);
-    const rpcUrl: string = needle.rpcUrl;
-    const res = await updateNodeInfo(rpcUrl);
-    this.setState({
-      client: needle.client,
-      selectedNode: node,
-      statusText: res.statusText,
-      nodeId: res.nodeId,
-      nodeName: res.nodeName,
-      enode: res.enode,
-      ip: res.ip,
-      rpcUrl: rpcUrl,
-      blocks: res.blocks,
-      peers: res.peers,
-    });
-    // console.log('State: '+ JSON.stringify(this.state, null, 2));
-  }
-
-  tick = () => {
-    this.nodeInfoHandler(this.state.selectedNode);
-  };
-
-  // content visible on screen
-  async componentDidMount() {
+  useEffect(() => {
     console.log("component rendered to screen");
-    this.intervalId = window.setInterval(this.tick, this.state.delay);
-    this.nodeInfoHandler(this.state.selectedNode);
-  }
+    nodeInfoHandler(selectedNode);
+    const interval = setInterval(() => {
+      nodeInfoHandler(selectedNode);
+    }, 5000);
 
-  // sit and wait to updates from setState
-  componentDidUpdate() {
-    console.log("component just updated and re rendered");
-  }
+    return () => clearInterval(interval);
+  }, [nodeInfoHandler, config, selectedNode]);
 
-  // sit and wait till component is no longer shown
-  componentWillUnmount() {
-    console.log("component gone off screen");
-    clearInterval(this.intervalId);
-  }
-
-  handleSelectNode = (e: any) => {
-    console.log(e);
-    this.setState({
-      selectedNode: e.target.value,
-    });
-    // this.nodeInfoHandler(e);
+  const handleSelectNode = (e: any) => {
+    setSelectedNode(e.target.value);
+    // console.log(selectedNode);
   };
 
-  render() {
-    const stats: Cards[] = [
-      {
-        label: "Status",
-        value: this.state.statusText === "OK" ? "Running" : "Stopped",
-        icon:
-          this.state.statusText === "OK" ? (
-            <FontAwesomeIcon icon={faPlay} size="2x" color="green" />
-          ) : (
-            <FontAwesomeIcon icon={faStop} size="2x" color="red" />
-          ),
-      },
-      {
-        label: "Blocks",
-        value: this.state.blocks,
-        icon: <FontAwesomeIcon icon={faCubes} size="2x" color="steelBlue" />,
-      },
-      {
-        label: "Peers",
-        value: this.state.peers,
-        icon: <FontAwesomeIcon icon={faUsers} size="2x" color="dimGray" />,
-      },
-      {
-        label: "Queued",
-        value: this.state.queuedTxns,
-        icon: <FontAwesomeIcon icon={faExchangeAlt} size="2x" color="coral" />,
-      },
-    ];
-
-    return (
-      <>
-        <Container maxW={{ base: "container.sm", md: "container.xl" }}>
-          <PageHeader
-            title="Nodes"
-            config={this.props.config}
-            selectNodeHandler={this.handleSelectNode}
-          />
-          <NodeOverview stats={stats} statusText={this.state.statusText} />
-          <NodeDetails
-            client={this.state.client}
-            nodeId={this.state.nodeId}
-            nodeName={this.state.nodeName}
-            enode={this.state.enode}
-            rpcUrl={this.state.rpcUrl}
-            ip={this.state.ip}
-            statusText={this.state.statusText}
-          />
-        </Container>
-      </>
-    );
-  }
+  return (
+    <>
+      <Container maxW={{ base: "container.sm", md: "container.xl" }}>
+        <PageHeader
+          title="Nodes"
+          config={config}
+          selectNodeHandler={handleSelectNode}
+        />
+        <NodeOverview stats={stats} statusText={qrNode.statusText} />
+        <NodeDetails
+          client={qrNode.client}
+          nodeId={qrNode.nodeId}
+          nodeName={qrNode.nodeName}
+          enode={qrNode.enode}
+          rpcUrl={qrNode.rpcUrl}
+          ip={qrNode.ip}
+          statusText={qrNode.statusText}
+        />
+      </Container>
+    </>
+  );
 }
