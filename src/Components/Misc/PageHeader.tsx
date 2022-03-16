@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Heading, Container, HStack, Box, Flex, Select, } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../Types/QuorumConfig";
 import { getNodeKeys, getDetailsByNodeName } from "../API/QuorumConfig";
@@ -38,7 +39,7 @@ export default function PageHeader({ title, config, selectNodeHandler }: IProps)
           </Box>
           <Box alignItems="center">
             <HStack>
-              <FontAwesomeIcon icon={faSlidersH} fontSize="lg" />
+              <FontAwesomeIcon icon={faSlidersH as IconProp} fontSize="lg" />
               <Select
                 size="lg"
                 variant="filled"

@@ -7,6 +7,7 @@ import { QuorumIcon } from "./QuorumIcon";
 import { NavItems } from "../Types/NavBar";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { motion } from "framer-motion";
 const MotionFlex = motion(Flex);
 
@@ -30,7 +31,7 @@ export default function NavBar() {
           {NavItems.map((item, i) => (
             <Link key={i} to={item["label"].toLowerCase()}>
               <Button
-                leftIcon={<FontAwesomeIcon icon={item["icon"]} fontSize="1.25rem" />}
+                leftIcon={<FontAwesomeIcon icon={item["icon"] as IconProp} fontSize="1.25rem" />}
                 variant="ghost"
               >
                 {item.label}

@@ -4,6 +4,7 @@ import PageHeader from "../Misc/PageHeader";
 import NodeOverview from "../Nodes/NodeOverview";
 import NodeDetails from "../Nodes/NodeDetails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faPlay, faStop, faCubes, faUsers, faExchangeAlt, } from "@fortawesome/free-solid-svg-icons";
 import { QuorumStatCard } from "../Types/Nodes";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
@@ -24,25 +25,25 @@ export default function Nodes({ config }: IProps) {
       value: qrNode.statusText === "OK" ? "Running" : "Stopped",
       icon:
       qrNode.statusText === "OK" ? (
-          <FontAwesomeIcon icon={faPlay} size="2x" color="green" />
+          <FontAwesomeIcon icon={faPlay as IconProp} size="2x" color="green" />
         ) : (
-          <FontAwesomeIcon icon={faStop} size="2x" color="red" />
+          <FontAwesomeIcon icon={faStop as IconProp} size="2x" color="red" />
         ),
     },
     {
       label: "Blocks",
       value: qrNode.blocks,
-      icon: <FontAwesomeIcon icon={faCubes} size="2x" color="steelBlue" />,
+      icon: <FontAwesomeIcon icon={faCubes as IconProp} size="2x" color="steelBlue" />,
     },
     {
       label: "Peers",
       value: qrNode.peers,
-      icon: <FontAwesomeIcon icon={faUsers} size="2x" color="dimGray" />,
+      icon: <FontAwesomeIcon icon={faUsers as IconProp} size="2x" color="dimGray" />,
     },
     {
       label: "Queued",
       value: qrNode.queuedTxns,
-      icon: <FontAwesomeIcon icon={faExchangeAlt} size="2x" color="coral" />,
+      icon: <FontAwesomeIcon icon={faExchangeAlt as IconProp} size="2x" color="coral" />,
     },
   ];
 

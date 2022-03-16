@@ -1,5 +1,6 @@
 import { Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverArrow, PopoverCloseButton, Button, Text } from '@chakra-ui/react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faExpand } from "@fortawesome/free-solid-svg-icons"; 
 import { QuorumBlock } from '../Types/Explorer'
 
@@ -13,7 +14,7 @@ export default function ExplorerBlockDetails({ block }: IProps) {
     <>
     <Popover>
       <PopoverTrigger>
-        <Button p={0} m={0}><FontAwesomeIcon icon={faExpand} /></Button>
+        <Button p={0} m={0}><FontAwesomeIcon icon={faExpand as IconProp} /></Button>
       </PopoverTrigger>
       <PopoverContent>
         <PopoverArrow />

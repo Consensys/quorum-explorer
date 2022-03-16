@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useDisclosure, Flex, Button, VStack } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import MobileDrawer from "./MobileDrawer";
 import { NavItems } from "../Types/NavBar";
@@ -12,7 +13,7 @@ export default function MobileNav() {
   return (
     <Flex display={{ base: "flex", md: "none" }}>
       <Button ref={btnRef} onClick={onOpen}>
-        <FontAwesomeIcon icon={faBars} fontSize="20px" />
+        <FontAwesomeIcon icon={faBars as IconProp} fontSize="20px" />
       </Button>
       <MobileDrawer isOpen={isOpen} onClose={onClose}>
         <VStack alignItems="left">
@@ -20,7 +21,7 @@ export default function MobileNav() {
             <Link key={i} to={item["label"].toLowerCase()}>
               <Button
                 leftIcon={
-                  <FontAwesomeIcon icon={item["icon"]} fontSize="20px" />
+                  <FontAwesomeIcon icon={item["icon"] as IconProp} fontSize="20px" />
                 }
                 variant="text"
                 onClick={onClose}
