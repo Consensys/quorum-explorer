@@ -22,7 +22,7 @@ export default function ExplorerTxnCard({ txn }: IProps) {
             justifyContent="center"
             borderRadius="md"
             borderWidth={1}
-            bg={txn.to === null ? "orange.300" : "green.300"}
+            bg={txn.to === null ? "orange.300" : "green.400"}
             minW="15%"
           >
             {txn.to === null ? (

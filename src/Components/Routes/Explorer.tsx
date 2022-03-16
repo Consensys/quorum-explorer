@@ -1,10 +1,11 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Container, Divider } from "@chakra-ui/react";
 import ExplorerBlocks from "../Explorer/ExplorerBlocks";
 import PageHeader from "../Misc/PageHeader";
 import { QuorumBlock, QuorumTxn } from "../Types/Explorer";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
+import { QRExplorer, emptyQRExplorer } from "../Types/Routes";
 import { getDetailsByNodeName, getNodeKeys } from "../API/QuorumConfig";
 import { getBlockByNumber, updateBlockArray, updateTxnArray } from "../API/Explorer";
 import ExplorerTxns from "../Explorer/ExplorerTxns";
@@ -15,44 +16,50 @@ interface IProps {
 
 export default function Explorer ({ config }: IProps ) {
 
-  const [blockNumber, setBlockNumber] = useState(0);
-  const [transactions, setTransactions] = useState<QuorumTxn[]>([]);
-  const [blocks, setBlocks] = useState<QuorumBlock[]>([]);
+  const [qrExplorer, setQRExplorer] = useState<QRExplorer>( emptyQRExplorer );
   const [selectedNode, setSelectedNode] = useState(config.nodes[0].name);
   const nodeKeys: string[] = getNodeKeys(config);
 
-  const nodeInfoHandler = async (name: string) => {
-    const needle: QuorumNode = getDetailsByNodeName(config, name);
-    const rpcUrl: string = needle.rpcUrl;
-    const quorumBlock = await getBlockByNumber(rpcUrl, "latest");
-    var tmpTxns: QuorumTxn[] = transactions;
-    if (quorumBlock.transactions.length > 0) {
-      tmpTxns = updateTxnArray(
-        transactions,
-        quorumBlock.transactions,
-        4
-      );
-    }
-    var tmpBlocks: QuorumBlock[] = updateBlockArray(blocks, quorumBlock, 4);
-    setSelectedNode(name);
-    setBlockNumber(quorumBlock.number);
-    setBlocks(tmpBlocks);
-    setTransactions(tmpTxns);
-  }
+
+  // use useCallBack
+  // useEffect is go to re-render and causes a memory leek issue - every time react renders Nodes its re-create the api call, you can prevent this case by using useCallBack,
+  const nodeInfoHandler = useCallback(
+    async (name: string) => {
+      const needle: QuorumNode = getDetailsByNodeName(config, name);
+      const rpcUrl: string = needle.rpcUrl;
+      const quorumBlock = await getBlockByNumber(rpcUrl, "latest");
+      var tmpTxns: QuorumTxn[] = qrExplorer.transactions;
+      if (quorumBlock.transactions.length > 0) {
+        tmpTxns = updateTxnArray(
+          qrExplorer.transactions,
+          quorumBlock.transactions,
+          4
+        );
+      }
+      var tmpBlocks: QuorumBlock[] = updateBlockArray(qrExplorer.blocks, quorumBlock, 4);
+      // setSelectedNode(name);
+      setQRExplorer({
+        blocks: tmpBlocks,
+        transactions: tmpTxns
+      });
+    },
+    [config]
+  );
 
   useEffect(() => {
     console.log("component rendered to screen");
+    nodeInfoHandler(selectedNode);
     const interval = setInterval(() => {
       nodeInfoHandler(selectedNode);
-    }, 1000);
+    }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [nodeInfoHandler, config, selectedNode]);
+
 
   const handleSelectNode = (e: any) => {
-    console.log(e);
     setSelectedNode(e.target.value);
-    //nodeInfoHandler(e);
+    // console.log(selectedNode);
   };
 
   return (
@@ -64,7 +71,7 @@ export default function Explorer ({ config }: IProps ) {
           selectNodeHandler={handleSelectNode}
         />
         <ExplorerBlocks
-          blocks={blocks}
+          blocks={qrExplorer.blocks}
           url={
             getDetailsByNodeName(config, selectedNode)
               .rpcUrl
@@ -72,7 +79,7 @@ export default function Explorer ({ config }: IProps ) {
         />
         <Divider />
         <ExplorerTxns
-          txns={transactions}
+          txns={qrExplorer.transactions}
           url={
             getDetailsByNodeName(config, selectedNode)
               .rpcUrl

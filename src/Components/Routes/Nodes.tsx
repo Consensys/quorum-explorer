@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faStop, faCubes, faUsers, faExchangeAlt, } from "@fortawesome/free-solid-svg-icons";
 import { QuorumStatCard } from "../Types/Nodes";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
-import { QuorumRouteNode, emptyQRNode } from "../Types/Nodes";
+import { QRNode, emptyQRNode } from "../Types/Routes";
 import { getDetailsByNodeName } from "../API/QuorumConfig";
 import { updateNodeInfo } from "../API/Nodes";
 
@@ -17,7 +17,7 @@ interface IProps {
 
 export default function Nodes({ config }: IProps) {
   const [selectedNode, setSelectedNode] = useState(config.nodes[0].name);
-  const [qrNode, setQRNode] = useState<QuorumRouteNode>( emptyQRNode );
+  const [qrNode, setQRNode] = useState<QRNode>( emptyQRNode );
   const stats: QuorumStatCard[] = [
     {
       label: "Status",
@@ -75,7 +75,7 @@ export default function Nodes({ config }: IProps) {
     nodeInfoHandler(selectedNode);
     const interval = setInterval(() => {
       nodeInfoHandler(selectedNode);
-    }, 1000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [nodeInfoHandler, config, selectedNode]);
