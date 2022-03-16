@@ -14,7 +14,7 @@ import { ValidatorsActive } from "../Validators/ValidatorsActive";
 import { ValidatorsPending } from "../Validators/ValidatorsPending";
 import { ValidatorsPropose } from "../Validators/ValidatorsPropose";
 import ValidatorsAbout from "../Validators/ValidatorAbout";
-import { getCurrentValidators } from "../API/Validators";
+import { getCurrentValidators, getPendingVotes } from "../API/Validators";
 import { getDetailsByNodeName } from "../API/QuorumConfig";
 import { updateNodeInfo } from "../API/Nodes";
 
@@ -37,6 +37,7 @@ interface IState {
   statusText: string;
   blocks: number;
   minersList: string[];
+  pendingList: string[];
 }
 
 export default class Validators extends Component<IProps, IState> {
@@ -44,12 +45,13 @@ export default class Validators extends Component<IProps, IState> {
     super(props);
     this.state = {
       selectedNode: this.props.config.nodes[0].name,
-      delay: 1000,
+      delay: 2000,
       client: "",
       rpcUrl: this.props.config.nodes[0].rpcUrl,
       statusText: "error",
       blocks: 0,
       minersList: [],
+      pendingList: [],
     };
   }
   intervalId: number = 0;
@@ -65,10 +67,8 @@ export default class Validators extends Component<IProps, IState> {
     const needle: QuorumNode = getDetailsByNodeName(this.props.config, node);
     const rpcUrl: string = needle.rpcUrl;
     const res = await updateNodeInfo(rpcUrl);
-    const currentValidators = await getCurrentValidators(
-      rpcUrl,
-      this.props.config.algorithm
-    );
+    const currentValidators = await getCurrentValidators(rpcUrl);
+    const pendingValidators = await getPendingVotes(this.props.config);
     this.setState({
       client: needle.client,
       selectedNode: node,
@@ -76,6 +76,7 @@ export default class Validators extends Component<IProps, IState> {
       rpcUrl: rpcUrl,
       blocks: res.blocks,
       minersList: currentValidators,
+      pendingList: pendingValidators,
     });
   }
 
@@ -119,7 +120,7 @@ export default class Validators extends Component<IProps, IState> {
             />
             <ValidatorsPending
               config={this.props.config}
-              minersList={this.state.minersList}
+              pendingList={this.state.pendingList}
             />
             <ValidatorsPropose
               config={this.props.config}

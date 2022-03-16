@@ -38,10 +38,8 @@ export class ValidatorsActive extends Component<IProps, IState> {
           mx={2}
           my={3}
         >
-          <Center>
-            <Heading size="lg" mb={5}>
-              Active Validators
-            </Heading>
+          <Center mb={5}>
+            <Heading size="lg">Active Validators</Heading>
           </Center>
           {this.props.minersList.length > 0 ? (
             this.props.minersList.map((miner) => {

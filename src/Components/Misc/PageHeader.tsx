@@ -23,8 +23,11 @@ interface IProps {
   isLoading?: boolean;
 }
 
-export default function PageHeader({ title, config, selectNodeHandler }: IProps) {
-
+export default function PageHeader({
+  title,
+  config,
+  selectNodeHandler,
+}: IProps) {
   const nodeKeys: string[] = getNodeKeys(config);
 
   return (
@@ -41,7 +44,6 @@ export default function PageHeader({ title, config, selectNodeHandler }: IProps)
           alignItems="center"
           mt={5}
         >
-<<<<<<< HEAD
           <Box>
             <Heading as="h1" size="lg" textAlign="center">
               {title}
@@ -50,11 +52,7 @@ export default function PageHeader({ title, config, selectNodeHandler }: IProps)
           <Box alignItems="center">
             <HStack>
               <FontAwesomeIcon icon={faSlidersH as IconProp} fontSize="lg" />
-              <Select
-                size="lg"
-                variant="filled"
-                onChange={selectNodeHandler}
-              >
+              <Select size="lg" variant="filled" onChange={selectNodeHandler}>
                 {nodeKeys.map((node) => (
                   <option key={node} value={node}>
                     {node}
@@ -67,41 +65,4 @@ export default function PageHeader({ title, config, selectNodeHandler }: IProps)
       </MotionContainer>
     </>
   );
-  
-=======
-          <Flex
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-            mt={5}
-          >
-            <HStack>
-              <Heading as="h1" size="lg" textAlign="center">
-                {this.props.title}
-              </Heading>
-              {this.props.isLoading && <Spinner color="red.500" />}
-            </HStack>
-            <Box alignItems="center">
-              <HStack>
-                <FontAwesomeIcon icon={faSlidersH} fontSize="lg" />
-                <Select
-                  size="lg"
-                  variant="filled"
-                  onChange={this.props.selectNodeHandler}
-                >
-                  {this.nodeKeys.map((node) => (
-                    <option key={node} value={node}>
-                      {node}
-                    </option>
-                  ))}
-                </Select>
-              </HStack>
-            </Box>
-          </Flex>
-        </MotionContainer>
-      </>
-    );
-  }
->>>>>>> 4261b90 (general layout, need to implement api funcs)
 }
-

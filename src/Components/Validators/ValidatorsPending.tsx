@@ -1,5 +1,14 @@
 import React, { Component } from "react";
-import { Heading, Center, Text, Skeleton, Box } from "@chakra-ui/react";
+import {
+  Heading,
+  Center,
+  Text,
+  Skeleton,
+  Box,
+  Flex,
+  Button,
+  Spacer,
+} from "@chakra-ui/react";
 import { QuorumConfig } from "../Types/QuorumConfig";
 import { motion } from "framer-motion";
 
@@ -7,7 +16,7 @@ const MotionBox = motion(Box);
 
 interface IProps {
   config: QuorumConfig;
-  minersList: string[];
+  pendingList: string[];
 }
 
 interface IState {}
@@ -35,13 +44,15 @@ export class ValidatorsPending extends Component<IProps, IState> {
               Pending Validators
             </Heading>
           </Center>
-          {this.props.minersList.length > 0 ? (
-            this.props.minersList.map((miner) => {
+          {this.props.pendingList.length > 0 ? (
+            this.props.pendingList.map((pending) => {
               return (
                 <>
-                  <Center m={5}>
-                    <Text>{miner}</Text>
-                  </Center>
+                  <Flex m={3} justifyContent="center" alignItems="center">
+                    <Text>{pending}</Text>
+                    <Spacer />
+                    <Button>Discard Vote</Button>
+                  </Flex>
                 </>
               );
             })

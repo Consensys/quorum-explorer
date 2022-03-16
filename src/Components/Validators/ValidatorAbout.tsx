@@ -1,14 +1,5 @@
 import React, { Component } from "react";
-import {
-  Heading,
-  Text,
-  VStack,
-  Box,
-  Center,
-  Code,
-  Link,
-  HStack,
-} from "@chakra-ui/react";
+import { Heading, Text, VStack, Box, Center, Code } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
 const MotionBox = motion(Box);
@@ -33,19 +24,21 @@ export default function ValidatorsAbout() {
             </Heading>
             <Text>
               Please take note that this page is for demonstration purposes
-              only. If you are operating a network in production, especially in
-              a consortium where you may not have direct access to other nodes,
-              this page may not be useful.
+              only. When using the buttons to remove, discard pending, or
+              proposing a validator, the app will send an API request to all
+              nodes automatically. It should be noted in a production
+              environment, or where you do not have full control over all nodes,
+              this will be dependent on each party running these API requests
+              individually.
             </Text>
             <Text>
               This page simulates API calls to all nodes specified in{" "}
-              <Code>Config/config.json</Code> to remove or propose validators in
-              a network.
+              <Code>src/Config/config.json</Code> to remove or propose
+              validators in a network.
             </Text>
             <Text>
               You may find more information about making these API calls
-              yourself by following the documentation. Find these links as
-              tooltips next to each card's heading.
+              yourself by following the documentation.
             </Text>
           </VStack>
         </Center>
