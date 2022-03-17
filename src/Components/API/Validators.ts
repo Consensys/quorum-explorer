@@ -21,7 +21,11 @@ export async function getCurrentValidators(url: string) {
   return uniqueList.sort();
 }
 
-export async function getPendingVotes(config: QuorumConfig) {
+export async function getPendingVotes(
+  rpcUrl: string,
+  client: string,
+  algorithm: string
+) {
   const methodDict = {
     goquorum: {
       qbft: "istanbul_candidates",
@@ -36,27 +40,26 @@ export async function getPendingVotes(config: QuorumConfig) {
   };
   const listReturn: any = [];
 
-  config.nodes.map(async (node) => {
-    if (node.client === "goquorum") {
-      if (config.algorithm === "qbft" || config.algorithm === "ibft") {
-        const req = await ethApiCall(
-          node.rpcUrl,
-          methodDict.goquorum[config.algorithm]
+  if (client === "goquorum") {
+    if (algorithm === "qbft" || algorithm === "ibft") {
+      const req = await ethApiCall(rpcUrl, methodDict.goquorum[algorithm]);
+      const listOfCandidates = req.data.result;
+      if (Object.keys(listOfCandidates).length !== 0) {
+        Object.keys(listOfCandidates).map((address) =>
+          listReturn.push(address)
         );
-        const listOfCandidates = req.data.result;
-        if (Object.keys(listOfCandidates).length !== 0) {
-          Object.keys(listOfCandidates).map((address) =>
-            listReturn.push(address)
-          );
-        }
       }
     }
-  });
-
+  }
   return listReturn;
 }
 
-export async function proposeValidator(config: QuorumConfig, address: string) {
+export async function proposeValidator(
+  rpcUrl: string,
+  client: string,
+  algorithm: string,
+  address: string
+) {
   const methodDict = {
     goquorum: {
       qbft: "istanbul_propose",
@@ -69,44 +72,46 @@ export async function proposeValidator(config: QuorumConfig, address: string) {
       qbft: "qbft_proposeValidatorVote",
     },
   };
-  const listReturn: any = [];
-  config.nodes.map(async (node) => {
-    if (node.client === "goquorum") {
-      if (config.algorithm === "qbft" || config.algorithm === "ibft") {
-        const req = await ethApiCall(
-          node.rpcUrl,
-          methodDict.goquorum[config.algorithm]
-        );
-        const listOfCandidates = req.data.result;
-        if (Object.keys(listOfCandidates).length !== 0) {
-          listReturn.push(Object.keys(listOfCandidates)[0]);
-        }
-      }
-    } else if (node.client === "besu") {
-      if (
-        config.algorithm === "qbft" ||
-        config.algorithm === "ibft" ||
-        config.algorithm === "clique"
-      ) {
-        const req = await ethApiCall(
-          node.rpcUrl,
-          methodDict.besu[config.algorithm]
-        );
-        const listOfCandidates = req.data.result;
-        if (Object.keys(listOfCandidates).length !== 0) {
-          listReturn.push(Object.keys(listOfCandidates)[0]);
-        }
-      }
+  if (client === "goquorum") {
+    if (algorithm === "qbft" || algorithm === "ibft") {
+      const req = await ethApiCall(rpcUrl, methodDict[client][algorithm], [
+        address,
+        true,
+      ]);
+      console.log(req);
+      const status = req.status;
+      return status;
     }
-  });
-  return listReturn.sort();
+  }
 }
 
-export async function discardProposal(url: string, consensus: string) {
+export async function discardProposal(
+  rpcUrl: string,
+  client: string,
+  algorithm: string,
+  address: string
+) {
   const methodDict = {
-    qbft: "qbft_discardValidatorVote", // istanbul_discard
-    ibft: "ibft_discardValidatorVote", // istanbul_discard
-    raft: "raft_removePeer",
-    clique: "clique_discard",
+    goquorum: {
+      qbft: "istanbul_discard",
+      ibft: "istanbul_discard",
+      raft: "raft_removePeer",
+    },
+    besu: {
+      qbft: "qbft_discardValidatorVote",
+      ibft: "ibft_discardValidatorVote",
+      clique: "clique_discard",
+    },
   };
+
+  if (client === "goquorum") {
+    if (algorithm === "qbft" || algorithm === "ibft") {
+      const req = await ethApiCall(rpcUrl, methodDict.goquorum[algorithm], [
+        address,
+      ]);
+      // console.log(req);
+      const status = req.status;
+      return status;
+    }
+  }
 }

@@ -25,16 +25,10 @@ export default function ValidatorsAbout() {
             <Text>
               Please take note that this page is for demonstration purposes
               only. When using the buttons to remove, discard pending, or
-              proposing a validator, the app will send an API request to all
-              nodes automatically. It should be noted in a production
-              environment, or where you do not have full control over all nodes,
-              this will be dependent on each party running these API requests
-              individually.
-            </Text>
-            <Text>
-              This page simulates API calls to all nodes specified in{" "}
-              <Code>src/Config/config.json</Code> to remove or propose
-              validators in a network.
+              proposing a validator, the app will send an API request to the
+              selected node from the drop down only. This simulates a production
+              environment or consortium where each node should individually run
+              these calls to vote.
             </Text>
             <Text>
               You may find more information about making these API calls

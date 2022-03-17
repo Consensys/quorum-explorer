@@ -47,11 +47,11 @@ export class ValidatorsActive extends Component<IProps, IState> {
             <Heading size="lg">Active Validators</Heading>
           </Center>
           {this.props.minersList.length > 0 ? (
-            this.props.minersList.map((miner) => {
+            this.props.minersList.map((miner, i) => {
               return (
                 <>
                   <Flex
-                    key={miner}
+                    key={i}
                     m={3}
                     justifyContent="center"
                     alignItems="center"
