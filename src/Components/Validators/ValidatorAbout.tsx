@@ -31,8 +31,10 @@ export default function ValidatorsAbout() {
               these calls to vote.
             </Text>
             <Text>
-              You may find more information about making these API calls
-              yourself by following the documentation.
+              When a validator is proposed or removed, the entry under "Pending
+              Votes" will not automatically be removed. Each node can call a
+              discard on the voting process during or after the validator has
+              been proposed to be removed or added.
             </Text>
           </VStack>
         </Center>

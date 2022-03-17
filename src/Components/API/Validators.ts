@@ -4,9 +4,9 @@ import { getBlockByNumber } from "./Explorer";
 
 export async function getCurrentValidators(url: string) {
   const minersList: string[] = [];
-  let numBlocksPrev = 20;
+  let numBlocksPrev = 10;
   const latestBlock = await getBlockByNumber(url, "latest");
-  if (latestBlock.number < 20) {
+  if (latestBlock.number < numBlocksPrev) {
     numBlocksPrev = latestBlock.number;
   }
   const transformLatestBlock = parseInt(latestBlock.number.toString(), 16);
@@ -42,7 +42,7 @@ export async function getPendingVotes(
 
   if (client === "goquorum") {
     if (algorithm === "qbft" || algorithm === "ibft") {
-      const req = await ethApiCall(rpcUrl, methodDict.goquorum[algorithm]);
+      const req = await ethApiCall(rpcUrl, methodDict[client][algorithm]);
       const listOfCandidates = req.data.result;
       if (Object.keys(listOfCandidates).length !== 0) {
         Object.keys(listOfCandidates).map((address) =>
@@ -107,7 +107,7 @@ export async function discardProposal(
 
   if (client === "goquorum") {
     if (algorithm === "qbft" || algorithm === "ibft") {
-      const req = await ethApiCall(rpcUrl, methodDict.goquorum[algorithm], [
+      const req = await ethApiCall(rpcUrl, methodDict[client][algorithm], [
         address,
       ]);
       // console.log(req);
