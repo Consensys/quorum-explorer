@@ -35,30 +35,63 @@ export async function getPendingVotes(config: QuorumConfig) {
     },
   };
   const listReturn: any = [];
+
   config.nodes.map(async (node) => {
     if (node.client === "goquorum") {
       if (config.algorithm === "qbft" || config.algorithm === "ibft") {
-        const req = await ethApiCall(node.rpcUrl, methodDict.goquorum.qbft);
+        const req = await ethApiCall(
+          node.rpcUrl,
+          methodDict.goquorum[config.algorithm]
+        );
+        const listOfCandidates = req.data.result;
+        if (Object.keys(listOfCandidates).length !== 0) {
+          Object.keys(listOfCandidates).map((address) =>
+            listReturn.push(address)
+          );
+        }
+      }
+    }
+  });
+
+  return listReturn;
+}
+
+export async function proposeValidator(config: QuorumConfig, address: string) {
+  const methodDict = {
+    goquorum: {
+      qbft: "istanbul_propose",
+      ibft: "istanbul_propose",
+      raft: "raft_addPeer",
+    },
+    besu: {
+      clique: "clique_proposals",
+      ibft: "ibft_proposeValidatorVote",
+      qbft: "qbft_proposeValidatorVote",
+    },
+  };
+  const listReturn: any = [];
+  config.nodes.map(async (node) => {
+    if (node.client === "goquorum") {
+      if (config.algorithm === "qbft" || config.algorithm === "ibft") {
+        const req = await ethApiCall(
+          node.rpcUrl,
+          methodDict.goquorum[config.algorithm]
+        );
         const listOfCandidates = req.data.result;
         if (Object.keys(listOfCandidates).length !== 0) {
           listReturn.push(Object.keys(listOfCandidates)[0]);
         }
       }
     } else if (node.client === "besu") {
-      if (config.algorithm === "qbft") {
-        const req = await ethApiCall(node.rpcUrl, methodDict.besu.qbft);
-        const listOfCandidates = req.data.result;
-        if (Object.keys(listOfCandidates).length !== 0) {
-          listReturn.push(Object.keys(listOfCandidates)[0]);
-        }
-      } else if (config.algorithm === "ibft") {
-        const req = await ethApiCall(node.rpcUrl, methodDict.besu.ibft);
-        const listOfCandidates = req.data.result;
-        if (Object.keys(listOfCandidates).length !== 0) {
-          listReturn.push(Object.keys(listOfCandidates)[0]);
-        }
-      } else if (config.algorithm === "clique") {
-        const req = await ethApiCall(node.rpcUrl, methodDict.besu.clique);
+      if (
+        config.algorithm === "qbft" ||
+        config.algorithm === "ibft" ||
+        config.algorithm === "clique"
+      ) {
+        const req = await ethApiCall(
+          node.rpcUrl,
+          methodDict.besu[config.algorithm]
+        );
         const listOfCandidates = req.data.result;
         if (Object.keys(listOfCandidates).length !== 0) {
           listReturn.push(Object.keys(listOfCandidates)[0]);
@@ -66,16 +99,7 @@ export async function getPendingVotes(config: QuorumConfig) {
       }
     }
   });
-  return listReturn;
-}
-
-export async function proposeValidator(url: string, consensus: string) {
-  const methodDict = {
-    qbft: "qbft_proposeValidatorVote",
-    ibft: "ibft_proposeValidatorVote",
-    raft: "raft_addPeer",
-    clique: "clique_proposals",
-  };
+  return listReturn.sort();
 }
 
 export async function discardProposal(url: string, consensus: string) {

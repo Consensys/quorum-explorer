@@ -1,13 +1,11 @@
-
 export type QuorumNode = {
-    name: string;
-    client: string;
-    rpcUrl: string;
-    wsUrl:  string;
+  name: string;
+  client: string;
+  rpcUrl: string;
+  wsUrl: string;
 };
-  
-export type QuorumConfig = {
-    algorithm: string;
-    nodes: QuorumNode[];
-}
 
+export type QuorumConfig = {
+  algorithm: string;
+  nodes: QuorumNode[];
+};

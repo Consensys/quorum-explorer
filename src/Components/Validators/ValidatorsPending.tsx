@@ -27,6 +27,7 @@ export class ValidatorsPending extends Component<IProps, IState> {
     this.state = {};
   }
   render() {
+    console.log(this.props.pendingList);
     return (
       <>
         <MotionBox
@@ -48,7 +49,12 @@ export class ValidatorsPending extends Component<IProps, IState> {
             this.props.pendingList.map((pending) => {
               return (
                 <>
-                  <Flex m={3} justifyContent="center" alignItems="center">
+                  <Flex
+                    key={pending}
+                    m={3}
+                    justifyContent="center"
+                    alignItems="center"
+                  >
                     <Text>{pending}</Text>
                     <Spacer />
                     <Button>Discard Vote</Button>

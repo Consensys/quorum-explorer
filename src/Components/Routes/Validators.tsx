@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useCallback, useEffect, useState } from "react";
 import {
   Heading,
   Divider,
@@ -14,7 +14,11 @@ import { ValidatorsActive } from "../Validators/ValidatorsActive";
 import { ValidatorsPending } from "../Validators/ValidatorsPending";
 import { ValidatorsPropose } from "../Validators/ValidatorsPropose";
 import ValidatorsAbout from "../Validators/ValidatorAbout";
-import { getCurrentValidators, getPendingVotes } from "../API/Validators";
+import {
+  getCurrentValidators,
+  getPendingVotes,
+  proposeValidator,
+} from "../API/Validators";
 import { getDetailsByNodeName } from "../API/QuorumConfig";
 import { updateNodeInfo } from "../API/Nodes";
 
@@ -30,105 +34,78 @@ interface IProps {
 }
 
 interface IState {
-  delay: number;
-  client: string;
   selectedNode: string;
   rpcUrl: string;
-  statusText: string;
-  blocks: number;
   minersList: string[];
   pendingList: string[];
 }
 
-export default class Validators extends Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      selectedNode: this.props.config.nodes[0].name,
-      delay: 2000,
-      client: "",
-      rpcUrl: this.props.config.nodes[0].rpcUrl,
-      statusText: "error",
-      blocks: 0,
-      minersList: [],
-      pendingList: [],
-    };
-  }
-  intervalId: number = 0;
+export default function Validators(props: IProps) {
+  const [validators, setValidators] = useState<IState>({
+    selectedNode: props.config.nodes[0].name,
+    rpcUrl: props.config.nodes[0].rpcUrl,
+    minersList: [],
+    pendingList: [],
+  });
 
-  handleSelectNode = (e: any) => {
-    console.log(e);
-    this.setState({
-      selectedNode: e.target.value,
-    });
-  };
+  const nodeInfoHandler = useCallback(
+    async (node: string) => {
+      const needle: QuorumNode = getDetailsByNodeName(props.config, node);
+      const rpcUrl: string = needle.rpcUrl;
+      // const res = await updateNodeInfo(rpcUrl);
+      const currentValidators = await getCurrentValidators(rpcUrl);
+      const pendingValidators = await getPendingVotes(props.config);
 
-  async nodeInfoHandler(node: string) {
-    const needle: QuorumNode = getDetailsByNodeName(this.props.config, node);
-    const rpcUrl: string = needle.rpcUrl;
-    const res = await updateNodeInfo(rpcUrl);
-    const currentValidators = await getCurrentValidators(rpcUrl);
-    const pendingValidators = await getPendingVotes(this.props.config);
-    this.setState({
-      client: needle.client,
-      selectedNode: node,
-      statusText: res.statusText,
-      rpcUrl: rpcUrl,
-      blocks: res.blocks,
-      minersList: currentValidators,
-      pendingList: pendingValidators,
-    });
-  }
+      setValidators({
+        selectedNode: node,
+        rpcUrl: rpcUrl,
+        minersList: currentValidators,
+        pendingList: pendingValidators,
+      });
+    },
+    [props.config]
+  );
 
-  tick = () => {
-    this.nodeInfoHandler(this.state.selectedNode);
-  };
-
-  // content visible on screen
-  async componentDidMount() {
+  useEffect(() => {
     console.log("component rendered to screen");
-    this.intervalId = window.setInterval(this.tick, this.state.delay);
-    this.nodeInfoHandler(this.state.selectedNode);
-  }
+    nodeInfoHandler(validators.selectedNode);
+    const interval = setInterval(() => {
+      nodeInfoHandler(validators.selectedNode);
+    }, 5000);
 
-  // sit and wait to updates from setState
-  componentDidUpdate() {
-    console.log("component just updated and re rendered");
-  }
+    return () => clearInterval(interval);
+  }, [nodeInfoHandler, validators.selectedNode]);
 
-  // sit and wait till component is no longer shown
-  componentWillUnmount() {
-    console.log("component gone off screen");
-    clearInterval(this.intervalId);
-  }
+  const handleSelectNode = (e: any) => {
+    console.log(e);
+    setValidators({ ...validators, selectedNode: e.target.value });
+  };
 
-  render() {
-    return (
-      <>
-        <Container maxW={{ base: "container.sm", md: "container.xl" }}>
-          <PageHeader
-            title="Validators"
-            config={this.props.config}
-            selectNodeHandler={this.handleSelectNode}
+  return (
+    <>
+      <Container maxW={{ base: "container.sm", md: "container.xl" }}>
+        <PageHeader
+          title="Validators"
+          config={props.config}
+          selectNodeHandler={handleSelectNode}
+        />
+        <Divider my={8} />
+        <SimpleGrid columns={2} minChildWidth="600px">
+          <ValidatorsAbout />
+          <ValidatorsActive
+            config={props.config}
+            minersList={validators.minersList}
           />
-          <Divider my={8} />
-          <SimpleGrid columns={2} minChildWidth="600px">
-            <ValidatorsAbout />
-            <ValidatorsActive
-              config={this.props.config}
-              minersList={this.state.minersList}
-            />
-            <ValidatorsPending
-              config={this.props.config}
-              pendingList={this.state.pendingList}
-            />
-            <ValidatorsPropose
-              config={this.props.config}
-              minersList={this.state.minersList}
-            />
-          </SimpleGrid>
-        </Container>
-      </>
-    );
-  }
+          <ValidatorsPending
+            config={props.config}
+            pendingList={validators.pendingList}
+          />
+          <ValidatorsPropose
+            config={props.config}
+            minersList={validators.minersList}
+          />
+        </SimpleGrid>
+      </Container>
+    </>
+  );
 }

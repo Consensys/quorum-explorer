@@ -26,6 +26,11 @@ export class ValidatorsPropose extends Component<IProps, IState> {
     super(props);
     this.state = {};
   }
+
+  handleClick = (e: any) => {
+    console.log(e);
+  };
+
   render() {
     return (
       <>
@@ -48,10 +53,17 @@ export class ValidatorsPropose extends Component<IProps, IState> {
             this.props.minersList.map((miner) => {
               return (
                 <>
-                  <Flex m={3} justifyContent="center" alignItems="center">
+                  <Flex
+                    key={miner}
+                    m={3}
+                    justifyContent="center"
+                    alignItems="center"
+                  >
                     <Text>{miner}</Text>
                     <Spacer />
-                    <Button>Propose Validator</Button>
+                    <Button onClick={() => this.handleClick(miner)}>
+                      Propose Validator
+                    </Button>
                   </Flex>
                 </>
               );
