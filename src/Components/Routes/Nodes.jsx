@@ -61,27 +61,24 @@ export default function Nodes({ config }) {
 
   // use useCallBack
   // useEffect is go to re-render and causes a memory leek issue - every time react renders Nodes its re-create the api call, you can prevent this case by using useCallBack,
-  const nodeInfoHandler = useCallback(
-    async (node) => {
-      const needle = getDetailsByNodeName(config, node);
-      const rpcUrl = needle.rpcUrl;
-      const res = await updateNodeInfo(rpcUrl);
-      setQRNode({
-        client: needle.client,
-        nodeId: res.nodeId,
-        nodeName: res.nodeName,
-        enode: res.enode,
-        ip: res.ip,
-        statusText: res.statusText,
-        rpcUrl: rpcUrl,
-        blocks: res.blocks,
-        peers: res.peers,
-        pendingTxns: res.pendingTxns,
-        queuedTxns: res.queuedTxns,
-      });
-    },
-    [config]
-  );
+  const nodeInfoHandler = useCallback(async (node) => {
+    const needle = getDetailsByNodeName(config, node);
+    const rpcUrl = needle.rpcUrl;
+    const res = await updateNodeInfo(rpcUrl);
+    setQRNode({
+      client: needle.client,
+      nodeId: res.nodeId,
+      nodeName: res.nodeName,
+      enode: res.enode,
+      ip: res.ip,
+      statusText: res.statusText,
+      rpcUrl: rpcUrl,
+      blocks: res.blocks,
+      peers: res.peers,
+      pendingTxns: res.pendingTxns,
+      queuedTxns: res.queuedTxns,
+    });
+  }, []);
 
   useEffect(() => {
     console.log("component rendered to screen");
@@ -91,7 +88,7 @@ export default function Nodes({ config }) {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [nodeInfoHandler, config, selectedNode]);
+  }, [selectedNode]);
 
   const handleSelectNode = (e) => {
     setSelectedNode(e.target.value);

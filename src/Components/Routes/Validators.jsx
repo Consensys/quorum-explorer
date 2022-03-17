@@ -17,27 +17,24 @@ export default function Validators(props) {
     pendingList: [],
   });
 
-  const nodeInfoHandler = useCallback(
-    async (node) => {
-      const needle = getDetailsByNodeName(props.config, node);
-      const rpcUrl = needle.rpcUrl;
-      const client = needle.client;
-      const currentValidators = await getCurrentValidators(rpcUrl);
-      const pendingValidators = await getPendingVotes(
-        rpcUrl,
-        client,
-        props.config.algorithm
-      );
+  const nodeInfoHandler = useCallback(async (node) => {
+    const needle = getDetailsByNodeName(props.config, node);
+    const rpcUrl = needle.rpcUrl;
+    const client = needle.client;
+    const currentValidators = await getCurrentValidators(rpcUrl);
+    const pendingValidators = await getPendingVotes(
+      rpcUrl,
+      client,
+      props.config.algorithm
+    );
 
-      setValidators({
-        selectedNode: node,
-        rpcUrl: rpcUrl,
-        minersList: currentValidators,
-        pendingList: pendingValidators,
-      });
-    },
-    [props.config]
-  );
+    setValidators({
+      selectedNode: node,
+      rpcUrl: rpcUrl,
+      minersList: currentValidators,
+      pendingList: pendingValidators,
+    });
+  }, []);
 
   useEffect(() => {
     console.log("first render");
@@ -45,16 +42,15 @@ export default function Validators(props) {
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(validators.selectedNode);
       console.log("called for new info...");
-    }, 2000);
+    }, 1000);
 
     return () => clearInterval(intervalRef.current);
-  }, [nodeInfoHandler, validators.selectedNode]);
+  }, [validators.selectedNode]);
 
   const handleSelectNode = (e) => {
     console.log("cleaning up:" + intervalRef.current);
     clearInterval(intervalRef.current);
     setValidators({ ...validators, selectedNode: e.target.value });
-    // need to clear the interval here
   };
 
   return (
