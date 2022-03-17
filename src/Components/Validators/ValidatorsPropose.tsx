@@ -15,6 +15,7 @@ import {
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { proposeValidator } from "../API/Validators";
 import { getDetailsByNodeName } from "../API/QuorumConfig";
+
 import { motion } from "framer-motion";
 
 const MotionBox = motion(Box);

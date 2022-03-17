@@ -7,6 +7,7 @@ export async function getCurrentValidators(url: string) {
   let numBlocksPrev = 10;
   const latestBlock = await getBlockByNumber(url, "latest");
   if (latestBlock.number < numBlocksPrev) {
+
     numBlocksPrev = latestBlock.number;
   }
   const transformLatestBlock = parseInt(latestBlock.number.toString(), 16);
@@ -115,4 +116,5 @@ export async function discardProposal(
       return status;
     }
   }
+
 }
