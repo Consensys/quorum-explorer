@@ -58,7 +58,8 @@ export async function proposeValidator(
   rpcUrl: string,
   client: string,
   algorithm: string,
-  address: string
+  address: string,
+  vote: boolean // true to vote in, false to vote out
 ) {
   const methodDict = {
     goquorum: {
@@ -76,7 +77,7 @@ export async function proposeValidator(
     if (algorithm === "qbft" || algorithm === "ibft") {
       const req = await ethApiCall(rpcUrl, methodDict[client][algorithm], [
         address,
-        true,
+        vote,
       ]);
       console.log(req);
       const status = req.status;

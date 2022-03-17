@@ -15,7 +15,6 @@ import {
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { proposeValidator } from "../API/Validators";
 import { getDetailsByNodeName } from "../API/QuorumConfig";
-
 import { motion } from "framer-motion";
 
 const MotionBox = motion(Box);
@@ -47,7 +46,8 @@ export default function ValidatorsPropose(props: IProps) {
       rpcUrl,
       client,
       props.config.algorithm,
-      propose.address_input
+      propose.address_input,
+      true
     );
     if (removeValidator === 200) {
       console.log("Successful proposed: " + propose.address_input);

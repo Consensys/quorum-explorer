@@ -55,7 +55,7 @@ export default function ValidatorsPending(props: IProps) {
       >
         <Center>
           <Heading size="lg" mb={5}>
-            Pending Validators
+            Pending Votes
           </Heading>
         </Center>
         {props.pendingList.length > 0 ? (

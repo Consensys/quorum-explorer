@@ -10,24 +10,12 @@ import {
 } from "@chakra-ui/react";
 import PageHeader from "../Misc/PageHeader";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
-import { ValidatorsActive } from "../Validators/ValidatorsActive";
+import ValidatorsActive from "../Validators/ValidatorsActive";
 import ValidatorsPending from "../Validators/ValidatorsPending";
 import ValidatorsPropose from "../Validators/ValidatorsPropose";
 import ValidatorsAbout from "../Validators/ValidatorAbout";
-import {
-  getCurrentValidators,
-  getPendingVotes,
-  proposeValidator,
-} from "../API/Validators";
+import { getCurrentValidators, getPendingVotes } from "../API/Validators";
 import { getDetailsByNodeName } from "../API/QuorumConfig";
-import { updateNodeInfo } from "../API/Nodes";
-
-// Check consensus mechanism -- will then depend on what APIs we use
-// getPendingVotes, getValidatorsByBlockNumber, proposeValidatorVote (QBFT, Clique, IBFT2)
-// https://consensys.net/docs/goquorum/en/latest/reference/api-methods/#istanbul_getvalidators
-// https://consensys.net/docs/goquorum/en/latest/reference/api-methods/#raft_leader
-
-// UI: Current list of validators (button for revoking?), any pending votes (with button to discard pending vote), list of non-validators with buttons to propose new validator
 
 interface IProps {
   config: QuorumConfig;
@@ -103,6 +91,7 @@ export default function Validators(props: IProps) {
           <ValidatorsActive
             config={props.config}
             minersList={validators.minersList}
+            selectedNode={validators.selectedNode}
           />
           <ValidatorsPending
             config={props.config}
