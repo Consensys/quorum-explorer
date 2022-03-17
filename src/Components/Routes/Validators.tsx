@@ -93,13 +93,13 @@ export default function Validators(props: IProps) {
             minersList={validators.minersList}
             selectedNode={validators.selectedNode}
           />
+          <ValidatorsPropose
+            config={props.config}
+            selectedNode={validators.selectedNode}
+          />
           <ValidatorsPending
             config={props.config}
             pendingList={validators.pendingList}
-            selectedNode={validators.selectedNode}
-          />
-          <ValidatorsPropose
-            config={props.config}
             selectedNode={validators.selectedNode}
           />
         </SimpleGrid>

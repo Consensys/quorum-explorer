@@ -72,13 +72,12 @@ export default function ValidatorsPropose(props: IProps) {
       >
         <Center>
           <Heading size="lg" mb={5}>
-            Propose Validators
+            Propose Validator
           </Heading>
         </Center>
         <FormControl>
           <FormLabel htmlFor="address">Address</FormLabel>
-          <Input id="address" type="text" onChange={handleInput} />
-          <FormHelperText>Wow!</FormHelperText>
+          <Input mb={3} id="address" type="text" onChange={handleInput} />
           <Button onClick={handleClick} type="submit">
             Propose Validator
           </Button>
