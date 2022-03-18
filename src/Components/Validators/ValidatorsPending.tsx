@@ -1,5 +1,15 @@
-
-import { Heading, Center, Text, Skeleton, Box, Flex, Button, Spacer, } from "@chakra-ui/react";
+import {
+  Heading,
+  Center,
+  Text,
+  Skeleton,
+  Box,
+  Flex,
+  Button,
+  Spacer,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { buttonState } from "../Types/Validator";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { discardProposal } from "../../API/Validators";
 import { getDetailsByNodeName } from "../../API/QuorumConfig";
@@ -13,8 +23,10 @@ interface IProps {
 }
 
 export default function ValidatorsPending(props: IProps) {
-  const handleClick = async (e: any) => {
+  const [buttonLoading, setButtonLoading] = useState<buttonState>({});
+  const handleClick = async (e: any, index: number) => {
     console.log(e);
+    setButtonLoading({ [index]: true });
     const needle: QuorumNode = getDetailsByNodeName(
       props.config,
       props.selectedNode
@@ -30,6 +42,7 @@ export default function ValidatorsPending(props: IProps) {
     if (discardStatus === 200) {
       console.log("Address discarded: " + e);
     }
+    setButtonLoading({ [index]: false });
   };
   return (
     <>
@@ -55,7 +68,11 @@ export default function ValidatorsPending(props: IProps) {
                 <Flex key={i} m={3} justifyContent="center" alignItems="center">
                   <Text>{pending}</Text>
                   <Spacer />
-                  <Button onClick={() => handleClick(pending)}>
+                  <Button
+                    isLoading={buttonLoading[i] ? true : false}
+                    loadingText="Discarding..."
+                    onClick={() => handleClick(pending, i)}
+                  >
                     Discard Vote
                   </Button>
                 </Flex>

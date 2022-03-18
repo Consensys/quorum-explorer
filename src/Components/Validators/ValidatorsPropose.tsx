@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Heading, Center, FormControl, FormLabel, Input, Box, Button, } from "@chakra-ui/react";
+import {
+  Heading,
+  Center,
+  FormControl,
+  FormLabel,
+  Input,
+  Box,
+  Button,
+} from "@chakra-ui/react";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { proposeValidator } from "../../API/Validators";
 import { getDetailsByNodeName } from "../../API/QuorumConfig";
@@ -19,10 +27,13 @@ export default function ValidatorsPropose(props: IProps) {
   const [propose, setPropose] = useState<IState>({
     address_input: "",
   });
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const handleClick = async (e: any) => {
     e.preventDefault();
     console.log(e);
+    setButtonLoading(true);
+    await new Promise((r) => setTimeout(r, 1000));
     const needle: QuorumNode = getDetailsByNodeName(
       props.config,
       props.selectedNode
@@ -39,6 +50,7 @@ export default function ValidatorsPropose(props: IProps) {
     if (removeValidator === 200) {
       console.log("Successful proposed: " + propose.address_input);
     }
+    setButtonLoading(false);
   };
 
   const handleInput = (e: any) => {
@@ -65,7 +77,12 @@ export default function ValidatorsPropose(props: IProps) {
         <FormControl>
           <FormLabel htmlFor="address">Address</FormLabel>
           <Input mb={3} id="address" type="text" onChange={handleInput} />
-          <Button onClick={handleClick} type="submit">
+          <Button
+            isLoading={buttonLoading ? true : false}
+            loadingText="Proposing..."
+            onClick={handleClick}
+            type="submit"
+          >
             Propose Validator
           </Button>
         </FormControl>

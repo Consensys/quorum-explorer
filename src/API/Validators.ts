@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { ConsensusAlgorithms, Clients } from "./../Components/Types/Validator";
-=======
-import { consensusAlgorithms, clients } from "./../Components/Types/Validator";
->>>>>>> 0491b8a (fix explorer transactions ago and validator calls support besu)
-=======
-import { ConsensusAlgorithms, Clients } from "./../Components/Types/Validator";
->>>>>>> 8c93d07 (test linting)
 import { ethApiCall } from "./Common";
 import { getBlockByNumber } from "./Explorer";
 
