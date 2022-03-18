@@ -1,10 +1,10 @@
-export interface consensusAlgorithms {
+export interface ConsensusAlgorithms {
   qbft: string;
   ibft: string;
   raft?: string;
   clique?: string;
 }
-export interface clients {
-  goquorum: consensusAlgorithms;
-  besu: consensusAlgorithms;
+export interface Clients {
+  goquorum: ConsensusAlgorithms;
+  besu: ConsensusAlgorithms;
 }

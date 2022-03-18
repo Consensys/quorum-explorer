@@ -57,6 +57,7 @@ export default function Explorer(props: IProps) {
         transactions: tmpTxns,
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.config]
   );
 
@@ -68,6 +69,7 @@ export default function Explorer(props: IProps) {
     }, refreshFrequency);
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [explorer.selectedNode]);
 
   const handleSelectNode = (e: any) => {

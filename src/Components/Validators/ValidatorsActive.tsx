@@ -1,5 +1,13 @@
-
-import { Heading, Flex, Text, Button, Spacer, Box, Center, Skeleton, } from "@chakra-ui/react";
+import {
+  Heading,
+  Flex,
+  Text,
+  Button,
+  Spacer,
+  Box,
+  Center,
+  Skeleton,
+} from "@chakra-ui/react";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { proposeValidator } from "../../API/Validators";
 import { getDetailsByNodeName } from "../../API/QuorumConfig";
@@ -11,8 +19,6 @@ interface IProps {
   minersList: string[];
   selectedNode: string;
 }
-
-interface IState {}
 
 export default function ValidatorsActive(props: IProps) {
   const handleClick = async (e: any) => {
@@ -80,4 +86,3 @@ export default function ValidatorsActive(props: IProps) {
     </>
   );
 }
-
