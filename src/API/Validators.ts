@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { ConsensusAlgorithms, Clients } from "./../Components/Types/Validator";
+=======
+import { consensusAlgorithms, clients } from "./../Components/Types/Validator";
+>>>>>>> 0491b8a (fix explorer transactions ago and validator calls support besu)
 import { ethApiCall } from "./Common";
 import { getBlockByNumber } from "./Explorer";
 
@@ -30,7 +34,11 @@ export async function getPendingVotes(
   client: string,
   algorithm: string
 ) {
+<<<<<<< HEAD
   const methodDict: Clients = {
+=======
+  const methodDict: clients = {
+>>>>>>> 0491b8a (fix explorer transactions ago and validator calls support besu)
     goquorum: {
       qbft: "istanbul_candidates",
       ibft: "istanbul_candidates",
@@ -44,6 +52,7 @@ export async function getPendingVotes(
   };
   const listReturn: any = [];
 
+<<<<<<< HEAD
   try {
     const req = await ethApiCall(
       rpcUrl,
@@ -61,6 +70,18 @@ export async function getPendingVotes(
     console.log(e);
     return [];
   }
+=======
+  const req = await ethApiCall(
+    rpcUrl,
+    methodDict[client as keyof clients][algorithm as keyof consensusAlgorithms]!
+  );
+  const listOfCandidates = req.data.result;
+  if (Object.keys(listOfCandidates).length !== 0) {
+    Object.keys(listOfCandidates).map((address) => listReturn.push(address));
+  }
+
+  return listReturn;
+>>>>>>> 0491b8a (fix explorer transactions ago and validator calls support besu)
 }
 
 export async function proposeValidator(
@@ -70,7 +91,11 @@ export async function proposeValidator(
   address: string,
   vote: boolean // true to vote in, false to vote out
 ) {
+<<<<<<< HEAD
   const methodDict: Clients = {
+=======
+  const methodDict: clients = {
+>>>>>>> 0491b8a (fix explorer transactions ago and validator calls support besu)
     goquorum: {
       qbft: "istanbul_propose",
       ibft: "istanbul_propose",
@@ -82,6 +107,7 @@ export async function proposeValidator(
       qbft: "qbft_proposeValidatorVote",
     },
   };
+<<<<<<< HEAD
   try {
     const req = await ethApiCall(
       rpcUrl,
@@ -97,6 +123,18 @@ export async function proposeValidator(
     console.log(e);
     return 500;
   }
+=======
+  const req = await ethApiCall(
+    rpcUrl,
+    methodDict[client as keyof clients][
+      algorithm as keyof consensusAlgorithms
+    ]!,
+    [address, vote]
+  );
+  console.log(req);
+  const status = req.status;
+  return status;
+>>>>>>> 0491b8a (fix explorer transactions ago and validator calls support besu)
 }
 
 export async function discardProposal(
@@ -105,7 +143,11 @@ export async function discardProposal(
   algorithm: string,
   address: string
 ) {
+<<<<<<< HEAD
   const methodDict: Clients = {
+=======
+  const methodDict: clients = {
+>>>>>>> 0491b8a (fix explorer transactions ago and validator calls support besu)
     goquorum: {
       qbft: "istanbul_discard",
       ibft: "istanbul_discard",
@@ -118,6 +160,7 @@ export async function discardProposal(
     },
   };
 
+<<<<<<< HEAD
   try {
     const req = await ethApiCall(
       rpcUrl,
@@ -133,4 +176,16 @@ export async function discardProposal(
     console.log(e);
     return 500;
   }
+=======
+  const req = await ethApiCall(
+    rpcUrl,
+    methodDict[client as keyof clients][
+      algorithm as keyof consensusAlgorithms
+    ]!,
+    [address]
+  );
+  // console.log(req);
+  const status = req.status;
+  return status;
+>>>>>>> 0491b8a (fix explorer transactions ago and validator calls support besu)
 }
