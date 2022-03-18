@@ -66,9 +66,9 @@ export default function ValidatorsActive(props: IProps) {
           props.minersList.map((miner, i) => {
             return (
               <>
-                <Flex key={i} m={3} justifyContent="center" alignItems="center">
+                <Flex m={3} justifyContent="center" alignItems="center">
                   <Text>{miner}</Text>
-                  <Spacer />
+                  <Spacer key={i} />
                   <Button
                     isLoading={buttonLoading[i] ? true : false}
                     loadingText="Removing..."

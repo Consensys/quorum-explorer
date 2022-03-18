@@ -27,6 +27,7 @@ export default function ValidatorsPending(props: IProps) {
   const handleClick = async (e: any, index: number) => {
     console.log(e);
     setButtonLoading({ [index]: true });
+    await new Promise((r) => setTimeout(r, 1000));
     const needle: QuorumNode = getDetailsByNodeName(
       props.config,
       props.selectedNode

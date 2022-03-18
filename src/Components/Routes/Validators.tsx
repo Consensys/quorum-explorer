@@ -22,6 +22,7 @@ interface IState {
 
 export default function Validators(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const toContinue = useRef(true);
   const refreshFrequency: number = 1000;
   const [validators, setValidators] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
@@ -30,43 +31,46 @@ export default function Validators(props: IProps) {
     pendingList: [],
   });
 
-  const nodeInfoHandler = useCallback(
-    async (node: string) => {
-      const needle: QuorumNode = getDetailsByNodeName(props.config, node);
-      const rpcUrl: string = needle.rpcUrl;
-      const client: string = needle.client;
-      const currentValidators = await getCurrentValidators(rpcUrl);
-      const pendingValidators = await getPendingVotes(
-        rpcUrl,
-        client,
-        props.config.algorithm
-      );
-
+  const nodeInfoHandler = useCallback(async (node: string) => {
+    const needle: QuorumNode = getDetailsByNodeName(props.config, node);
+    const rpcUrl: string = needle.rpcUrl;
+    const client: string = needle.client;
+    const currentValidators = await getCurrentValidators(rpcUrl);
+    const pendingValidators = await getPendingVotes(
+      rpcUrl,
+      client,
+      props.config.algorithm
+    );
+    if (toContinue.current) {
       setValidators({
         selectedNode: node,
         rpcUrl: rpcUrl,
         minersList: currentValidators,
         pendingList: pendingValidators,
       });
-    },
-    [props.config]
-  );
+    }
+  }, []);
 
   useEffect(() => {
-    console.log("rendering...");
+    toContinue.current = true;
+    console.log(validators);
     nodeInfoHandler(validators.selectedNode);
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(validators.selectedNode);
       console.log("called for new info...");
     }, refreshFrequency);
 
-    return () => clearInterval(intervalRef.current as NodeJS.Timeout);
+    return () => {
+      toContinue.current = false;
+      clearInterval(intervalRef.current as NodeJS.Timeout);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validators.selectedNode]);
 
   const handleSelectNode = (e: any) => {
-    console.log("cleaning up:" + intervalRef.current);
+    toContinue.current = false;
     clearInterval(intervalRef.current as NodeJS.Timeout);
+    console.log("cleaned up: " + intervalRef.current);
     setValidators({ ...validators, selectedNode: e.target.value });
   };
 
