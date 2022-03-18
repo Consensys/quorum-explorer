@@ -16,6 +16,7 @@ import { buttonState } from "../Types/Validator";
 import { motion } from "framer-motion";
 
 const MotionBox = motion(Box);
+const MotionFlex = motion(Flex);
 interface IProps {
   config: QuorumConfig;
   minersList: string[];
@@ -66,7 +67,14 @@ export default function ValidatorsActive(props: IProps) {
           props.minersList.map((miner, i) => {
             return (
               <>
-                <Flex m={3} justifyContent="center" alignItems="center">
+                <MotionFlex
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  m={3}
+                  justifyContent="center"
+                  alignItems="center"
+                >
                   <Text>{miner}</Text>
                   <Spacer key={i} />
                   <Button
@@ -76,7 +84,7 @@ export default function ValidatorsActive(props: IProps) {
                   >
                     Remove Validator
                   </Button>
-                </Flex>
+                </MotionFlex>
               </>
             );
           })

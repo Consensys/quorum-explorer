@@ -14,7 +14,9 @@ import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { discardProposal } from "../../API/Validators";
 import { getDetailsByNodeName } from "../../API/QuorumConfig";
 import { motion } from "framer-motion";
+
 const MotionBox = motion(Box);
+const MotionFlex = motion(Flex);
 
 interface IProps {
   config: QuorumConfig;
@@ -66,7 +68,15 @@ export default function ValidatorsPending(props: IProps) {
           props.pendingList.map((pending, i) => {
             return (
               <>
-                <Flex key={i} m={3} justifyContent="center" alignItems="center">
+                <MotionFlex
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  key={i}
+                  m={3}
+                  justifyContent="center"
+                  alignItems="center"
+                >
                   <Text>{pending}</Text>
                   <Spacer />
                   <Button
@@ -76,7 +86,7 @@ export default function ValidatorsPending(props: IProps) {
                   >
                     Discard Vote
                   </Button>
-                </Flex>
+                </MotionFlex>
               </>
             );
           })
