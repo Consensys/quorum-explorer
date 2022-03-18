@@ -1,19 +1,14 @@
 import { ethApiCall } from "./Common";
 import { QuorumBlock, QuorumTxn } from "../Components/Types/Explorer";
 
-export function getSecsAgo(
-  h: string
-) {
-  const ago: number = parseInt(h, 10);
-  const now: any = new Date();
-  const d = now - ago;
-  const dts = new Date(d);
-  return dts.getSeconds();
+export function getSecsAgo(h: string) {
+  const ago: Date = new Date(parseInt(h, 16)); // convert to decimal unix time
+  const now: Date = new Date();
+  const d = Math.abs(ago.getTime() - now.getTime() / 1000);
+  return Math.trunc(d);
 }
 
-export function abbreviateValidator(
-  s: string
-) {
+export function abbreviateValidator(s: string) {
   const len = s.length;
   return s.slice(0, 10) + "..." + s.slice(len - 6);
 }
@@ -43,10 +38,7 @@ export function updateTxnArray(
   return arr.slice(0, len);
 }
 
-export async function getTxnByHash(
-  url: string,
-  txnHash: string
-) {
+export async function getTxnByHash(url: string, txnHash: string) {
   let quorumTxn: QuorumTxn = {
     blockHash: "error",
     blockNumber: -1,

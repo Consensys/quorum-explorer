@@ -1,4 +1,3 @@
-
 {
   "algorithm": "qbft",
   "nodes": [
@@ -8,31 +7,31 @@
       "rpcUrl": "http://localhost:8545",
       "wsUrl": "local"
     },
-    { 
+    {
       "name": "validator1",
       "client": "goquorum",
       "rpcUrl": "http://localhost:21001",
       "wsUrl": "local"
     },
-    { 
+    {
       "name": "validator2",
       "client": "goquorum",
       "rpcUrl": "http://localhost:21002",
       "wsUrl": "local"
     },
-    { 
+    {
       "name": "validator3",
       "client": "goquorum",
       "rpcUrl": "http://localhost:21003",
       "wsUrl": "local"
     },
-    { 
+    {
       "name": "validator4",
       "client": "goquorum",
       "rpcUrl": "http://localhost:21004",
       "wsUrl": "local"
     },
-    { 
+    {
       "name": "broken",
       "client": "besu",
       "rpcUrl": "http://localhost:9000",

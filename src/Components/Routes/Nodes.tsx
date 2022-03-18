@@ -1,11 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Container, StatHelpText } from "@chakra-ui/react";
+import { Container } from "@chakra-ui/react";
 import PageHeader from "../Misc/PageHeader";
 import NodeOverview from "../Nodes/NodeOverview";
 import NodeDetails from "../Nodes/NodeDetails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faPlay, faStop, faCubes, faUsers, faExchangeAlt, } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlay,
+  faStop,
+  faCubes,
+  faUsers,
+  faExchangeAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { QuorumStatCard } from "../Types/Nodes";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { getDetailsByNodeName } from "../../API/QuorumConfig";
@@ -32,7 +38,7 @@ interface IState {
 
 export default function Nodes(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refreshFrequency : number = 5000;
+  const refreshFrequency: number = 5000;
   const [node, setNode] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
     client: "",
@@ -47,13 +53,13 @@ export default function Nodes(props: IProps) {
     queuedTxns: 0,
     pendingTxns: 0,
   });
- 
+
   const stats: QuorumStatCard[] = [
     {
       label: "Status",
       value: node.statusText === "OK" ? "Running" : "Stopped",
       icon:
-      node.statusText === "OK" ? (
+        node.statusText === "OK" ? (
           <FontAwesomeIcon icon={faPlay as IconProp} size="2x" color="green" />
         ) : (
           <FontAwesomeIcon icon={faStop as IconProp} size="2x" color="red" />
@@ -62,17 +68,31 @@ export default function Nodes(props: IProps) {
     {
       label: "Blocks",
       value: node.blocks,
-      icon: <FontAwesomeIcon icon={faCubes as IconProp} size="2x" color="steelBlue" />,
+      icon: (
+        <FontAwesomeIcon
+          icon={faCubes as IconProp}
+          size="2x"
+          color="steelBlue"
+        />
+      ),
     },
     {
       label: "Peers",
       value: node.peers,
-      icon: <FontAwesomeIcon icon={faUsers as IconProp} size="2x" color="dimGray" />,
+      icon: (
+        <FontAwesomeIcon icon={faUsers as IconProp} size="2x" color="dimGray" />
+      ),
     },
     {
       label: "Queued",
       value: node.queuedTxns,
-      icon: <FontAwesomeIcon icon={faExchangeAlt as IconProp} size="2x" color="coral" />,
+      icon: (
+        <FontAwesomeIcon
+          icon={faExchangeAlt as IconProp}
+          size="2x"
+          color="coral"
+        />
+      ),
     },
   ];
 
@@ -109,6 +129,7 @@ export default function Nodes(props: IProps) {
     }, refreshFrequency);
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [node.selectedNode]);
 
   const handleSelectNode = (e: any) => {

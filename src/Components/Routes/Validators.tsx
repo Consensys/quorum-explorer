@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, useRef } from "react";
-import { Divider, Container, SimpleGrid, } from "@chakra-ui/react";
+import { Divider, Container, SimpleGrid } from "@chakra-ui/react";
 import PageHeader from "../Misc/PageHeader";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import ValidatorsActive from "../Validators/ValidatorsActive";
@@ -22,7 +22,7 @@ interface IState {
 
 export default function Validators(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refreshFrequency : number = 3000;
+  const refreshFrequency: number = 1000;
   const [validators, setValidators] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
     rpcUrl: props.config.nodes[0].rpcUrl,
@@ -53,7 +53,7 @@ export default function Validators(props: IProps) {
   );
 
   useEffect(() => {
-    console.log("first render");
+    console.log("rendering...");
     nodeInfoHandler(validators.selectedNode);
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(validators.selectedNode);
@@ -61,13 +61,13 @@ export default function Validators(props: IProps) {
     }, refreshFrequency);
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
-  }, [nodeInfoHandler, validators.selectedNode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [validators.selectedNode]);
 
   const handleSelectNode = (e: any) => {
     console.log("cleaning up:" + intervalRef.current);
     clearInterval(intervalRef.current as NodeJS.Timeout);
     setValidators({ ...validators, selectedNode: e.target.value });
-    // need to clear the interval here
   };
 
   return (
@@ -99,5 +99,4 @@ export default function Validators(props: IProps) {
       </Container>
     </>
   );
-
 }

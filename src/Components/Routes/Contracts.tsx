@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef} from "react";
-import { Container, Divider } from "@chakra-ui/react";
+import { useState, useRef } from "react";
+import { Container } from "@chakra-ui/react";
 import PageHeader from "../Misc/PageHeader";
 import { QuorumConfig } from "../Types/QuorumConfig";
 
