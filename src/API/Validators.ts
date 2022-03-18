@@ -1,4 +1,4 @@
-
+import { consensusAlgorithms, clients } from "./../Components/Types/Validator";
 import { ethApiCall } from "./Common";
 import { getBlockByNumber } from "./Explorer";
 
@@ -21,12 +21,12 @@ export async function getCurrentValidators(url: string) {
   return uniqueList.sort();
 }
 
-export async function getPendingVotes( 
+export async function getPendingVotes(
   rpcUrl: string,
   client: string,
   algorithm: string
 ) {
-  const methodDict = {
+  const methodDict: clients = {
     goquorum: {
       qbft: "istanbul_candidates",
       ibft: "istanbul_candidates",
@@ -40,17 +40,15 @@ export async function getPendingVotes(
   };
   const listReturn: any = [];
 
-  if (client === "goquorum") {
-    if (algorithm === "qbft" || algorithm === "ibft") {
-      const req = await ethApiCall(rpcUrl, methodDict[client][algorithm]);
-      const listOfCandidates = req.data.result;
-      if (Object.keys(listOfCandidates).length !== 0) {
-        Object.keys(listOfCandidates).map((address) =>
-          listReturn.push(address)
-        );
-      }
-    }
+  const req = await ethApiCall(
+    rpcUrl,
+    methodDict[client as keyof clients][algorithm as keyof consensusAlgorithms]!
+  );
+  const listOfCandidates = req.data.result;
+  if (Object.keys(listOfCandidates).length !== 0) {
+    Object.keys(listOfCandidates).map((address) => listReturn.push(address));
   }
+
   return listReturn;
 }
 
@@ -61,7 +59,7 @@ export async function proposeValidator(
   address: string,
   vote: boolean // true to vote in, false to vote out
 ) {
-  const methodDict = {
+  const methodDict: clients = {
     goquorum: {
       qbft: "istanbul_propose",
       ibft: "istanbul_propose",
@@ -73,17 +71,16 @@ export async function proposeValidator(
       qbft: "qbft_proposeValidatorVote",
     },
   };
-  if (client === "goquorum") {
-    if (algorithm === "qbft" || algorithm === "ibft") {
-      const req = await ethApiCall(rpcUrl, methodDict[client][algorithm], [
-        address,
-        vote,
-      ]);
-      console.log(req);
-      const status = req.status;
-      return status;
-    }
-  }
+  const req = await ethApiCall(
+    rpcUrl,
+    methodDict[client as keyof clients][
+      algorithm as keyof consensusAlgorithms
+    ]!,
+    [address, vote]
+  );
+  console.log(req);
+  const status = req.status;
+  return status;
 }
 
 export async function discardProposal(
@@ -92,7 +89,7 @@ export async function discardProposal(
   algorithm: string,
   address: string
 ) {
-  const methodDict = {
+  const methodDict: clients = {
     goquorum: {
       qbft: "istanbul_discard",
       ibft: "istanbul_discard",
@@ -105,15 +102,14 @@ export async function discardProposal(
     },
   };
 
-  if (client === "goquorum") {
-    if (algorithm === "qbft" || algorithm === "ibft") {
-      const req = await ethApiCall(rpcUrl, methodDict[client][algorithm], [
-        address,
-      ]);
-      // console.log(req);
-      const status = req.status;
-      return status;
-    }
-  }
-
+  const req = await ethApiCall(
+    rpcUrl,
+    methodDict[client as keyof clients][
+      algorithm as keyof consensusAlgorithms
+    ]!,
+    [address]
+  );
+  // console.log(req);
+  const status = req.status;
+  return status;
 }
