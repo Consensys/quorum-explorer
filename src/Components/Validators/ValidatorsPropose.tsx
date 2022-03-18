@@ -74,13 +74,13 @@ export default function ValidatorsPropose(props: IProps) {
             Propose Validator
           </Heading>
         </Center>
-        <FormControl>
+        <FormControl as="form" onSubmit={handleClick}>
           <FormLabel htmlFor="address">Address</FormLabel>
           <Input mb={3} id="address" type="text" onChange={handleInput} />
           <Button
-            isLoading={buttonLoading ? true : false}
+            isLoading={buttonLoading}
             loadingText="Proposing..."
-            onClick={handleClick}
+            // onClick={handleClick}
             type="submit"
           >
             Propose Validator

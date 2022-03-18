@@ -53,7 +53,7 @@ export default function Validators(props: IProps) {
 
   useEffect(() => {
     toContinue.current = true;
-    console.log(validators);
+    console.log("rendering...");
     nodeInfoHandler(validators.selectedNode);
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(validators.selectedNode);
