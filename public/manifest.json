@@ -1,0 +1,18 @@
+{
+  "short_name": "Quorum Explorer",
+  "name": "Quorum Explorer",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg"
+    },
+    {
+      "src": "logo.svg",
+      "type": "image/svg"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

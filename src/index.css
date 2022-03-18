@@ -1,0 +1,23 @@
+* {
+  margin: 0;
+  padding: 0;
+  /* box-sizing: border-box; */
+  font-family: 'Roboto';
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.cCenterAlign {
+  text-align: center;
+}
+.cBold {
+  font-weight: 400;
+}
+
+.cCapitalize {
+  text-transform:capitalize;
+}
