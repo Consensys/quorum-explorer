@@ -22,7 +22,7 @@ interface IState {
 
 export default function Validators(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const toContinue = useRef(true);
+  const [cancelState, setCancelState] = useState(false);
   const refreshFrequency: number = 1000;
   const [validators, setValidators] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
@@ -41,36 +41,42 @@ export default function Validators(props: IProps) {
       client,
       props.config.algorithm
     );
-    if (toContinue.current) {
-      setValidators({
-        selectedNode: node,
-        rpcUrl: rpcUrl,
-        minersList: currentValidators,
-        pendingList: pendingValidators,
-      });
+    if (cancelState) {
+      return;
     }
+    setValidators({
+      selectedNode: node,
+      rpcUrl: rpcUrl,
+      minersList: currentValidators,
+      pendingList: pendingValidators,
+    });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    toContinue.current = true;
     console.log("rendering...");
     nodeInfoHandler(validators.selectedNode);
+    setCancelState(false);
+    // issue is that when the above line is executing and then we change drop-down to trigger new re-render before we get to the interval... then the previous interval cannot be cleared so continues execution and causes infinite loop
+    // potential fix, other than having a delay when navigating to the new node selection, is to have a variable to control whether the drop-down is disabled or not
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(validators.selectedNode);
       console.log("called for new info...");
     }, refreshFrequency);
 
     return () => {
-      toContinue.current = false;
+      setCancelState(true);
       clearInterval(intervalRef.current as NodeJS.Timeout);
+      intervalRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validators.selectedNode]);
 
   const handleSelectNode = (e: any) => {
-    toContinue.current = false;
+    setCancelState(true);
     clearInterval(intervalRef.current as NodeJS.Timeout);
+    intervalRef.current = null;
     console.log("cleaned up: " + intervalRef.current);
     setValidators({ ...validators, selectedNode: e.target.value });
   };
