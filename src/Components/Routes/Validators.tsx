@@ -68,7 +68,6 @@ export default function Validators(props: IProps) {
     return () => {
       setCancelState(true);
       clearInterval(intervalRef.current as NodeJS.Timeout);
-      intervalRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validators.selectedNode]);
@@ -76,7 +75,6 @@ export default function Validators(props: IProps) {
   const handleSelectNode = (e: any) => {
     setCancelState(true);
     clearInterval(intervalRef.current as NodeJS.Timeout);
-    intervalRef.current = null;
     console.log("cleaned up: " + intervalRef.current);
     setValidators({ ...validators, selectedNode: e.target.value });
   };

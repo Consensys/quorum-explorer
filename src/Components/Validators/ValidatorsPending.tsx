@@ -1,12 +1,13 @@
 import {
   Heading,
   Center,
-  Text,
+  Code,
   Skeleton,
   Box,
   Flex,
   Button,
   Spacer,
+  Tooltip,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { buttonState } from "../Types/Validator";
@@ -40,7 +41,7 @@ export default function ValidatorsPending(props: IProps) {
       rpcUrl,
       client,
       props.config.algorithm,
-      e
+      e[0]
     );
     if (discardStatus === 200) {
       console.log("Address discarded: " + e);
@@ -77,7 +78,16 @@ export default function ValidatorsPending(props: IProps) {
                   justifyContent="center"
                   alignItems="center"
                 >
-                  <Text>{pending}</Text>
+                  <Tooltip
+                    label={Object.values(pending)[1] ? "Vote in!" : "Vote out!"}
+                    aria-label="Vote validator in or out"
+                  >
+                    <Code
+                      colorScheme={Object.values(pending)[1] ? "green" : "red"}
+                    >
+                      {Object.values(pending)}
+                    </Code>
+                  </Tooltip>
                   <Spacer />
                   <Button
                     isLoading={buttonLoading[i] ? true : false}
