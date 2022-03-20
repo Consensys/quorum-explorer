@@ -56,8 +56,7 @@ export default function Validators(props: IProps) {
 
   useEffect(() => {
     console.log("rendering...");
-    nodeInfoHandler(validators.selectedNode);
-    setCancelState(false);
+    nodeInfoHandler(validators.selectedNode).then(() => setCancelState(false));
     // issue is that when the above line is executing and then we change drop-down to trigger new re-render before we get to the interval... then the previous interval cannot be cleared so continues execution and causes infinite loop
     // potential fix, other than having a delay when navigating to the new node selection, is to have a variable to control whether the drop-down is disabled or not
     intervalRef.current = setInterval(() => {
