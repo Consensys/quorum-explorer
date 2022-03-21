@@ -20,6 +20,19 @@ import {
   AccordionPanel,
   AccordionIcon,
   Box,
+  Input,
+  Flex,
+  Text,
+  Table,
+  Thead,
+  Tbody,
+  Code,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  VStack,
+  Divider,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -97,64 +110,126 @@ contract SimpleStorage {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <SimpleGrid columns={2} minChildWidth="120px" spacing="40px">
+            <SimpleGrid columns={2} minChildWidth="400px" spacing="40px">
               <Accordion allowMultiple defaultIndex={[0, 1]}>
                 <AccordionItem>
                   <AccordionButton>
-                    <Box fontWeight="semibold" flex="1" textAlign="left">
+                    <Box
+                      color="blue.600"
+                      fontWeight="bold"
+                      flex="1"
+                      textAlign="left"
+                    >
                       Choose Contract
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
                   <AccordionPanel pb={4}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    <FormControl isRequired>
+                      <FormLabel htmlFor="contract-address">
+                        Contract Address
+                      </FormLabel>
+                      <Input id="contract-address" placeholder="0x" />
+                    </FormControl>
                   </AccordionPanel>
                 </AccordionItem>
                 <AccordionItem>
                   <AccordionButton>
-                    <Box fontWeight="semibold" flex="1" textAlign="left">
+                    <Box
+                      color="blue.600"
+                      fontWeight="bold"
+                      flex="1"
+                      textAlign="left"
+                    >
                       Transact
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
                   <AccordionPanel pb={4}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    <FormControl>
+                      <FormLabel htmlFor="from-address">FROM Address</FormLabel>
+                      <Input id="from-address" placeholder="0x" />
+                      <FormLabel htmlFor="private-for">Private For</FormLabel>
+                      <Input id="private-for" placeholder="0x" />
+                      <Flex justifyContent="space-between" alignItems="center">
+                        <Text fontWeight="semibold">get</Text>
+                        <Button>Read</Button>
+                      </Flex>
+                      <Flex justifyContent="space-between" alignItems="center">
+                        <FormLabel htmlFor="set" fontWeight="semibold">
+                          set
+                        </FormLabel>
+                        <Input id="set" placeholder="0x" />
+                        <Button>Transact</Button>
+                      </Flex>
+                      <Flex justifyContent="space-between" alignItems="center">
+                        <Text fontWeight="semibold">storedData</Text>
+                        <Button>Read</Button>
+                      </Flex>
+                    </FormControl>
                   </AccordionPanel>
                 </AccordionItem>
               </Accordion>
               <Accordion allowMultiple defaultIndex={[0, 1]}>
                 <AccordionItem>
                   <AccordionButton>
-                    <Box fontWeight="semibold" flex="1" textAlign="left">
+                    <Box
+                      color="blue.600"
+                      fontWeight="bold"
+                      flex="1"
+                      textAlign="left"
+                    >
                       Contract State
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
                   <AccordionPanel pb={4}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    <Table variant="simple">
+                      <TableCaption>Read and Transact Results</TableCaption>
+                      <Thead>
+                        <Tr>
+                          <Th>Result</Th>
+                          <Th isNumeric>Value</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        <Tr>
+                          <Td>get</Td>
+                          <Td isNumeric>0</Td>
+                        </Tr>
+                        <Tr>
+                          <Td>storedData</Td>
+                          <Td isNumeric>0</Td>
+                        </Tr>
+                      </Tbody>
+                    </Table>
                   </AccordionPanel>
                 </AccordionItem>
                 <AccordionItem>
                   <AccordionButton>
-                    <Box fontWeight="semibold" flex="1" textAlign="left">
+                    <Box
+                      color="blue.600"
+                      fontWeight="bold"
+                      flex="1"
+                      textAlign="left"
+                    >
                       Log
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
                   <AccordionPanel pb={4}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    <VStack
+                      align="left"
+                      divider={<Divider borderColor="gray.200" />}
+                      spacing={1}
+                    >
+                      <Code>Using 'SimpleStorage' at 0x881ba7a6</Code>
+                      <Code>{`[read] get() => 0`}</Code>
+                      <Code>{`[txn] set("1234") => created tx 0xcd362161`}</Code>
+                      <Code>{`[read] get() => 0`}</Code>
+                      <Code>{`[txn] set("4321") => created tx 0xcd362161`}</Code>
+                      <Code>{`[read] get() => 0`}</Code>
+                    </VStack>
                   </AccordionPanel>
                 </AccordionItem>
               </Accordion>
@@ -162,8 +237,9 @@ contract SimpleStorage {
           </TabPanel>
           <TabPanel>
             <FormControl as="form" onSubmit={HandleClick}>
-              <FormLabel htmlFor="email">Solidity Contract Code</FormLabel>
+              <FormLabel htmlFor="code">Solidity Contract Code</FormLabel>
               <ChakraCodeArea
+                id="code"
                 value={code}
                 language="sol"
                 placeholder="Please enter SOL code."
