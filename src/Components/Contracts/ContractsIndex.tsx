@@ -14,11 +14,22 @@ import {
   FormHelperText,
   useColorModeValue,
   useToast,
+  SimpleGrid,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  Box,
 } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 
 interface IProps {
   config: QuorumConfig;
+  selectedNode: string;
 }
+
+const MotionTabs = motion(Tabs);
 
 const ChakraCodeArea = chakra(CodeEditor);
 
@@ -56,7 +67,7 @@ contract SimpleStorage {
     setButtonLoading(true);
     toast({
       title: "Deployed Contract!",
-      description: "The contract was successfully deployed @ address: ",
+      description: `The contract was successfully deployed through ${props.selectedNode} @ address: `,
       status: "success",
       duration: 5000,
       position: "bottom",
@@ -69,14 +80,83 @@ contract SimpleStorage {
 
   return (
     <>
-      <Tabs mt={5} isFitted isLazy variant="enclosed">
+      <MotionTabs
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        mt={5}
+        isFitted
+        isLazy
+        variant="enclosed"
+      >
         <TabList mb="1em">
           <Tab>Interact</Tab>
           <Tab>Deploy</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
-            <p>Interact with contracts here!</p>
+            <SimpleGrid columns={2} minChildWidth="120px" spacing="40px">
+              <Accordion allowMultiple defaultIndex={[0, 1]}>
+                <AccordionItem>
+                  <AccordionButton>
+                    <Box flex="1" textAlign="left">
+                      Choose Contract
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                  </AccordionPanel>
+                </AccordionItem>
+                <AccordionItem>
+                  <AccordionButton>
+                    <Box flex="1" textAlign="left">
+                      Transact
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+              <Accordion allowMultiple defaultIndex={[0, 1]}>
+                <AccordionItem>
+                  <AccordionButton>
+                    <Box flex="1" textAlign="left">
+                      Contract State
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                  </AccordionPanel>
+                </AccordionItem>
+                <AccordionItem>
+                  <AccordionButton>
+                    <Box flex="1" textAlign="left">
+                      Log
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+            </SimpleGrid>
           </TabPanel>
           <TabPanel>
             <FormControl as="form" onSubmit={HandleClick}>
@@ -103,7 +183,7 @@ contract SimpleStorage {
             </FormControl>
           </TabPanel>
         </TabPanels>
-      </Tabs>
+      </MotionTabs>
     </>
   );
 }

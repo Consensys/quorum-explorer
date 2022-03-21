@@ -31,7 +31,10 @@ export default function Contracts(props: IProps) {
           config={props.config}
           selectNodeHandler={handleSelectNode}
         />
-        <ContractsIndex config={props.config} />
+        <ContractsIndex
+          config={props.config}
+          selectedNode={contracts.selectedNode}
+        />
       </Container>
     </>
   );
