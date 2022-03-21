@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Container } from "@chakra-ui/react";
 import PageHeader from "../Misc/PageHeader";
+import ContractsIndex from "../Contracts/ContractsIndex";
 import { QuorumConfig } from "../Types/QuorumConfig";
 
 interface IProps {
@@ -30,6 +31,7 @@ export default function Contracts(props: IProps) {
           config={props.config}
           selectNodeHandler={handleSelectNode}
         />
+        <ContractsIndex config={props.config} />
       </Container>
     </>
   );
