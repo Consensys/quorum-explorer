@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { QuorumConfig } from "../Types/QuorumConfig";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import {
@@ -8,6 +8,10 @@ import {
   Tab,
   TabPanel,
   chakra,
+  FormControl,
+  FormLabel,
+  Button,
+  FormHelperText,
 } from "@chakra-ui/react";
 
 interface IProps {
@@ -17,7 +21,7 @@ interface IProps {
 const ChakraCodeArea = chakra(CodeEditor);
 
 export default function ContractsIndex(props: IProps) {
-  const [code, setCode] = React.useState(
+  const [code, setCode] = useState(
     `pragma solidity ^0.7.0;
 contract SimpleStorage {
   uint public storedData;
@@ -38,6 +42,10 @@ contract SimpleStorage {
   }
 }`
   );
+  const [buttonLoading, setButtonLoading] = useState(false);
+
+  const handleClick = async (e: any) => {};
+
   return (
     <>
       <Tabs isFitted isLazy variant="enclosed">
@@ -50,17 +58,28 @@ contract SimpleStorage {
             <p>Interact with contracts here!</p>
           </TabPanel>
           <TabPanel>
-            <ChakraCodeArea
-              value={code}
-              language="sol"
-              placeholder="Please enter SOL code."
-              onChange={(evn) => setCode(evn.target.value)}
-              padding={15}
-              borderRadius="lg"
-              borderWidth={2}
-              backgroundColor="gray.200"
-              fontSize={16}
-            />
+            <FormControl as="form" onSubmit={handleClick}>
+              <FormLabel htmlFor="email">Solidity Contract Code</FormLabel>
+              <ChakraCodeArea
+                value={code}
+                language="sol"
+                placeholder="Please enter SOL code."
+                onChange={(evn) => setCode(evn.target.value)}
+                padding={15}
+                borderRadius="lg"
+                borderWidth={2}
+                backgroundColor="gray.200"
+                fontSize={16}
+              />
+              <FormHelperText>Click below to deploy!</FormHelperText>
+              <Button
+                isLoading={buttonLoading}
+                loadingText="Deploying..."
+                type="submit"
+              >
+                Deploy
+              </Button>
+            </FormControl>
           </TabPanel>
         </TabPanels>
       </Tabs>
