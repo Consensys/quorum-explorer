@@ -13,6 +13,7 @@ import {
   Button,
   FormHelperText,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 
 interface IProps {
@@ -25,6 +26,7 @@ export default function ContractsIndex(props: IProps) {
   const lightMode = "gray.100";
   const darkMode = "gray.200";
   const codeTextArea = useColorModeValue(lightMode, darkMode);
+  const toast = useToast();
 
   const [code, setCode] = useState(
     `pragma solidity ^0.7.0;
@@ -49,9 +51,17 @@ contract SimpleStorage {
   );
   const [buttonLoading, setButtonLoading] = useState(false);
 
-  const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
+  const HandleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     setButtonLoading(true);
+    toast({
+      title: "Deployed Contract!",
+      description: "The contract was successfully deployed @ address: ",
+      status: "success",
+      duration: 5000,
+      position: "bottom",
+      isClosable: true,
+    });
     await new Promise((r) => setTimeout(r, 1000));
     console.log(code);
     setButtonLoading(false);
@@ -69,7 +79,7 @@ contract SimpleStorage {
             <p>Interact with contracts here!</p>
           </TabPanel>
           <TabPanel>
-            <FormControl as="form" onSubmit={handleClick}>
+            <FormControl as="form" onSubmit={HandleClick}>
               <FormLabel htmlFor="email">Solidity Contract Code</FormLabel>
               <ChakraCodeArea
                 value={code}
