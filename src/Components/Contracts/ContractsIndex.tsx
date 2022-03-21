@@ -11,7 +11,6 @@ import {
   FormControl,
   FormLabel,
   Button,
-  FormHelperText,
   useColorModeValue,
   useToast,
   SimpleGrid,
@@ -22,6 +21,9 @@ import {
   AccordionIcon,
   Box,
 } from "@chakra-ui/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { faRocket } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 
 interface IProps {
@@ -99,7 +101,7 @@ contract SimpleStorage {
               <Accordion allowMultiple defaultIndex={[0, 1]}>
                 <AccordionItem>
                   <AccordionButton>
-                    <Box flex="1" textAlign="left">
+                    <Box fontWeight="semibold" flex="1" textAlign="left">
                       Choose Contract
                     </Box>
                     <AccordionIcon />
@@ -113,7 +115,7 @@ contract SimpleStorage {
                 </AccordionItem>
                 <AccordionItem>
                   <AccordionButton>
-                    <Box flex="1" textAlign="left">
+                    <Box fontWeight="semibold" flex="1" textAlign="left">
                       Transact
                     </Box>
                     <AccordionIcon />
@@ -129,7 +131,7 @@ contract SimpleStorage {
               <Accordion allowMultiple defaultIndex={[0, 1]}>
                 <AccordionItem>
                   <AccordionButton>
-                    <Box flex="1" textAlign="left">
+                    <Box fontWeight="semibold" flex="1" textAlign="left">
                       Contract State
                     </Box>
                     <AccordionIcon />
@@ -143,7 +145,7 @@ contract SimpleStorage {
                 </AccordionItem>
                 <AccordionItem>
                   <AccordionButton>
-                    <Box flex="1" textAlign="left">
+                    <Box fontWeight="semibold" flex="1" textAlign="left">
                       Log
                     </Box>
                     <AccordionIcon />
@@ -171,12 +173,16 @@ contract SimpleStorage {
                 borderWidth={2}
                 backgroundColor={codeTextArea}
                 fontSize={16}
+                boxShadow="2xl"
+                mb={10}
               />
-              <FormHelperText>Click below to deploy!</FormHelperText>
               <Button
+                leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
                 isLoading={buttonLoading}
                 loadingText="Deploying..."
                 type="submit"
+                variant="solid"
+                backgroundColor="blue.200"
               >
                 Deploy
               </Button>
