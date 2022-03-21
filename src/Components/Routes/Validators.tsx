@@ -22,7 +22,6 @@ interface IState {
 
 export default function Validators(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [cancelState, setCancelState] = useState(false);
   const refreshFrequency: number = 1000;
   const [validators, setValidators] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
@@ -35,44 +34,37 @@ export default function Validators(props: IProps) {
     const needle: QuorumNode = getDetailsByNodeName(props.config, node);
     const rpcUrl: string = needle.rpcUrl;
     const client: string = needle.client;
-    const currentValidators = await getCurrentValidators(rpcUrl);
-    const pendingValidators = await getPendingVotes(
-      rpcUrl,
-      client,
-      props.config.algorithm
-    );
-    if (cancelState) {
-      return;
-    }
-    setValidators({
-      selectedNode: node,
-      rpcUrl: rpcUrl,
-      minersList: currentValidators,
-      pendingList: pendingValidators,
-    });
 
+    return Promise.all([
+      getCurrentValidators(rpcUrl),
+      getPendingVotes(rpcUrl, client, props.config.algorithm),
+    ]).then(([currentVal, pendingVal]) => {
+      setValidators({
+        selectedNode: node,
+        rpcUrl: rpcUrl,
+        minersList: currentVal,
+        pendingList: pendingVal,
+      });
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     console.log("rendering...");
-    nodeInfoHandler(validators.selectedNode).then(() => setCancelState(false));
-    // issue is that when the above line is executing and then we change drop-down to trigger new re-render before we get to the interval... then the previous interval cannot be cleared so continues execution and causes infinite loop
-    // potential fix, other than having a delay when navigating to the new node selection, is to have a variable to control whether the drop-down is disabled or not
+    // nodeInfoHandler(validators.selectedNode);
+
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(validators.selectedNode);
       console.log("called for new info...");
     }, refreshFrequency);
 
     return () => {
-      setCancelState(true);
       clearInterval(intervalRef.current as NodeJS.Timeout);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validators.selectedNode]);
 
   const handleSelectNode = (e: any) => {
-    setCancelState(true);
     clearInterval(intervalRef.current as NodeJS.Timeout);
     console.log("cleaned up: " + intervalRef.current);
     setValidators({ ...validators, selectedNode: e.target.value });
