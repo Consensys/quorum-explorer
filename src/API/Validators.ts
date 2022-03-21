@@ -43,7 +43,6 @@ export async function getPendingVotes(
     },
   };
   const listReturn: any = [];
-
   try {
     const req = await ethApiCall(
       rpcUrl,
@@ -53,9 +52,8 @@ export async function getPendingVotes(
     );
     const listOfCandidates = req.data.result;
     if (Object.keys(listOfCandidates).length !== 0) {
-      Object.keys(listOfCandidates).map((address) => listReturn.push(address));
+      Object.entries(listOfCandidates).map((values) => listReturn.push(values));
     }
-
     return listReturn;
   } catch (e) {
     console.log(e);

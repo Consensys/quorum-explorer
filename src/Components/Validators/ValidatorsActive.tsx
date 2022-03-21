@@ -8,12 +8,15 @@ import {
   Center,
   Skeleton,
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { QuorumConfig, QuorumNode } from "../Types/QuorumConfig";
 import { proposeValidator } from "../../API/Validators";
 import { getDetailsByNodeName } from "../../API/QuorumConfig";
+import { buttonState } from "../Types/Validator";
 import { motion } from "framer-motion";
 
 const MotionBox = motion(Box);
+const MotionFlex = motion(Flex);
 interface IProps {
   config: QuorumConfig;
   minersList: string[];
@@ -21,8 +24,11 @@ interface IProps {
 }
 
 export default function ValidatorsActive(props: IProps) {
-  const handleClick = async (e: any) => {
+  const [buttonLoading, setButtonLoading] = useState<buttonState>({});
+  const handleClick = async (e: any, index: number) => {
     console.log(e);
+    setButtonLoading({ [index]: true });
+    await new Promise((r) => setTimeout(r, 1000));
     const needle: QuorumNode = getDetailsByNodeName(
       props.config,
       props.selectedNode
@@ -39,6 +45,7 @@ export default function ValidatorsActive(props: IProps) {
     if (removeValidator === 200) {
       console.log("Proposal to remove initiated: " + e);
     }
+    setButtonLoading({ [index]: false });
   };
 
   return (
@@ -60,13 +67,24 @@ export default function ValidatorsActive(props: IProps) {
           props.minersList.map((miner, i) => {
             return (
               <>
-                <Flex key={i} m={3} justifyContent="center" alignItems="center">
+                <MotionFlex
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  m={3}
+                  justifyContent="center"
+                  alignItems="center"
+                >
                   <Text>{miner}</Text>
-                  <Spacer />
-                  <Button onClick={() => handleClick(miner)}>
+                  <Spacer key={i} />
+                  <Button
+                    isLoading={buttonLoading[i] ? true : false}
+                    loadingText="Removing..."
+                    onClick={() => handleClick(miner, i)}
+                  >
                     Remove Validator
                   </Button>
-                </Flex>
+                </MotionFlex>
               </>
             );
           })

@@ -8,3 +8,7 @@ export interface Clients {
   goquorum: ConsensusAlgorithms;
   besu: ConsensusAlgorithms;
 }
+
+export interface buttonState {
+  [index: number]: boolean;
+}

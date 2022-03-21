@@ -30,43 +30,43 @@ export default function Validators(props: IProps) {
     pendingList: [],
   });
 
-  const nodeInfoHandler = useCallback(
-    async (node: string) => {
-      const needle: QuorumNode = getDetailsByNodeName(props.config, node);
-      const rpcUrl: string = needle.rpcUrl;
-      const client: string = needle.client;
-      const currentValidators = await getCurrentValidators(rpcUrl);
-      const pendingValidators = await getPendingVotes(
-        rpcUrl,
-        client,
-        props.config.algorithm
-      );
+  const nodeInfoHandler = useCallback(async (node: string) => {
+    const needle: QuorumNode = getDetailsByNodeName(props.config, node);
+    const rpcUrl: string = needle.rpcUrl;
+    const client: string = needle.client;
 
+    return Promise.all([
+      getCurrentValidators(rpcUrl),
+      getPendingVotes(rpcUrl, client, props.config.algorithm),
+    ]).then(([currentVal, pendingVal]) => {
       setValidators({
         selectedNode: node,
         rpcUrl: rpcUrl,
-        minersList: currentValidators,
-        pendingList: pendingValidators,
+        minersList: currentVal,
+        pendingList: pendingVal,
       });
-    },
-    [props.config]
-  );
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     console.log("rendering...");
-    nodeInfoHandler(validators.selectedNode);
+    // nodeInfoHandler(validators.selectedNode);
+
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(validators.selectedNode);
       console.log("called for new info...");
     }, refreshFrequency);
 
-    return () => clearInterval(intervalRef.current as NodeJS.Timeout);
+    return () => {
+      clearInterval(intervalRef.current as NodeJS.Timeout);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validators.selectedNode]);
 
   const handleSelectNode = (e: any) => {
-    console.log("cleaning up:" + intervalRef.current);
     clearInterval(intervalRef.current as NodeJS.Timeout);
+    console.log("cleaned up: " + intervalRef.current);
     setValidators({ ...validators, selectedNode: e.target.value });
   };
 
