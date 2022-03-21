@@ -12,6 +12,7 @@ import {
   FormLabel,
   Button,
   FormHelperText,
+  useColorModeValue,
 } from "@chakra-ui/react";
 
 interface IProps {
@@ -21,6 +22,10 @@ interface IProps {
 const ChakraCodeArea = chakra(CodeEditor);
 
 export default function ContractsIndex(props: IProps) {
+  const lightMode = "gray.100";
+  const darkMode = "gray.200";
+  const codeTextArea = useColorModeValue(lightMode, darkMode);
+
   const [code, setCode] = useState(
     `pragma solidity ^0.7.0;
 contract SimpleStorage {
@@ -44,11 +49,17 @@ contract SimpleStorage {
   );
   const [buttonLoading, setButtonLoading] = useState(false);
 
-  const handleClick = async (e: any) => {};
+  const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setButtonLoading(true);
+    await new Promise((r) => setTimeout(r, 1000));
+    console.log(code);
+    setButtonLoading(false);
+  };
 
   return (
     <>
-      <Tabs isFitted isLazy variant="enclosed">
+      <Tabs mt={5} isFitted isLazy variant="enclosed">
         <TabList mb="1em">
           <Tab>Interact</Tab>
           <Tab>Deploy</Tab>
@@ -68,7 +79,7 @@ contract SimpleStorage {
                 padding={15}
                 borderRadius="lg"
                 borderWidth={2}
-                backgroundColor="gray.200"
+                backgroundColor={codeTextArea}
                 fontSize={16}
               />
               <FormHelperText>Click below to deploy!</FormHelperText>
