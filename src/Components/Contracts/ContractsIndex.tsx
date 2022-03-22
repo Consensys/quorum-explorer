@@ -123,21 +123,25 @@ export default function ContractsIndex(props: IProps) {
       <MotionGrid
         columns={2}
         minChildWidth="400px"
-        gap={2}
+        spacing={5}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
         {/* code and button  */}
         <Box mt={5}>
-          <Select size="sm" variant="filled" onChange={ContractCodeHandler}>
+          <Select
+            mb={8}
+            size="sm"
+            variant="filled"
+            onChange={ContractCodeHandler}
+          >
             {contracts.map((c) => (
               <option key={c.name} value={c.name}>
                 {c.name}
               </option>
             ))}
           </Select>
-          <br />
           <ChakraCodeArea
             id="code"
             value={code}
