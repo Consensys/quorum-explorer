@@ -40,7 +40,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faRocket, faCode, faStream, faPaperPlane, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
-import { defaultSmartContracts } from '../Types/Contracts';
+import { SmartContract, defaultSmartContracts } from '../Types/Contracts';
 const MotionTabs = motion(Tabs);
 const ChakraCodeArea = chakra(CodeEditor);
 
@@ -53,20 +53,21 @@ export default function ContractsIndex(props: IProps) {
   const lightMode = "gray.100";
   const darkMode = "gray.200";
 
-  const contracts: Record<string, string> = defaultSmartContracts;
+  const contracts: SmartContract[] = defaultSmartContracts;
   const conts: string[] = ["a", "b"];
   
   const codeTextArea = useColorModeValue(lightMode, darkMode);
   const toast = useToast();
   const [code, setCode] = useState(
-    ``
+    contracts[0].contract
   );
   
   const [buttonLoading, setButtonLoading] = useState(false);
 
   const ContractCodeHandler = (e: any) => {
     e.preventDefault();
-    console.log(e.target.value);
+    const needle : SmartContract = contracts.filter(_ => _.name === e.target.value)[0];
+    setCode(needle.contract);
   };
 
 
@@ -103,9 +104,6 @@ export default function ContractsIndex(props: IProps) {
     console.log(code);
     setButtonLoading(false);
   };
-  console.log(">>>>>>>>>")
-  console.log(contracts);
-  console.log(">>>>>>>>>")
 
   return (
     <>
@@ -118,10 +116,8 @@ export default function ContractsIndex(props: IProps) {
         {/* code  */}
         <GridItem rowSpan={3} colSpan={1}>
           <Select size="sm" variant="filled" onChange={ContractCodeHandler}>
-            
-
-            {conts.map((c) => (
-              <option key={c} value={c}>{c}</option>
+            {contracts.map((c) => (
+              <option key={c.name} value={c.name}>{c.name}</option>
             ))}
           </Select>
           <br />
