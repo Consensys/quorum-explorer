@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import solc from "solc";
 
 export function compile(sourceCode, contractName) {

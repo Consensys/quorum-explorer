@@ -46,10 +46,16 @@ import {
   faHammer,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
-import { SmartContract, defaultSmartContracts } from "../../types/Contracts";
+import {
+  SmartContract,
+  defaultSmartContracts,
+  compiledContract,
+} from "../../types/Contracts";
 import axios from "axios";
 //@ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { deployContract } from "../../api/deployContract";
+import { getDetailsByNodeName } from "../../api/quorumConfig";
 
 const MotionGrid = motion(SimpleGrid);
 const ChakraCode = chakra(SyntaxHighlighter);
@@ -64,7 +70,7 @@ export default function ContractsIndex(props: IProps) {
   const contracts: SmartContract[] = defaultSmartContracts;
   const toast = useToast();
   const [code, setCode] = useState(contracts[0].contract);
-  const [compiledContract, setCompiledContract] = useState({
+  const [compiledContract, setCompiledContract] = useState<compiledContract>({
     abi: [],
     bytecode: "",
   });
@@ -158,6 +164,10 @@ export default function ContractsIndex(props: IProps) {
       Deploy: { status: true, isDisabled: false },
     });
     await new Promise((r) => setTimeout(r, 1000));
+    deployContract(
+      getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
+      compiledContract
+    );
     toast({
       title: "Deployed Contract!",
       description: `The contract was successfully deployed through ${props.selectedNode} @ address: `,
@@ -166,7 +176,6 @@ export default function ContractsIndex(props: IProps) {
       position: "bottom",
       isClosable: true,
     });
-    console.log(code);
     setButtonLoading({
       ...buttonLoading,
       Deploy: { status: false, isDisabled: false },

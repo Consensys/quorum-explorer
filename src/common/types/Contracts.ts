@@ -179,3 +179,8 @@ contract Ballot {
 }`,
   },
 ];
+
+export type compiledContract = {
+  abi: [];
+  bytecode: string;
+};
