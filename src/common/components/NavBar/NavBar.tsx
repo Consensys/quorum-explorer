@@ -26,7 +26,7 @@ export default function NavBar() {
         {/* TODO: fix me up to avoid duplication of items  */}
         <HStack spacing="5" display={{ base: "none", md: "flex" }}>
           {NavItems.map((item, i) => (
-            <Link key={i} href={item["label"].toLowerCase()} passHref>
+            <Link key={i} href={"/" + item["label"].toLowerCase()} passHref>
               <Button
                 leftIcon={
                   <FontAwesomeIcon

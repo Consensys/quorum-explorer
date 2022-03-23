@@ -79,6 +79,11 @@ export default function ContractsIndex(props: IProps) {
   const HandleCompile = async (e: any) => {
     e.preventDefault();
     //TODO: fix me to use the contract name and save the drop down value
+    setButtonLoading({
+      ...buttonLoading,
+      Compile: { status: true, isDisabled: false },
+    });
+    await new Promise((r) => setTimeout(r, 1000));
     axios({
       method: "POST",
       url: "/api/compileContract",
@@ -91,23 +96,21 @@ export default function ContractsIndex(props: IProps) {
         console.log(":::::::::::");
         console.log(response);
         console.log(":::::::::::");
+        if (response.status === 200) {
+          toast({
+            title: "Compiled Contract!",
+            description: `The contract was successfully compiled. Please check the compiled code tab for details `,
+            status: "success",
+            duration: 5000,
+            position: "bottom",
+            isClosable: true,
+          });
+        }
       })
       .catch((error) => {
         console.log(error);
       });
-    setButtonLoading({
-      ...buttonLoading,
-      Compile: { status: true, isDisabled: false },
-    });
-    await new Promise((r) => setTimeout(r, 1000));
-    toast({
-      title: "Compiled Contract!",
-      description: `The contract was successfully compiled. Please check the compiled code tab for details `,
-      status: "success",
-      duration: 5000,
-      position: "bottom",
-      isClosable: true,
-    });
+
     setButtonLoading({
       Deploy: { status: false, isDisabled: false },
       Compile: { status: false, isDisabled: false },
