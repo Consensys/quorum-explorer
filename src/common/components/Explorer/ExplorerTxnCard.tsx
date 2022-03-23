@@ -17,7 +17,12 @@ export default function ExplorerTxnCard({ txn }: IProps) {
   return (
     <>
       <Container maxW={{ base: "container.sm", md: "container.xl" }}>
-        <Flex justifyContent="space-between" borderRadius="md" borderWidth={1}>
+        <Flex
+          flexDirection={{ base: "column", md: "row" }}
+          justifyContent="space-between"
+          borderRadius="md"
+          borderWidth={1}
+        >
           {/* contract deployment */}
           <Flex
             alignItems="center"
@@ -29,30 +34,36 @@ export default function ExplorerTxnCard({ txn }: IProps) {
           >
             {txn.to === null ? (
               <Text fontSize="sm" textAlign="center">
-                {" "}
                 Contract Deployment{" "}
               </Text>
             ) : (
               <Text fontSize="sm" textAlign="center">
-                {" "}
-                Regular Transaction{" "}
+                Regular Transaction
               </Text>
             )}
           </Flex>
-          <Flex flexDirection="column" flexGrow={1} p={2}>
-            <Box display="flex" flexDirection="column" alignItems="center">
+          <Flex flexDirection="column" flexGrow={1} p={2} minW="85%">
+            <Flex flexDirection="column" alignItems="center" maxW="100%">
               {txn.hash !== null ? (
                 <>
-                  {" "}
-                  <Box>
-                    <Text fontSize="md" as="b" mr={2}>
+                  <Box minW={0}>
+                    <Text
+                      maxW="100px"
+                      overflowWrap="break-word"
+                      fontSize={{ base: "sm", md: "md" }}
+                      as="b"
+                      mr={2}
+                    >
                       {txn.hash}
                     </Text>
                     <ExplorerTxnDetails txn={txn} />
-                    <Divider m={1} />
                   </Box>
+                  <Divider m={1} />
                   <Text fontSize="sm" textAlign="left">
-                    Block: {txn.blockNumber}, hash: {txn.blockHash}
+                    Block: {txn.blockNumber}
+                  </Text>
+                  <Text fontSize="sm" textAlign="left">
+                    Hash: {txn.blockHash}
                   </Text>
                   <Text fontSize="sm" align="left">
                     Gas: {txn.gas}
@@ -70,7 +81,7 @@ export default function ExplorerTxnCard({ txn }: IProps) {
                   <Skeleton h="20px" w="180px" />
                 </>
               )}
-            </Box>
+            </Flex>
           </Flex>
         </Flex>
       </Container>
