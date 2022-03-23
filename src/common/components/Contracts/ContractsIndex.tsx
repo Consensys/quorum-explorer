@@ -43,6 +43,7 @@ import {
   faStream,
   faPaperPlane,
   faQuestionCircle,
+  faHammer,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 import { SmartContract, defaultSmartContracts } from "../../types/Contracts";
@@ -63,8 +64,12 @@ export default function ContractsIndex(props: IProps) {
   const contracts: SmartContract[] = defaultSmartContracts;
   const toast = useToast();
   const [code, setCode] = useState(contracts[0].contract);
-  const [compiledContract, setCompiledContract] = useState({});
+  const [compiledContract, setCompiledContract] = useState({
+    abi: [],
+    bytecode: "",
+  });
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
+  const [logs, setLogs] = useState<string[]>([]);
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
     Deploy: { status: false, isDisabled: true },
@@ -75,6 +80,8 @@ export default function ContractsIndex(props: IProps) {
     const needle: SmartContract = contracts.filter(
       (_) => _.name === e.target.value
     )[0];
+    const joined = logs.concat("Navigated to: " + e.target.value);
+    setLogs(joined);
     setButtonLoading({
       ...buttonLoading,
       Deploy: { status: false, isDisabled: true },
@@ -103,7 +110,10 @@ export default function ContractsIndex(props: IProps) {
         console.log(response);
         console.log(":::::::::::");
         if (response.status === 200) {
-          setCompiledContract(response.data);
+          setCompiledContract({
+            abi: response.data.abi,
+            bytecode: response.data.bytecode,
+          });
           toast({
             title: "Compiled Contract!",
             description: `The contract was successfully compiled. Please check the compiled code tab for details `,
@@ -193,7 +203,7 @@ export default function ContractsIndex(props: IProps) {
               borderWidth={2}
               boxShadow="2xl"
               language="solidity"
-              maxH="650px"
+              maxH="550px"
               showLineNumbers={false}
               wrapLongLines={true}
             >
@@ -201,7 +211,7 @@ export default function ContractsIndex(props: IProps) {
             </ChakraCode>
           </Box>
           <Button
-            leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
+            leftIcon={<FontAwesomeIcon icon={faHammer as IconProp} />}
             isLoading={buttonLoading.Compile.status}
             isDisabled={buttonLoading.Compile.isDisabled}
             loadingText="Compiling..."
@@ -367,34 +377,31 @@ export default function ContractsIndex(props: IProps) {
               </TabPanel>
 
               {/* compiler output */}
-              <TabPanel>
+              <TabPanel overflow="scroll" h="550px">
                 <VStack
                   align="left"
                   divider={<Divider borderColor="gray.200" />}
                   spacing={1}
                 >
-                  <Code>Using SimpleStorage at 0x881ba7a6</Code>
-                  <Code>{`[read] get() => 0`}</Code>
-                  <Code>{`[txn] set("1234") => created tx 0xcd362161`}</Code>
-                  <Code>{`[read] get() => 0`}</Code>
-                  <Code>{`[txn] set("4321") => created tx 0xcd362161`}</Code>
-                  <Code>{`[read] get() => 0`}</Code>
+                  {compiledContract.abi.length && (
+                    <Code>{JSON.stringify(compiledContract.abi)}</Code>
+                  )}
+                  {compiledContract.bytecode && (
+                    <Code>{compiledContract.bytecode.toString()}</Code>
+                  )}
                 </VStack>
               </TabPanel>
 
               {/* logs */}
-              <TabPanel>
+              <TabPanel overflow="scroll" h="550px">
                 <VStack
                   align="left"
                   divider={<Divider borderColor="gray.200" />}
                   spacing={1}
                 >
-                  <Code>Using SimpleStorage at 0x881ba7a6</Code>
-                  <Code>{`[read] get() => 0`}</Code>
-                  <Code>{`[txn] set("1234") => created tx 0xcd362161`}</Code>
-                  <Code>{`[read] get() => 0`}</Code>
-                  <Code>{`[txn] set("4321") => created tx 0xcd362161`}</Code>
-                  <Code>{`[read] get() => 0`}</Code>
+                  {logs.map((log, i) => (
+                    <Code key={i}>{log}</Code>
+                  ))}
                 </VStack>
               </TabPanel>
             </TabPanels>
