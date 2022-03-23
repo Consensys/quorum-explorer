@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { QuorumConfig } from "../../types/QuorumConfig";
-import CodeEditor from "@uiw/react-textarea-code-editor";
 import {
   Tabs,
   TabList,
@@ -47,13 +46,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 import { SmartContract, defaultSmartContracts } from "../../types/Contracts";
-import { compile } from "../../api/contracts";
-import CodeMirror from "@uiw/react-codemirror";
-import { javascript } from "@codemirror/lang-javascript";
 import axios from "axios";
+//@ts-ignore
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+//@ts-ignore
+import { dark } from "react-syntax-highlighter/dist/esm/styles/prism/atom-dark";
 
 const MotionGrid = motion(SimpleGrid);
-const ChakraCodeArea = chakra(CodeMirror);
+const ChakraCode = chakra(SyntaxHighlighter);
 
 interface IProps {
   config: QuorumConfig;
@@ -83,21 +83,20 @@ export default function ContractsIndex(props: IProps) {
     //TODO: fix me to use the contract name and save the drop down value
     axios({
       method: "POST",
-      url: '/api/compileContract',
+      url: "/api/compileContract",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      data: JSON.stringify({ name: 'SimpleStorage', content: code })
-
+      data: JSON.stringify({ name: "SimpleStorage", content: code }),
     })
-    .then(response => {
+      .then((response) => {
         console.log(":::::::::::");
-        console.log(response)
+        console.log(response);
         console.log(":::::::::::");
-    })
-    .catch(error => {
-      console.log(error);
-    });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setButtonLoading({
       ...buttonLoading,
       Compile: { status: true, isDisabled: false },
@@ -164,15 +163,22 @@ export default function ContractsIndex(props: IProps) {
               </option>
             ))}
           </Select>
-          <Box
+
+          <ChakraCode
             padding={15}
             borderRadius="lg"
             borderWidth={2}
             boxShadow="2xl"
             mb={10}
+            language="solidity"
+            style={dark}
+            maxH="650px"
           >
-            <ChakraCodeArea
+            {code}
+          </ChakraCode>
+          {/* <CodeMirror
               id="code"
+              maxHeight="650px"
               theme={colorMode === "light" ? "light" : "dark"}
               value={code}
               placeholder="Enter your SOL code."
@@ -180,10 +186,8 @@ export default function ContractsIndex(props: IProps) {
               onChange={(value, viewUpdate) => {
                 console.log("value:", value);
               }}
-              fontSize={12}
               editable={false}
-            />
-          </Box>
+            /> */}
           <Button
             leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
             isLoading={buttonLoading.Compile.status}
