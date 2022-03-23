@@ -74,6 +74,7 @@ export default function ContractsIndex(props: IProps) {
     abi: [],
     bytecode: "",
   });
+  const [deployedAddress, setDeployedAddress] = useState("");
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
   const [logs, setLogs] = useState<string[]>([]);
   const [buttonLoading, setButtonLoading] = useState({
@@ -167,16 +168,32 @@ export default function ContractsIndex(props: IProps) {
     deployContract(
       getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
       compiledContract,
-      10
-    );
-    toast({
-      title: "Deployed Contract!",
-      description: `The contract was successfully deployed through ${props.selectedNode} @ address: `,
-      status: "success",
-      duration: 5000,
-      position: "bottom",
-      isClosable: true,
+      100
+    ).then((result) => {
+      if (result === 1) {
+        toast({
+          title: "Error!",
+          description: `There was an error deploying the contract.`,
+          status: "error",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+      } else {
+        setDeployedAddress(result.address);
+        console.log(result.address);
+        console.log(result.deployTransaction);
+        toast({
+          title: "Deployed Contract!",
+          description: `The contract was successfully deployed through ${props.selectedNode} @ address: ${result.address}`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+      }
     });
+
     setButtonLoading({
       ...buttonLoading,
       Deploy: { status: false, isDisabled: false },
@@ -285,7 +302,14 @@ export default function ContractsIndex(props: IProps) {
                           <FormLabel htmlFor="contract-address">
                             Contract Address
                           </FormLabel>
-                          <Input id="contract-address" placeholder="0x" />
+                          <Input
+                            id="contract-address"
+                            placeholder="0x"
+                            value={deployedAddress}
+                            onChange={(e) => {
+                              setDeployedAddress(e.target.value);
+                            }}
+                          />
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>

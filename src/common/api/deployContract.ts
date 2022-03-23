@@ -14,9 +14,12 @@ export async function deployContract(
   const newWallet = new ethers.Wallet(randomPrivateKey, provider);
   console.log(newWallet.address, newWallet.provider, newWallet.publicKey);
 
-  const factory = new ethers.ContractFactory(abi, bytecode, newWallet);
-  const contract = await factory.deploy(deployArgs); // If contract has deploy args put in function
-
-  console.log(contract.address);
-  console.log(contract.deployTransaction);
+  try {
+    const factory = new ethers.ContractFactory(abi, bytecode, newWallet);
+    const contract = await factory.deploy(deployArgs); // If contract has deploy args put in function
+    return contract;
+  } catch (e) {
+    console.log(e);
+    return 1;
+  }
 }
