@@ -31,39 +31,39 @@ export default function ExplorerBlockToast({ block, closeToast }: IProps) {
       <Table size="xs">
         <Tbody>
           <Tr fontSize="xs">
-            <Td borderBottomColor={"#2c56dd"}>Hash&nbsp;</Td>
+            <Td borderBottomColor={"#2c56dd"}>Hash</Td>
             <Td borderBottomColor={"#2c56dd"}>{block.hash} </Td>
           </Tr>
           <Tr fontSize="xs">
-            <Td borderBottomColor={"#2c56dd"}>Transactions&nbsp;</Td>
+            <Td borderBottomColor={"#2c56dd"}>Transactions</Td>
             <Td borderBottomColor={"#2c56dd"}>{block.transactions.length} </Td>
           </Tr>
           <Tr fontSize="xs">
-            <Td borderBottomColor={"#2c56dd"}>Uncles&nbsp;</Td>
+            <Td borderBottomColor={"#2c56dd"}>Uncles</Td>
             <Td borderBottomColor={"#2c56dd"}>{block.uncles.length} </Td>
           </Tr>
           <Tr fontSize="xs">
-            <Td borderBottomColor={"#2c56dd"}>Size&nbsp;</Td>
+            <Td borderBottomColor={"#2c56dd"}>Size</Td>
             <Td borderBottomColor={"#2c56dd"}>{block.size} </Td>
           </Tr>
           <Tr fontSize="xs">
-            <Td borderBottomColor={"#2c56dd"}>Gas Used&nbsp;</Td>
+            <Td borderBottomColor={"#2c56dd"}>Gas Used</Td>
             <Td borderBottomColor={"#2c56dd"}>{block.gasUsed} </Td>
           </Tr>
           <Tr fontSize="xs">
-            <Td borderBottomColor={"#2c56dd"}>Timestamp&nbsp;</Td>
+            <Td borderBottomColor={"#2c56dd"}>Timestamp</Td>
             <Td borderBottomColor={"#2c56dd"}>{block.timestamp} </Td>
           </Tr>
           <Tr fontSize="xs">
-            <Td borderBottomColor={"#2c56dd"}>State Root&nbsp;</Td>
+            <Td borderBottomColor={"#2c56dd"}>State Root</Td>
             <Td borderBottomColor={"#2c56dd"}>{block.stateRoot} </Td>
           </Tr>
           <Tr fontSize="xs">
-            <Td borderBottomColor={"#2c56dd"}>Receipt Root&nbsp;</Td>
+            <Td borderBottomColor={"#2c56dd"}>Receipt Root</Td>
             <Td borderBottomColor={"#2c56dd"}>{block.receiptsRoot} </Td>
           </Tr>
           <Tr fontSize="xs">
-            <Td borderBottomColor={"#2c56dd"}>Txn Root&nbsp;</Td>
+            <Td borderBottomColor={"#2c56dd"}>Txn Root</Td>
             <Td borderBottomColor={"#2c56dd"}>{block.transactionsRoot} </Td>
           </Tr>
         </Tbody>

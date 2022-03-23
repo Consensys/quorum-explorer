@@ -1,4 +1,11 @@
-import { Divider, VStack, Flex, Text, Skeleton } from "@chakra-ui/react";
+import {
+  Divider,
+  VStack,
+  Flex,
+  Text,
+  Skeleton,
+  HStack,
+} from "@chakra-ui/react";
 import ExplorerBlockDetails from "./ExplorerBlockDetails";
 import { QuorumBlock } from "../../types/Explorer";
 import { getSecsAgo, abbreviateValidator } from "../../api/explorer";
@@ -24,12 +31,12 @@ export default function ExplorerBlockCard({ block }: IProps) {
         <VStack>
           {block.statusText !== "error" ? (
             <>
-              {" "}
-              <Text fontSize="md" as="b">
-                {block.number}
-                &nbsp;&nbsp;&nbsp;
+              <HStack>
+                <Text fontSize="md" as="b">
+                  {block.number}
+                </Text>
                 <ExplorerBlockDetails block={block} />
-              </Text>
+              </HStack>
               <Divider />
               <Text fontSize="sm" textAlign="left">
                 {block.transactions.length} Transactions,{" "}
