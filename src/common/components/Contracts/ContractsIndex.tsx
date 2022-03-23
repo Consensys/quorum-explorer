@@ -33,6 +33,7 @@ import {
   VStack,
   Divider,
   Select,
+  useColorMode,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -58,6 +59,7 @@ interface IProps {
 }
 
 export default function ContractsIndex(props: IProps) {
+  const { colorMode, toggleColorMode } = useColorMode();
   const contracts: SmartContract[] = defaultSmartContracts;
   const toast = useToast();
   const [code, setCode] = useState(contracts[0].contract);
@@ -78,7 +80,6 @@ export default function ContractsIndex(props: IProps) {
 
   const HandleCompile = async (e: any) => {
     e.preventDefault();
-    //TODO: fix me to use the contract name and save the drop down value
     setButtonLoading({
       ...buttonLoading,
       Compile: { status: true, isDisabled: false },
@@ -193,18 +194,6 @@ export default function ContractsIndex(props: IProps) {
               {code}
             </ChakraCode>
           </Box>
-          {/* <CodeMirror
-              id="code"
-              maxHeight="650px"
-              theme={colorMode === "light" ? "light" : "dark"}
-              value={code}
-              placeholder="Enter your SOL code."
-              extensions={[javascript({ jsx: false })]}
-              onChange={(value, viewUpdate) => {
-                console.log("value:", value);
-              }}
-              editable={false}
-            /> */}
           <Button
             leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
             isLoading={buttonLoading.Compile.status}
