@@ -63,6 +63,7 @@ export default function ContractsIndex(props: IProps) {
   const contracts: SmartContract[] = defaultSmartContracts;
   const toast = useToast();
   const [code, setCode] = useState(contracts[0].contract);
+  const [compiledContract, setCompiledContract] = useState({});
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
@@ -74,6 +75,10 @@ export default function ContractsIndex(props: IProps) {
     const needle: SmartContract = contracts.filter(
       (_) => _.name === e.target.value
     )[0];
+    setButtonLoading({
+      ...buttonLoading,
+      Deploy: { status: false, isDisabled: true },
+    });
     setSelectedContract(e.target.value);
     setCode(needle.contract);
   };
@@ -98,6 +103,7 @@ export default function ContractsIndex(props: IProps) {
         console.log(response);
         console.log(":::::::::::");
         if (response.status === 200) {
+          setCompiledContract(response.data);
           toast({
             title: "Compiled Contract!",
             description: `The contract was successfully compiled. Please check the compiled code tab for details `,
