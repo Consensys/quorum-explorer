@@ -49,8 +49,6 @@ import { SmartContract, defaultSmartContracts } from "../../types/Contracts";
 import axios from "axios";
 //@ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-//@ts-ignore
-import { dark } from "react-syntax-highlighter/dist/esm/styles/prism/atom-dark";
 
 const MotionGrid = motion(SimpleGrid);
 const ChakraCode = chakra(SyntaxHighlighter);
@@ -110,7 +108,6 @@ export default function ContractsIndex(props: IProps) {
       position: "bottom",
       isClosable: true,
     });
-    console.log(code);
     setButtonLoading({
       Deploy: { status: false, isDisabled: false },
       Compile: { status: false, isDisabled: false },
@@ -163,19 +160,19 @@ export default function ContractsIndex(props: IProps) {
               </option>
             ))}
           </Select>
-
-          <ChakraCode
-            padding={15}
-            borderRadius="lg"
-            borderWidth={2}
-            boxShadow="2xl"
-            mb={10}
-            language="solidity"
-            style={dark}
-            maxH="650px"
-          >
-            {code}
-          </ChakraCode>
+          <Box mb={10}>
+            <ChakraCode
+              borderRadius="lg"
+              borderWidth={2}
+              boxShadow="2xl"
+              language="solidity"
+              maxH="650px"
+              showLineNumbers={false}
+              wrapLongLines={true}
+            >
+              {code}
+            </ChakraCode>
+          </Box>
           {/* <CodeMirror
               id="code"
               maxHeight="650px"
