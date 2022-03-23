@@ -33,7 +33,6 @@ import {
   VStack,
   Divider,
   Select,
-  useColorMode,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -61,8 +60,8 @@ interface IProps {
 export default function ContractsIndex(props: IProps) {
   const contracts: SmartContract[] = defaultSmartContracts;
   const toast = useToast();
-  const { colorMode, toggleColorMode } = useColorMode();
   const [code, setCode] = useState(contracts[0].contract);
+  const [selectedContract, setSelectedContract] = useState(contracts[0].name);
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
     Deploy: { status: false, isDisabled: true },
@@ -73,6 +72,7 @@ export default function ContractsIndex(props: IProps) {
     const needle: SmartContract = contracts.filter(
       (_) => _.name === e.target.value
     )[0];
+    setSelectedContract(e.target.value);
     setCode(needle.contract);
   };
 
@@ -90,7 +90,7 @@ export default function ContractsIndex(props: IProps) {
       headers: {
         "Content-Type": "application/json",
       },
-      data: JSON.stringify({ name: "SimpleStorage", content: code }),
+      data: JSON.stringify({ name: selectedContract, content: code }),
     })
       .then((response) => {
         console.log(":::::::::::");
@@ -105,10 +105,27 @@ export default function ContractsIndex(props: IProps) {
             position: "bottom",
             isClosable: true,
           });
+        } else {
+          toast({
+            title: "Contract Compilation Failed",
+            description: `Issue encountered compiling contract!`,
+            status: "error",
+            duration: 5000,
+            position: "bottom",
+            isClosable: true,
+          });
         }
       })
       .catch((error) => {
         console.log(error);
+        toast({
+          title: "Backend API Error",
+          description: `Issue encountered contacting back-end!`,
+          status: "error",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
       });
 
     setButtonLoading({
