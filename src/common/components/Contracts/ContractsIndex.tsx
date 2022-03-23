@@ -166,7 +166,8 @@ export default function ContractsIndex(props: IProps) {
     await new Promise((r) => setTimeout(r, 1000));
     deployContract(
       getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
-      compiledContract
+      compiledContract,
+      10
     );
     toast({
       title: "Deployed Contract!",
