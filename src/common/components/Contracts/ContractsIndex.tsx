@@ -55,7 +55,7 @@ import axios from "axios";
 //@ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { deployContract } from "../../api/deployContract";
-import { getDetailsByNodeName } from "../../api/quorumConfig";
+import { getDetailsByNodeName, getPrivateKey } from "../../api/quorumConfig";
 
 const MotionGrid = motion(SimpleGrid);
 const ChakraCode = chakra(SyntaxHighlighter);
@@ -75,12 +75,17 @@ export default function ContractsIndex(props: IProps) {
     bytecode: "",
   });
   const [deployedAddress, setDeployedAddress] = useState("");
+  const [accountAddress, setAccountAddress] = useState("");
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
   const [logs, setLogs] = useState<string[]>([]);
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
     Deploy: { status: false, isDisabled: true },
   });
+
+  const setTargetAddress = (e: any) => {
+    setAccountAddress(e.target.value);
+  };
 
   const ContractCodeHandler = (e: any) => {
     e.preventDefault();
@@ -177,7 +182,11 @@ export default function ContractsIndex(props: IProps) {
     });
     await new Promise((r) => setTimeout(r, 1000));
     deployContract(
+      getDetailsByNodeName(props.config, props.selectedNode).client,
       getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
+      getDetailsByNodeName(props.config, props.selectedNode).privateTxUrl,
+      getPrivateKey(props.config, accountAddress),
+      [],
       compiledContract,
       100
     ).then((result) => {
@@ -318,6 +327,18 @@ export default function ContractsIndex(props: IProps) {
                       </AccordionButton>
                       <AccordionPanel pb={4}>
                         <FormControl>
+                          <FormLabel htmlFor="predefined-account">
+                            Account
+                          </FormLabel>
+                          <Select
+                            id="predefined-account"
+                            placeholder="Select account"
+                            onChange={setTargetAddress}
+                          >
+                            {props.config.accounts.map((account, i) => (
+                              <option key={i}>{account.address}</option>
+                            ))}
+                          </Select>
                           <FormLabel htmlFor="contract-address">
                             Contract Address
                           </FormLabel>
