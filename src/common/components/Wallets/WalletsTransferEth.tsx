@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { QuorumWallet } from "../../types/Wallets";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
-import { Divider, Heading, Box, FormControl, FormLabel, useToast, Input, Button } from '@chakra-ui/react'
+import {
+  Divider,
+  Heading,
+  Box,
+  FormControl,
+  FormLabel,
+  useToast,
+  Input,
+  Button,
+} from "@chakra-ui/react";
 import { getDetailsByNodeName } from "../../api/quorumConfig";
 import { transferEth, getAccountBalance } from "../../api/wallets";
 import { motion } from "framer-motion";
@@ -39,11 +48,19 @@ export default function WalletsTransferEth(props: IProps) {
   const handleTransfer = async (e: any) => {
     e.preventDefault();
     setButtonLoading(true);
-    const tx = await transferEth(needle.rpcUrl, privateKeyFrom, accountTo, amount);
-    console.log(tx)
+    const tx = await transferEth(
+      needle.rpcUrl,
+      privateKeyFrom,
+      accountTo,
+      amount
+    );
+    console.log(tx);
 
-    const wallet : QuorumWallet = await getAccountBalance(needle.rpcUrl, accountTo);
-    console.log(wallet)
+    const wallet: QuorumWallet = await getAccountBalance(
+      needle.rpcUrl,
+      accountTo
+    );
+    console.log(wallet);
     toast({
       title: "Eth Transfer",
       description: `The eth transfer was successul! Transaction hash: ${tx.txHash}. Account ${wallet.account} has an updated balance of ${wallet.balance} Wei`,
@@ -67,22 +84,50 @@ export default function WalletsTransferEth(props: IProps) {
         mx={2}
         my={3}
       >
-      <Box mt={5} >
-        <Heading as='h5' size='md'>
-          Transfer ETH to Account 
-        </Heading>
-        <Divider/>
-        <br/>
-        <FormControl as="form" onSubmit={handleTransfer}>
-          <FormLabel htmlFor="privateKeyFrom">PrivateKey From</FormLabel>
-          <Input mb={3} id="privateKeyFrom" type="text" placeholder='0x...' onChange={handlePrivateKeyFrom} />
-          <FormLabel htmlFor="accountTo">Account To</FormLabel>
-          <Input mb={3} id="accountTo" type="text" placeholder='0x...' onChange={handleAccountTo} />
-          <FormLabel htmlFor="amount">Amount in wei (1 Ether = 1000000000000000000 wei)</FormLabel>
-          <Input mb={3} id="amount" type="text" placeholder='0x...' onChange={handleAmount} />
-          <Button type="submit" backgroundColor="green.200" isLoading={buttonLoading} loadingText='Submitting' variant='solid'>Transfer</Button>
-        </FormControl>
-      </Box>
+        <Box mt={5}>
+          <Heading as="h5" size="md">
+            Transfer ETH to Account
+          </Heading>
+          <Divider />
+          <br />
+          <FormControl as="form" onSubmit={handleTransfer} isRequired>
+            <FormLabel htmlFor="privateKeyFrom">PrivateKey From</FormLabel>
+            <Input
+              mb={3}
+              id="privateKeyFrom"
+              type="text"
+              placeholder="0x..."
+              onChange={handlePrivateKeyFrom}
+            />
+            <FormLabel htmlFor="accountTo">Account To</FormLabel>
+            <Input
+              mb={3}
+              id="accountTo"
+              type="text"
+              placeholder="0x..."
+              onChange={handleAccountTo}
+            />
+            <FormLabel htmlFor="amount">
+              Amount in wei (1 Ether = 1000000000000000000 wei)
+            </FormLabel>
+            <Input
+              mb={3}
+              id="amount"
+              type="text"
+              placeholder="0x..."
+              onChange={handleAmount}
+            />
+            <Button
+              type="submit"
+              backgroundColor="green.200"
+              isLoading={buttonLoading}
+              loadingText="Submitting"
+              variant="solid"
+            >
+              Transfer
+            </Button>
+          </FormControl>
+        </Box>
       </MotionBox>
     </>
   );

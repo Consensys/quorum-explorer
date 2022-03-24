@@ -43,12 +43,19 @@ import {
   faStream,
   faPaperPlane,
   faQuestionCircle,
+  faHammer,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
-import { SmartContract, defaultSmartContracts } from "../../types/Contracts";
+import {
+  SmartContract,
+  defaultSmartContracts,
+  compiledContract,
+} from "../../types/Contracts";
 import axios from "axios";
 //@ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { deployContract } from "../../api/deployContract";
+import { getDetailsByNodeName } from "../../api/quorumConfig";
 
 const MotionGrid = motion(SimpleGrid);
 const ChakraCode = chakra(SyntaxHighlighter);
@@ -59,10 +66,17 @@ interface IProps {
 }
 
 export default function ContractsIndex(props: IProps) {
+  const { colorMode, toggleColorMode } = useColorMode();
   const contracts: SmartContract[] = defaultSmartContracts;
   const toast = useToast();
-  const { colorMode, toggleColorMode } = useColorMode();
   const [code, setCode] = useState(contracts[0].contract);
+  const [compiledContract, setCompiledContract] = useState<compiledContract>({
+    abi: [],
+    bytecode: "",
+  });
+  const [deployedAddress, setDeployedAddress] = useState("");
+  const [selectedContract, setSelectedContract] = useState(contracts[0].name);
+  const [logs, setLogs] = useState<string[]>([]);
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
     Deploy: { status: false, isDisabled: true },
@@ -73,41 +87,82 @@ export default function ContractsIndex(props: IProps) {
     const needle: SmartContract = contracts.filter(
       (_) => _.name === e.target.value
     )[0];
+    const joined = logs.concat("Navigated to: " + e.target.value);
+    setLogs(joined);
+    setButtonLoading({
+      ...buttonLoading,
+      Deploy: { status: false, isDisabled: true },
+    });
+    setSelectedContract(e.target.value);
     setCode(needle.contract);
   };
 
   const HandleCompile = async (e: any) => {
     e.preventDefault();
-    //TODO: fix me to use the contract name and save the drop down value
+    setButtonLoading({
+      ...buttonLoading,
+      Compile: { status: true, isDisabled: false },
+    });
+    await new Promise((r) => setTimeout(r, 1000));
     axios({
       method: "POST",
       url: "/api/compileContract",
       headers: {
         "Content-Type": "application/json",
       },
-      data: JSON.stringify({ name: "SimpleStorage", content: code }),
+      data: JSON.stringify({ name: selectedContract, content: code }),
     })
       .then((response) => {
         console.log(":::::::::::");
         console.log(response);
         console.log(":::::::::::");
+        if (response.status === 200) {
+          setCompiledContract({
+            abi: response.data.abi,
+            bytecode: response.data.bytecode,
+          });
+          toast({
+            title: "Compiled Contract!",
+            description: `The contract was successfully compiled. Please check the compiled code tab for details `,
+            status: "success",
+            duration: 5000,
+            position: "bottom",
+            isClosable: true,
+          });
+          const joined = logs.concat("Compiled contract: " + selectedContract);
+          setLogs(joined);
+        } else {
+          toast({
+            title: "Contract Compilation Failed",
+            description: `Issue encountered compiling contract!`,
+            status: "error",
+            duration: 5000,
+            position: "bottom",
+            isClosable: true,
+          });
+          const joined = logs.concat(
+            "Compilation failed on contract: " + selectedContract
+          );
+          setLogs(joined);
+        }
       })
       .catch((error) => {
         console.log(error);
+        toast({
+          title: "Backend API Error",
+          description: `Issue encountered contacting back-end!`,
+          status: "error",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+        const joined = logs.concat(
+          "Failed to connect to back-end to compile contract: " +
+            selectedContract
+        );
+        setLogs(joined);
       });
-    setButtonLoading({
-      ...buttonLoading,
-      Compile: { status: true, isDisabled: false },
-    });
-    await new Promise((r) => setTimeout(r, 1000));
-    toast({
-      title: "Compiled Contract!",
-      description: `The contract was successfully compiled. Please check the compiled code tab for details `,
-      status: "success",
-      duration: 5000,
-      position: "bottom",
-      isClosable: true,
-    });
+
     setButtonLoading({
       Deploy: { status: false, isDisabled: false },
       Compile: { status: false, isDisabled: false },
@@ -121,15 +176,43 @@ export default function ContractsIndex(props: IProps) {
       Deploy: { status: true, isDisabled: false },
     });
     await new Promise((r) => setTimeout(r, 1000));
-    toast({
-      title: "Deployed Contract!",
-      description: `The contract was successfully deployed through ${props.selectedNode} @ address: `,
-      status: "success",
-      duration: 5000,
-      position: "bottom",
-      isClosable: true,
+    deployContract(
+      getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
+      compiledContract,
+      100
+    ).then((result) => {
+      if (result === 1) {
+        toast({
+          title: "Error!",
+          description: `There was an error deploying the contract.`,
+          status: "error",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+        const joined = logs.concat(
+          "Error in deploying contract: " + selectedContract
+        );
+        setLogs(joined);
+      } else {
+        setDeployedAddress(result.address);
+        console.log(result.address);
+        console.log(result.deployTransaction);
+        toast({
+          title: "Deployed Contract!",
+          description: `The contract was successfully deployed through ${props.selectedNode} @ address: ${result.address}`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+        const joined = logs.concat(
+          "Contract: " + selectedContract + "\n" + "Address: " + result.address
+        );
+        setLogs(joined);
+      }
     });
-    console.log(code);
+
     setButtonLoading({
       ...buttonLoading,
       Deploy: { status: false, isDisabled: false },
@@ -166,27 +249,15 @@ export default function ContractsIndex(props: IProps) {
               borderWidth={2}
               boxShadow="2xl"
               language="solidity"
-              maxH="650px"
+              maxH="550px"
               showLineNumbers={false}
               wrapLongLines={true}
             >
               {code}
             </ChakraCode>
           </Box>
-          {/* <CodeMirror
-              id="code"
-              maxHeight="650px"
-              theme={colorMode === "light" ? "light" : "dark"}
-              value={code}
-              placeholder="Enter your SOL code."
-              extensions={[javascript({ jsx: false })]}
-              onChange={(value, viewUpdate) => {
-                console.log("value:", value);
-              }}
-              editable={false}
-            /> */}
           <Button
-            leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
+            leftIcon={<FontAwesomeIcon icon={faHammer as IconProp} />}
             isLoading={buttonLoading.Compile.status}
             isDisabled={buttonLoading.Compile.isDisabled}
             loadingText="Compiling..."
@@ -250,7 +321,14 @@ export default function ContractsIndex(props: IProps) {
                           <FormLabel htmlFor="contract-address">
                             Contract Address
                           </FormLabel>
-                          <Input id="contract-address" placeholder="0x" />
+                          <Input
+                            id="contract-address"
+                            placeholder="0x"
+                            value={deployedAddress}
+                            onChange={(e) => {
+                              setDeployedAddress(e.target.value);
+                            }}
+                          />
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
@@ -352,34 +430,31 @@ export default function ContractsIndex(props: IProps) {
               </TabPanel>
 
               {/* compiler output */}
-              <TabPanel>
+              <TabPanel overflow="scroll" h="550px">
                 <VStack
                   align="left"
                   divider={<Divider borderColor="gray.200" />}
                   spacing={1}
                 >
-                  <Code>Using SimpleStorage at 0x881ba7a6</Code>
-                  <Code>{`[read] get() => 0`}</Code>
-                  <Code>{`[txn] set("1234") => created tx 0xcd362161`}</Code>
-                  <Code>{`[read] get() => 0`}</Code>
-                  <Code>{`[txn] set("4321") => created tx 0xcd362161`}</Code>
-                  <Code>{`[read] get() => 0`}</Code>
+                  {compiledContract.abi.length && (
+                    <Code>{JSON.stringify(compiledContract.abi)}</Code>
+                  )}
+                  {compiledContract.bytecode && (
+                    <Code>{compiledContract.bytecode.toString()}</Code>
+                  )}
                 </VStack>
               </TabPanel>
 
               {/* logs */}
-              <TabPanel>
+              <TabPanel overflow="scroll" h="550px">
                 <VStack
                   align="left"
                   divider={<Divider borderColor="gray.200" />}
                   spacing={1}
                 >
-                  <Code>Using SimpleStorage at 0x881ba7a6</Code>
-                  <Code>{`[read] get() => 0`}</Code>
-                  <Code>{`[txn] set("1234") => created tx 0xcd362161`}</Code>
-                  <Code>{`[read] get() => 0`}</Code>
-                  <Code>{`[txn] set("4321") => created tx 0xcd362161`}</Code>
-                  <Code>{`[read] get() => 0`}</Code>
+                  {logs.map((log, i) => (
+                    <Code key={i}>{log}</Code>
+                  ))}
                 </VStack>
               </TabPanel>
             </TabPanels>

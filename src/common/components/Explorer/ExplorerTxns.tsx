@@ -45,6 +45,10 @@ export default function ExplorerTxns({ txns, url }: IProps) {
       position: "top-right",
       isClosable: true,
       duration: 10000,
+      containerStyle: {
+        width: "600px",
+        maxWidth: "100%",
+      },
       render: () => <ExplorerTxnToast txn={txn} closeToast={closeToast} />,
     });
   };

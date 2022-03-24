@@ -45,6 +45,10 @@ export default function ExplorerBlocks(props: IProps) {
       position: "top-right",
       isClosable: true,
       duration: 10000,
+      containerStyle: {
+        width: "600px",
+        maxWidth: "100%",
+      },
       render: () => (
         <ExplorerBlockToast block={block} closeToast={closeToast} />
       ),

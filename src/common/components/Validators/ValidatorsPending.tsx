@@ -90,6 +90,7 @@ export default function ValidatorsPending(props: IProps) {
                   </Tooltip>
                   <Spacer />
                   <Button
+                    bgColor="yellow.400"
                     isLoading={buttonLoading[i] ? true : false}
                     loadingText="Discarding..."
                     onClick={() => handleClick(pending, i)}

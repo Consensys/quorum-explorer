@@ -32,43 +32,43 @@ export default function ExplorerTxnDetails({ txn }: IProps) {
           <PopoverCloseButton />
           <PopoverHeader>Txn: {txn.hash}</PopoverHeader>
           <PopoverBody>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               Block Number:&nbsp; {txn.blockNumber}
             </Text>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               Block Hash:&nbsp; {txn.blockHash}
             </Text>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               From:&nbsp; {txn.from}
             </Text>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               To:&nbsp; {txn.to}
             </Text>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               Gas:&nbsp; {txn.gas}
             </Text>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               Gas Price:&nbsp; {txn.gasPrice}
             </Text>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               Value:&nbsp; {txn.value}
             </Text>
             <Text fontSize="xs" isTruncated textAlign="left">
               Input:&nbsp; {txn.input}
             </Text>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               Nonce:&nbsp; {txn.nonce}
             </Text>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               Txn Index:&nbsp; {txn.transactionIndex}
             </Text>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               R:&nbsp; {txn.r}
             </Text>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               S:&nbsp; {txn.s}
             </Text>
-            <Text fontSize="xs" isTruncated textAlign="left">
+            <Text fontSize="xs" textAlign="left">
               V:&nbsp; {txn.v}
             </Text>
           </PopoverBody>

@@ -18,7 +18,7 @@ export default function MobileNav() {
       <MobileDrawer isOpen={isOpen} onClose={onClose}>
         <VStack alignItems="left">
           {NavItems.map((item, i) => (
-            <Link key={i} href={item["label"].toLowerCase()} passHref>
+            <Link key={i} href={"/" + item["label"].toLowerCase()} passHref>
               <Button
                 leftIcon={
                   <FontAwesomeIcon

@@ -17,7 +17,6 @@
     "@fortawesome/free-brands-svg-icons": "^6.1.0",
     "@fortawesome/free-solid-svg-icons": "^6.1.0",
     "@fortawesome/react-fontawesome": "^0.1.18",
-    "@uiw/react-codemirror": "^4.5.1",
     "axios": "^0.26.1",
     "ethers": "^5.6.1",
     "framer-motion": "^6.2.8",
