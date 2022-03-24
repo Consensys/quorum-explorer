@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import { compiledContract } from "../types/Contracts";
 import Web3 from "web3";
 //@ts-ignore

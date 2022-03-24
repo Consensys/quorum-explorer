@@ -88,6 +88,7 @@ export default function ContractsIndex(props: IProps) {
 
   const setTargetAddress = (e: any) => {
     setAccountAddress(e.target.value);
+    setDeployParams({ ...deployParams, privateKeyFrom: e.target.value });
   };
 
   const ContractCodeHandler = (e: any) => {
@@ -209,6 +210,11 @@ export default function ContractsIndex(props: IProps) {
       deployParams.privateKeyFrom.length > 0
     ) {
       // go ahead if accountAddress has been selected
+      const needle = getDetailsByNodeName(props.config, props.selectedNode);
+      const getAccountPrivKey = getPrivateKey(
+        props.config,
+        accountAddress
+      ).privateKey;
       await axios({
         method: "POST",
         url: "/api/deployContract",
@@ -216,12 +222,10 @@ export default function ContractsIndex(props: IProps) {
           "Content-Type": "application/json",
         },
         data: JSON.stringify({
-          client: getDetailsByNodeName(props.config, props.selectedNode).client,
-          rpcUrl: getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
-          privateUrl: getDetailsByNodeName(props.config, props.selectedNode)
-            .privateTxUrl,
-          accountPrivateKey: getPrivateKey(props.config, accountAddress)
-            .privateKey,
+          client: needle.client,
+          rpcUrl: needle.rpcUrl,
+          privateUrl: needle.privateTxUrl,
+          accountPrivateKey: getAccountPrivKey,
           privateForList: ["1iTZde/ndBHvzhcl7V68x44Vx7pl8nwx9LqnM/AfJUg="],
           compiledContract: compiledContract,
           deployArgs: 100,
@@ -367,9 +371,9 @@ export default function ContractsIndex(props: IProps) {
                       </AccordionButton>
                       <AccordionPanel pb={4}>
                         <FormControl>
-                          <FormLabel htmlFor="predefined-account">
+                          {/* <FormLabel htmlFor="predefined-account">
                             Account
-                          </FormLabel>
+                          </FormLabel> */}
                           <Select
                             id="predefined-account"
                             placeholder="Select account"
@@ -399,11 +403,30 @@ export default function ContractsIndex(props: IProps) {
                           <FormLabel htmlFor="private-from">
                             PrivateKey From
                           </FormLabel>
-                          <Input id="private-from" placeholder="0x" />
+                          <Input
+                            id="private-from"
+                            placeholder="0x"
+                            value={deployParams.privateKeyFrom}
+                            onChange={(e: any) => {
+                              setDeployParams({
+                                ...deployParams,
+                                privateKeyFrom: e.target.value,
+                              });
+                            }}
+                          />
                           <FormLabel htmlFor="private-for">
                             Private For
                           </FormLabel>
-                          <Input id="private-for" placeholder="0x" />
+                          <Input
+                            id="private-for"
+                            placeholder="0x"
+                            onChange={(e: any) => {
+                              setDeployParams({
+                                ...deployParams,
+                                privateFor: e.target.value,
+                              });
+                            }}
+                          />
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
