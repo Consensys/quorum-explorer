@@ -32,6 +32,24 @@
       "wsUrl": "local"
     },
     {
+      "name": "member1",
+      "client": "goquorum",
+      "rpcUrl": "http://localhost:20000",
+      "wsUrl": "local"
+    },
+    {
+      "name": "member2",
+      "client": "goquorum",
+      "rpcUrl": "http://localhost:20002",
+      "wsUrl": "local"
+    },
+    {
+      "name": "member3",
+      "client": "goquorum",
+      "rpcUrl": "http://localhost:20004",
+      "wsUrl": "local"
+    },
+    {
       "name": "broken",
       "client": "besu",
       "rpcUrl": "http://localhost:9000",

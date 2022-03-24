@@ -303,7 +303,7 @@ export default function ContractsIndex(props: IProps) {
             <TabPanels>
               <TabPanel>
                 <SimpleGrid columns={2} minChildWidth="400px" spacing="40px">
-                  <Accordion allowMultiple defaultIndex={[0, 1]}>
+                  <Accordion allowMultiple defaultIndex={[0, 1, 2]}>
                     <AccordionItem>
                       <AccordionButton>
                         <Box
@@ -312,12 +312,12 @@ export default function ContractsIndex(props: IProps) {
                           flex="1"
                           textAlign="left"
                         >
-                          Choose Contract
+                          1. Choose Contract
                         </Box>
                         <AccordionIcon />
                       </AccordionButton>
                       <AccordionPanel pb={4}>
-                        <FormControl isRequired>
+                        <FormControl>
                           <FormLabel htmlFor="contract-address">
                             Contract Address
                           </FormLabel>
@@ -340,53 +340,68 @@ export default function ContractsIndex(props: IProps) {
                           flex="1"
                           textAlign="left"
                         >
-                          Transact
+                          2. Deploy
                         </Box>
                         <AccordionIcon />
                       </AccordionButton>
                       <AccordionPanel pb={4}>
                         <FormControl>
-                          <FormLabel htmlFor="from-address">
-                            FROM Address
+                          <FormLabel htmlFor="private-from">
+                            PrivateKey From
                           </FormLabel>
-                          <Input id="from-address" placeholder="0x" />
+                          <Input id="private-from" placeholder="0x" />
                           <FormLabel htmlFor="private-for">
                             Private For
                           </FormLabel>
                           <Input id="private-for" placeholder="0x" />
-                          <Flex
-                            justifyContent="space-between"
-                            alignItems="center"
-                            m={1}
-                          >
-                            <Text fontWeight="semibold">get</Text>
-                            <Button>Read</Button>
-                          </Flex>
-                          <Flex
-                            justifyContent="space-between"
-                            alignItems="center"
-                            m={1}
-                          >
-                            <FormLabel
-                              htmlFor="set"
-                              fontWeight="semibold"
-                              m={0}
-                              mr={5}
-                            >
-                              set
-                            </FormLabel>
-                            <Input id="set" placeholder="0x" />
-                            <Button ml={5}>Transact</Button>
-                          </Flex>
-                          <Flex
-                            justifyContent="space-between"
-                            alignItems="center"
-                            m={1}
-                          >
-                            <Text fontWeight="semibold">storedData</Text>
-                            <Button>Read</Button>
-                          </Flex>
                         </FormControl>
+                      </AccordionPanel>
+                    </AccordionItem>
+                    <AccordionItem>
+                      <AccordionButton>
+                        <Box
+                          color="purple.400"
+                          fontWeight="bold"
+                          flex="1"
+                          textAlign="left"
+                        >
+                          3. Interact
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                      <AccordionPanel pb={4}>
+                        <Flex
+                          justifyContent="space-between"
+                          alignItems="center"
+                          m={1}
+                        >
+                          <Text fontWeight="semibold">get</Text>
+                          <Button>Read</Button>
+                        </Flex>
+                        <Flex
+                          justifyContent="space-between"
+                          alignItems="center"
+                          m={1}
+                        >
+                          <FormLabel
+                            htmlFor="set"
+                            fontWeight="semibold"
+                            m={0}
+                            mr={5}
+                          >
+                            set
+                          </FormLabel>
+                          <Input id="set" placeholder="0x" />
+                          <Button ml={5}>Transact</Button>
+                        </Flex>
+                        <Flex
+                          justifyContent="space-between"
+                          alignItems="center"
+                          m={1}
+                        >
+                          <Text fontWeight="semibold">storedData</Text>
+                          <Button>Read</Button>
+                        </Flex>
                       </AccordionPanel>
                     </AccordionItem>
                   </Accordion>
