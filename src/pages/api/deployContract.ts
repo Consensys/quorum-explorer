@@ -1,0 +1,81 @@
+import type { NextApiRequest, NextApiResponse } from "next";
+import Web3 from "web3";
+//@ts-ignore
+import Web3Quorum from "web3js-quorum";
+import axios from "axios";
+import { compiledContract } from "../../common/types/Contracts";
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  console.log(
+    req.body.client,
+    req.body.rpcUrl,
+    req.body.privateUrl,
+    req.body.accountPrivateKey,
+    req.body.privateForList,
+    req.body.compiledContract,
+    req.body.deployArgs
+  );
+  await deployContract(
+    req.body.client,
+    req.body.rpcUrl,
+    req.body.privateUrl,
+    req.body.accountPrivateKey,
+    req.body.privateForList,
+    req.body.compiledContract,
+    req.body.deployArgs
+  ).then((txHash) => {
+    res.status(200).json(txHash);
+  });
+}
+
+export async function deployContract(
+  client: string,
+  rpcUrl: string,
+  privateUrl: string,
+  accountPrivateKey: string,
+  privateForList: string[],
+  compiledContract: compiledContract,
+  deployArgs: any
+) {
+  const abi = compiledContract.abi;
+  const bytecode = compiledContract.bytecode;
+
+  const web3 = new Web3(rpcUrl);
+  const web3quorum = new Web3Quorum(
+    web3,
+    { privateUrl: privateUrl },
+    client === "goquorum"
+  );
+
+  const account = web3.eth.accounts.privateKeyToAccount(accountPrivateKey);
+  const txCount = await web3.eth.getTransactionCount(account.address);
+  const chainId = await web3.eth.getChainId();
+  const fromTxPublicKey = await axios
+    .get(privateUrl + "/keys", {
+      headers: { "Content-Type": "application/json" },
+    })
+    .then((res) => res.data.keys[0].key);
+
+  const txOptions = {
+    chainId,
+    nonce: txCount,
+    gasPrice: 0, //ETH per unit of gas
+    gasLimit: 0x24a22, //max number of gas units the tx is allowed to use
+    value: 0,
+    data: "0x" + bytecode + deployArgs,
+    from: account,
+    isPrivate: true,
+    privateKey: accountPrivateKey,
+    privateFrom: fromTxPublicKey,
+    privateFor: privateForList,
+  };
+  console.log("Creating contract...");
+
+  // Generate and send the Raw transaction to the Besu node using the eea_sendRawTransaction JSON-RPC call
+  const txHash = await web3quorum.priv.generateAndSendRawTransaction(txOptions);
+  console.log("Getting contractAddress from txHash: ", txHash);
+  return txHash;
+}

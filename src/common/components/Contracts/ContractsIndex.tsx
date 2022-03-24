@@ -181,16 +181,42 @@ export default function ContractsIndex(props: IProps) {
       Deploy: { status: true, isDisabled: false },
     });
     await new Promise((r) => setTimeout(r, 1000));
-    deployContract(
-      getDetailsByNodeName(props.config, props.selectedNode).client,
-      getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
-      getDetailsByNodeName(props.config, props.selectedNode).privateTxUrl,
-      getPrivateKey(props.config, accountAddress),
-      [],
-      compiledContract,
-      100
-    ).then((result) => {
-      if (result === 1) {
+    await axios({
+      method: "POST",
+      url: "/api/deployContract",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        client: getDetailsByNodeName(props.config, props.selectedNode).client,
+        rpcUrl: getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
+        privateUrl: getDetailsByNodeName(props.config, props.selectedNode)
+          .privateTxUrl,
+        accountPrivateKey: getPrivateKey(props.config, accountAddress)
+          .privateKey,
+        privateForList: ["1iTZde/ndBHvzhcl7V68x44Vx7pl8nwx9LqnM/AfJUg="],
+        compiledContract: compiledContract,
+        deployArgs: 100,
+      }),
+    })
+      .then((result) => {
+        // setDeployedAddress(result.address);
+        // console.log(result.address);
+        // console.log(result.deployTransaction);
+        toast({
+          title: "Deployed Contract!",
+          description: `The contract was successfully deployed through ${props.selectedNode} @ address: ${result}`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+        const joined = logs.concat(
+          "Contract: " + selectedContract + "\n" + "Address: " + result
+        );
+        setLogs(joined);
+      })
+      .catch((e) => {
         toast({
           title: "Error!",
           description: `There was an error deploying the contract.`,
@@ -203,24 +229,16 @@ export default function ContractsIndex(props: IProps) {
           "Error in deploying contract: " + selectedContract
         );
         setLogs(joined);
-      } else {
-        setDeployedAddress(result.address);
-        console.log(result.address);
-        console.log(result.deployTransaction);
-        toast({
-          title: "Deployed Contract!",
-          description: `The contract was successfully deployed through ${props.selectedNode} @ address: ${result.address}`,
-          status: "success",
-          duration: 5000,
-          position: "bottom",
-          isClosable: true,
-        });
-        const joined = logs.concat(
-          "Contract: " + selectedContract + "\n" + "Address: " + result.address
-        );
-        setLogs(joined);
-      }
-    });
+      });
+    // await deployContract(
+    //   getDetailsByNodeName(props.config, props.selectedNode).client,
+    //   getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
+    //   getDetailsByNodeName(props.config, props.selectedNode).privateTxUrl,
+    //   getPrivateKey(props.config, accountAddress).privateKey,
+    //   [],
+    //   compiledContract,
+    //   100
+    // );
 
     setButtonLoading({
       ...buttonLoading,
