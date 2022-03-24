@@ -54,7 +54,6 @@ import {
 import axios from "axios";
 //@ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { deployContract } from "../../api/deployContract";
 import { getDetailsByNodeName, getPrivateKey } from "../../api/quorumConfig";
 
 const MotionGrid = motion(SimpleGrid);
@@ -180,7 +179,7 @@ export default function ContractsIndex(props: IProps) {
       ...buttonLoading,
       Deploy: { status: true, isDisabled: false },
     });
-    await new Promise((r) => setTimeout(r, 1000));
+    // await new Promise((r) => setTimeout(r, 1000));
     await axios({
       method: "POST",
       url: "/api/deployContract",
@@ -200,19 +199,21 @@ export default function ContractsIndex(props: IProps) {
       }),
     })
       .then((result) => {
-        // setDeployedAddress(result.address);
-        // console.log(result.address);
-        // console.log(result.deployTransaction);
         toast({
           title: "Deployed Contract!",
-          description: `The contract was successfully deployed through ${props.selectedNode} @ address: ${result}`,
+          description: `The contract was successfully deployed through ${props.selectedNode} @ address: ${result.data.contractAddress}`,
           status: "success",
           duration: 5000,
           position: "bottom",
           isClosable: true,
         });
+        setDeployedAddress(result.data.contractAddress);
         const joined = logs.concat(
-          "Contract: " + selectedContract + "\n" + "Address: " + result
+          "Contract: " +
+            selectedContract +
+            "\n \n" +
+            "Address: " +
+            result.data.contractAddress
         );
         setLogs(joined);
       })
@@ -230,15 +231,6 @@ export default function ContractsIndex(props: IProps) {
         );
         setLogs(joined);
       });
-    // await deployContract(
-    //   getDetailsByNodeName(props.config, props.selectedNode).client,
-    //   getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
-    //   getDetailsByNodeName(props.config, props.selectedNode).privateTxUrl,
-    //   getPrivateKey(props.config, accountAddress).privateKey,
-    //   [],
-    //   compiledContract,
-    //   100
-    // );
 
     setButtonLoading({
       ...buttonLoading,
