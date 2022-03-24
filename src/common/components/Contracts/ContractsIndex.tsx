@@ -129,6 +129,8 @@ export default function ContractsIndex(props: IProps) {
             position: "bottom",
             isClosable: true,
           });
+          const joined = logs.concat("Compiled contract: " + selectedContract);
+          setLogs(joined);
         } else {
           toast({
             title: "Contract Compilation Failed",
@@ -138,6 +140,10 @@ export default function ContractsIndex(props: IProps) {
             position: "bottom",
             isClosable: true,
           });
+          const joined = logs.concat(
+            "Compilation failed on contract: " + selectedContract
+          );
+          setLogs(joined);
         }
       })
       .catch((error) => {
@@ -150,6 +156,11 @@ export default function ContractsIndex(props: IProps) {
           position: "bottom",
           isClosable: true,
         });
+        const joined = logs.concat(
+          "Failed to connect to back-end to compile contract: " +
+            selectedContract
+        );
+        setLogs(joined);
       });
 
     setButtonLoading({
@@ -179,6 +190,10 @@ export default function ContractsIndex(props: IProps) {
           position: "bottom",
           isClosable: true,
         });
+        const joined = logs.concat(
+          "Error in deploying contract: " + selectedContract
+        );
+        setLogs(joined);
       } else {
         setDeployedAddress(result.address);
         console.log(result.address);
@@ -191,6 +206,10 @@ export default function ContractsIndex(props: IProps) {
           position: "bottom",
           isClosable: true,
         });
+        const joined = logs.concat(
+          "Contract: " + selectedContract + "\n" + "Address: " + result.address
+        );
+        setLogs(joined);
       }
     });
 
