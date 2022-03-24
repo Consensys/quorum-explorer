@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^1.8.6",
-    "@codemirror/lang-javascript": "^0.19.7",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "@fortawesome/fontawesome-svg-core": "^6.1.0",
