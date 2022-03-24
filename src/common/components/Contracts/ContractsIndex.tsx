@@ -77,6 +77,10 @@ export default function ContractsIndex(props: IProps) {
   const [accountAddress, setAccountAddress] = useState("");
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
   const [logs, setLogs] = useState<string[]>([]);
+  const [deployParams, setDeployParams] = useState({
+    privateKeyFrom: "",
+    privateFor: "",
+  });
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
     Deploy: { status: false, isDisabled: true },
@@ -179,63 +183,89 @@ export default function ContractsIndex(props: IProps) {
       ...buttonLoading,
       Deploy: { status: true, isDisabled: false },
     });
-    // await new Promise((r) => setTimeout(r, 1000));
-    await axios({
-      method: "POST",
-      url: "/api/deployContract",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: JSON.stringify({
-        client: getDetailsByNodeName(props.config, props.selectedNode).client,
-        rpcUrl: getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
-        privateUrl: getDetailsByNodeName(props.config, props.selectedNode)
-          .privateTxUrl,
-        accountPrivateKey: getPrivateKey(props.config, accountAddress)
-          .privateKey,
-        privateForList: ["1iTZde/ndBHvzhcl7V68x44Vx7pl8nwx9LqnM/AfJUg="],
-        compiledContract: compiledContract,
-        deployArgs: 100,
-      }),
-    })
-      .then((result) => {
-        toast({
-          title: "Deployed Contract!",
-          description: `The contract was successfully deployed through ${props.selectedNode} @ address: ${result.data.contractAddress}`,
-          status: "success",
-          duration: 5000,
-          position: "bottom",
-          isClosable: true,
-        });
-        setDeployedAddress(result.data.contractAddress);
-        const joined = logs.concat(
-          "Contract: " +
-            selectedContract +
-            "\n \n" +
-            "Address: " +
-            result.data.contractAddress
-        );
-        setLogs(joined);
-      })
-      .catch((e) => {
-        toast({
-          title: "Error!",
-          description: `There was an error deploying the contract.`,
-          status: "error",
-          duration: 5000,
-          position: "bottom",
-          isClosable: true,
-        });
-        const joined = logs.concat(
-          "Error in deploying contract: " + selectedContract
-        );
-        setLogs(joined);
+    if (
+      (accountAddress.length === 0 && deployParams.privateFor.length === 0) ||
+      deployParams.privateKeyFrom.length === 0
+    ) {
+      // check if nothing has been selected for account
+      toast({
+        title: "Missing Details",
+        description: `Make sure to select an account to deploy to from the drop down`,
+        status: "warning",
+        duration: 5000,
+        position: "bottom",
+        isClosable: true,
       });
+      setButtonLoading({
+        ...buttonLoading,
+        Deploy: { status: false, isDisabled: false },
+      });
+      return;
+    }
 
-    setButtonLoading({
-      ...buttonLoading,
-      Deploy: { status: false, isDisabled: false },
-    });
+    if (
+      accountAddress.length > 0 &&
+      deployParams.privateFor.length > 0 &&
+      deployParams.privateKeyFrom.length > 0
+    ) {
+      // go ahead if accountAddress has been selected
+      await axios({
+        method: "POST",
+        url: "/api/deployContract",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          client: getDetailsByNodeName(props.config, props.selectedNode).client,
+          rpcUrl: getDetailsByNodeName(props.config, props.selectedNode).rpcUrl,
+          privateUrl: getDetailsByNodeName(props.config, props.selectedNode)
+            .privateTxUrl,
+          accountPrivateKey: getPrivateKey(props.config, accountAddress)
+            .privateKey,
+          privateForList: ["1iTZde/ndBHvzhcl7V68x44Vx7pl8nwx9LqnM/AfJUg="],
+          compiledContract: compiledContract,
+          deployArgs: 100,
+        }),
+      })
+        .then((result) => {
+          toast({
+            title: "Deployed Contract!",
+            description: `The contract was successfully deployed through ${props.selectedNode} @ address: ${result.data.contractAddress}`,
+            status: "success",
+            duration: 5000,
+            position: "bottom",
+            isClosable: true,
+          });
+          setDeployedAddress(result.data.contractAddress);
+          const joined = logs.concat(
+            "Contract: " +
+              selectedContract +
+              "\n \n" +
+              "Address: " +
+              result.data.contractAddress
+          );
+          setLogs(joined);
+        })
+        .catch((e) => {
+          toast({
+            title: "Error!",
+            description: `There was an error deploying the contract.`,
+            status: "error",
+            duration: 5000,
+            position: "bottom",
+            isClosable: true,
+          });
+          const joined = logs.concat(
+            "Error in deploying contract: " + selectedContract
+          );
+          setLogs(joined);
+        });
+
+      setButtonLoading({
+        ...buttonLoading,
+        Deploy: { status: false, isDisabled: false },
+      });
+    }
   };
 
   return (
@@ -256,8 +286,8 @@ export default function ContractsIndex(props: IProps) {
             variant="filled"
             onChange={ContractCodeHandler}
           >
-            {contracts.map((c) => (
-              <option key={c.name} value={c.name}>
+            {contracts.map((c, i) => (
+              <option key={i} value={c.name}>
                 {c.name}
               </option>
             ))}
@@ -331,7 +361,7 @@ export default function ContractsIndex(props: IProps) {
                           flex="1"
                           textAlign="left"
                         >
-                          1. Choose Contract
+                          1. Account to Deploy
                         </Box>
                         <AccordionIcon />
                       </AccordionButton>
@@ -349,17 +379,6 @@ export default function ContractsIndex(props: IProps) {
                               <option key={i}>{account.address}</option>
                             ))}
                           </Select>
-                          <FormLabel htmlFor="contract-address">
-                            Contract Address
-                          </FormLabel>
-                          <Input
-                            id="contract-address"
-                            placeholder="0x"
-                            value={deployedAddress}
-                            onChange={(e) => {
-                              setDeployedAddress(e.target.value);
-                            }}
-                          />
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
@@ -401,6 +420,19 @@ export default function ContractsIndex(props: IProps) {
                         <AccordionIcon />
                       </AccordionButton>
                       <AccordionPanel pb={4}>
+                        <FormControl>
+                          <FormLabel htmlFor="contract-address">
+                            Deployed Contract Address
+                          </FormLabel>
+                          <Input
+                            id="contract-address"
+                            placeholder="0x"
+                            value={deployedAddress}
+                            onChange={(e) => {
+                              setDeployedAddress(e.target.value);
+                            }}
+                          />
+                        </FormControl>
                         <Flex
                           justifyContent="space-between"
                           alignItems="center"
