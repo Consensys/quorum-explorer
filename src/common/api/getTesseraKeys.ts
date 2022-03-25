@@ -12,7 +12,6 @@ export async function getTesseraKeys(tesseraUrl: string) {
   // get self Tessera key with /keys
   // get all Tessera keys on network with /partyinfo/keys
   // either remove self key from output or give indicator that it is current selection
-  console.log(tesseraUrl);
   const selfKey = tesseraUrl + "/keys";
   const getAllKeys = tesseraUrl + "/partyinfo/keys";
 
@@ -39,8 +38,6 @@ export async function getTesseraKeys(tesseraUrl: string) {
       });
       return keyList;
     });
-
-  console.log(selfKeyRes, allKeysRes);
 
   return [selfKeyRes, allKeysRes];
 }

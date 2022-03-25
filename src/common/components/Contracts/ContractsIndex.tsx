@@ -87,15 +87,15 @@ export default function ContractsIndex(props: IProps) {
     privateKeyFrom: "",
     privateFor: [],
   });
+  const controller = new AbortController();
+  const [simpleStorageValue, setSimpleStorageValue] = useState(0);
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
     Deploy: { status: false, isDisabled: true },
   });
 
   useEffect(() => {
-    console.log(props.selectedNode);
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
-    console.log(needle);
     if (needle.privateTxUrl == "") {
       return;
     }
@@ -107,6 +107,7 @@ export default function ContractsIndex(props: IProps) {
           "Content-Type": "application/json",
         },
         data: JSON.stringify({ privateTxUrl: needle.privateTxUrl }),
+        signal: controller.signal,
       })
         .then((res) => {
           const conformSelectList: { label: string; value: string }[] = [];
@@ -119,13 +120,17 @@ export default function ContractsIndex(props: IProps) {
       return returnRes;
     };
     fetchData();
-    console.log(deployParams);
+    return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.selectedNode]);
 
   const setTargetAddress = (e: any) => {
     setAccountAddress(e.target.value);
     setDeployParams({ ...deployParams, privateKeyFrom: e.target.value });
+  };
+
+  const setStorageValue = (e: any) => {
+    setSimpleStorageValue(e.target.value);
   };
 
   const ContractCodeHandler = (e: any) => {
@@ -244,7 +249,8 @@ export default function ContractsIndex(props: IProps) {
     if (
       accountAddress.length > 0 &&
       deployParams.privateFor.length > 0 &&
-      deployParams.privateKeyFrom.length > 0
+      deployParams.privateKeyFrom.length > 0 &&
+      simpleStorageValue !== undefined
     ) {
       // go ahead if all necessary parameters selected
       const getAccountPrivKey = getPrivateKey(
@@ -265,7 +271,7 @@ export default function ContractsIndex(props: IProps) {
           accountPrivateKey: getAccountPrivKey,
           privateForList: deployParams.privateFor,
           compiledContract: compiledContract,
-          deployArgs: 100,
+          deployArgs: simpleStorageValue,
         }),
       })
         .then((result) => {
@@ -471,6 +477,14 @@ export default function ContractsIndex(props: IProps) {
                             closeMenuOnSelect={false}
                             selectedOptionStyle="check"
                             hideSelectedOptions={false}
+                          />
+                          <FormLabel htmlFor="storage-value">
+                            Storage Value
+                          </FormLabel>
+                          <Input
+                            id="storage-value"
+                            placeholder={simpleStorageValue.toString()}
+                            onChange={setStorageValue}
                           />
                         </FormControl>
                       </AccordionPanel>
