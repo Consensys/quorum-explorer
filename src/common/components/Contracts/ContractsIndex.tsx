@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import {
   Tabs,
@@ -10,7 +10,6 @@ import {
   FormControl,
   FormLabel,
   Button,
-  useColorModeValue,
   useToast,
   SimpleGrid,
   Accordion,
@@ -55,6 +54,8 @@ import axios from "axios";
 //@ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { getDetailsByNodeName, getPrivateKey } from "../../api/quorumConfig";
+import { Select as MultiSelect } from "chakra-react-select";
+import { getTesseraKeys } from "../../api/getTesseraKeys";
 
 const MotionGrid = motion(SimpleGrid);
 const ChakraCode = chakra(SyntaxHighlighter);
@@ -77,14 +78,50 @@ export default function ContractsIndex(props: IProps) {
   const [accountAddress, setAccountAddress] = useState("");
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
   const [logs, setLogs] = useState<string[]>([]);
-  const [deployParams, setDeployParams] = useState({
+  const [tesseraKeys, setTesseraKeys] =
+    useState<{ label: string; value: string }[]>();
+  const [deployParams, setDeployParams] = useState<{
+    privateKeyFrom: string;
+    privateFor: string[];
+  }>({
     privateKeyFrom: "",
-    privateFor: "",
+    privateFor: [],
   });
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
     Deploy: { status: false, isDisabled: true },
   });
+
+  useEffect(() => {
+    console.log(props.selectedNode);
+    const needle = getDetailsByNodeName(props.config, props.selectedNode);
+    console.log(needle);
+    if (needle.privateTxUrl == "") {
+      return;
+    }
+    const fetchData = async () => {
+      const returnRes = await axios({
+        method: "POST",
+        url: "/api/getTesseraKeys",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({ privateTxUrl: needle.privateTxUrl }),
+      })
+        .then((res) => {
+          const conformSelectList: { label: string; value: string }[] = [];
+          res.data.map((key: any) => {
+            conformSelectList.push({ label: key, value: key });
+          });
+          setTesseraKeys(conformSelectList);
+        })
+        .catch(console.error);
+      return returnRes;
+    };
+    fetchData();
+    console.log(deployParams);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.selectedNode]);
 
   const setTargetAddress = (e: any) => {
     setAccountAddress(e.target.value);
@@ -112,7 +149,7 @@ export default function ContractsIndex(props: IProps) {
       ...buttonLoading,
       Compile: { status: true, isDisabled: false },
     });
-    await new Promise((r) => setTimeout(r, 1000));
+    // await new Promise((r) => setTimeout(r, 1000));
     axios({
       method: "POST",
       url: "/api/compileContract",
@@ -185,13 +222,14 @@ export default function ContractsIndex(props: IProps) {
       Deploy: { status: true, isDisabled: false },
     });
     if (
-      (accountAddress.length === 0 && deployParams.privateFor.length === 0) ||
+      accountAddress.length === 0 ||
+      deployParams.privateFor.length === 0 ||
       deployParams.privateKeyFrom.length === 0
     ) {
       // check if nothing has been selected for account
       toast({
         title: "Missing Details",
-        description: `Make sure to select an account to deploy to from the drop down`,
+        description: `You must choose account to deploy and private for.`,
         status: "warning",
         duration: 5000,
         position: "bottom",
@@ -203,18 +241,17 @@ export default function ContractsIndex(props: IProps) {
       });
       return;
     }
-
     if (
       accountAddress.length > 0 &&
       deployParams.privateFor.length > 0 &&
       deployParams.privateKeyFrom.length > 0
     ) {
-      // go ahead if accountAddress has been selected
-      const needle = getDetailsByNodeName(props.config, props.selectedNode);
+      // go ahead if all necessary parameters selected
       const getAccountPrivKey = getPrivateKey(
         props.config,
         accountAddress
       ).privateKey;
+      const needle = getDetailsByNodeName(props.config, props.selectedNode);
       await axios({
         method: "POST",
         url: "/api/deployContract",
@@ -226,7 +263,7 @@ export default function ContractsIndex(props: IProps) {
           rpcUrl: needle.rpcUrl,
           privateUrl: needle.privateTxUrl,
           accountPrivateKey: getAccountPrivKey,
-          privateForList: ["1iTZde/ndBHvzhcl7V68x44Vx7pl8nwx9LqnM/AfJUg="],
+          privateForList: deployParams.privateFor,
           compiledContract: compiledContract,
           deployArgs: 100,
         }),
@@ -271,7 +308,6 @@ export default function ContractsIndex(props: IProps) {
       });
     }
   };
-
   return (
     <>
       <MotionGrid
@@ -417,15 +453,24 @@ export default function ContractsIndex(props: IProps) {
                           <FormLabel htmlFor="private-for">
                             Private For
                           </FormLabel>
-                          <Input
-                            id="private-for"
-                            placeholder="0x"
-                            onChange={(e: any) => {
+                          <MultiSelect
+                            instanceId="private-for"
+                            isMulti
+                            options={tesseraKeys}
+                            onChange={(e) => {
+                              // convert from [{label: "", value:""}]
+                              // to [value, value, value]
+                              const myList: string[] = [];
+                              e.map((k) => myList.push(k.value));
                               setDeployParams({
                                 ...deployParams,
-                                privateFor: e.target.value,
+                                privateFor: myList,
                               });
                             }}
+                            placeholder="Select Tessera node..."
+                            closeMenuOnSelect={false}
+                            selectedOptionStyle="check"
+                            hideSelectedOptions={false}
                           />
                         </FormControl>
                       </AccordionPanel>

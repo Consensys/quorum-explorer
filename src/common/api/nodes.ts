@@ -1,7 +1,8 @@
 import { ethApiCall } from "./common";
 import { NodeDetails } from "../types/api/responses";
 
-export async function updateNodeInfo(url: string, client?: string) {
+export async function updateNodeInfo(url: string, client: string) {
+  const userClient = client; // hack not sure why getting client directly breaks
   let nodeDetails: NodeDetails = {
     statusText: "error",
     nodeId: "",
@@ -20,7 +21,7 @@ export async function updateNodeInfo(url: string, client?: string) {
     const netPeerCount = await ethApiCall(url, "net_peerCount");
     const txPoolStatus = await ethApiCall(
       url,
-      client === "goquorum" ? "txpool_status" : "txpool_besuStatistics"
+      client === userClient ? "txpool_status" : "txpool_besuStatistics"
     );
     nodeDetails["statusText"] = adminNodeInfo.statusText;
     nodeDetails["nodeId"] = adminNodeInfo.data.result.id;
@@ -29,14 +30,12 @@ export async function updateNodeInfo(url: string, client?: string) {
     nodeDetails["ip"] = adminNodeInfo.data.result.ip;
     nodeDetails["blocks"] = parseInt(ethBlockNumber.data.result, 16);
     nodeDetails["peers"] = parseInt(netPeerCount.data.result, 16);
-    nodeDetails["queuedTxns"] =
-      client === "goquorum"
+    const besuOrGoQTxns =
+      client === userClient
         ? parseInt(txPoolStatus.data.result.queued, 16)
         : txPoolStatus.data.result.remoteCount;
-    nodeDetails["pendingTxns"] =
-      client === "goquorum"
-        ? parseInt(txPoolStatus.data.result.pending, 16)
-        : txPoolStatus.data.result.remoteCount;
+    nodeDetails["queuedTxns"] = besuOrGoQTxns;
+    nodeDetails["pendingTxns"] = besuOrGoQTxns;
   } catch (e) {
     console.error(
       "Node is unreachable. Ensure ports are open and client is running!"
