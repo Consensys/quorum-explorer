@@ -3,7 +3,7 @@ import Web3 from "web3";
 //@ts-ignore
 import Web3Quorum from "web3js-quorum";
 import axios from "axios";
-import { compiledContract } from "../../common/types/Contracts";
+import { CompiledContract } from "../../common/types/Contracts";
 
 export default async function handler(
   req: NextApiRequest,
@@ -37,7 +37,7 @@ export async function deployContract(
   privateUrl: string,
   accountPrivateKey: string,
   privateForList: string[],
-  compiledContract: compiledContract,
+  compiledContract: CompiledContract,
   deployArgs: any
 ) {
   const abi = compiledContract.abi;

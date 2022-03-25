@@ -56,6 +56,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { getDetailsByNodeName, getPrivateKey } from "../../api/quorumConfig";
 import { Select as MultiSelect } from "chakra-react-select";
 import { getTesseraKeys } from "../../api/getTesseraKeys";
+import ContractsInteract from "./ContractsInteract";
 
 const MotionGrid = motion(SimpleGrid);
 const ChakraCode = chakra(SyntaxHighlighter);
@@ -154,19 +155,16 @@ export default function ContractsIndex(props: IProps) {
       ...buttonLoading,
       Compile: { status: true, isDisabled: false },
     });
-    // await new Promise((r) => setTimeout(r, 1000));
+
     axios({
       method: "POST",
-      url: "/api/compileContract",
+      url: "/api/contractCompile",
       headers: {
         "Content-Type": "application/json",
       },
       data: JSON.stringify({ name: selectedContract, content: code }),
     })
       .then((response) => {
-        console.log(":::::::::::");
-        console.log(response);
-        console.log(":::::::::::");
         if (response.status === 200) {
           setCompiledContract({
             abi: response.data.abi,
@@ -260,7 +258,7 @@ export default function ContractsIndex(props: IProps) {
       const needle = getDetailsByNodeName(props.config, props.selectedNode);
       await axios({
         method: "POST",
-        url: "/api/deployContract",
+        url: "/api/contractDeploy",
         headers: {
           "Content-Type": "application/json",
         },
@@ -489,66 +487,7 @@ export default function ContractsIndex(props: IProps) {
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
-                    <AccordionItem>
-                      <AccordionButton>
-                        <Box
-                          color="purple.400"
-                          fontWeight="bold"
-                          flex="1"
-                          textAlign="left"
-                        >
-                          3. Interact
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                      <AccordionPanel pb={4}>
-                        <FormControl>
-                          <FormLabel htmlFor="contract-address">
-                            Deployed Contract Address
-                          </FormLabel>
-                          <Input
-                            id="contract-address"
-                            placeholder="0x"
-                            value={deployedAddress}
-                            onChange={(e) => {
-                              setDeployedAddress(e.target.value);
-                            }}
-                          />
-                        </FormControl>
-                        <Flex
-                          justifyContent="space-between"
-                          alignItems="center"
-                          m={1}
-                        >
-                          <Text fontWeight="semibold">get</Text>
-                          <Button>Read</Button>
-                        </Flex>
-                        <Flex
-                          justifyContent="space-between"
-                          alignItems="center"
-                          m={1}
-                        >
-                          <FormLabel
-                            htmlFor="set"
-                            fontWeight="semibold"
-                            m={0}
-                            mr={5}
-                          >
-                            set
-                          </FormLabel>
-                          <Input id="set" placeholder="0x" />
-                          <Button ml={5}>Transact</Button>
-                        </Flex>
-                        <Flex
-                          justifyContent="space-between"
-                          alignItems="center"
-                          m={1}
-                        >
-                          <Text fontWeight="semibold">storedData</Text>
-                          <Button>Read</Button>
-                        </Flex>
-                      </AccordionPanel>
-                    </AccordionItem>
+                    <ContractsInteract config={props.config} selectedNode={props.selectedNode} compiledContract={compiledContract} contractAddress={deployedAddress} />
                   </Accordion>
                   <Accordion allowMultiple defaultIndex={[0, 1]}>
                     <AccordionItem>

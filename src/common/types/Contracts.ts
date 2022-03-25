@@ -3,6 +3,12 @@ export type SmartContract = {
   contract: string;
 };
 
+export type CompiledContract = {
+  abi: [];
+  bytecode: string;
+};
+
+
 export const defaultSmartContracts: SmartContract[] = [
   {
     name: "SimpleStorage",
@@ -180,7 +186,3 @@ contract Ballot {
   },
 ];
 
-export type compiledContract = {
-  abi: [];
-  bytecode: string;
-};
