@@ -1,8 +1,8 @@
-import { compiledContract } from "../types/Contracts";
-import Web3 from "web3";
-//@ts-ignore
-import Web3Quorum from "web3js-quorum";
-import axios from "axios";
+// import { CompiledContract } from "../types/Contracts";
+// import Web3 from "web3";
+// //@ts-ignore
+// import Web3Quorum from "web3js-quorum";
+// import axios from "axios";
 
 // export async function deployContract(
 //   client: string,

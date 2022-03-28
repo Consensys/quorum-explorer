@@ -23,7 +23,7 @@ function compile(
   const input = {
     language: "Solidity",
     sources: { main: { content: sourceCode } },
-    settings: { outputSelection: { "*": { "*": ["abi", "evm.bytecode"] } } },
+    settings: { outputSelection: { "*": { "*": ["*", "evm.bytecode"] } } },
   };
   // Parse the compiler output to retrieve the ABI and bytecode
   const output = solc.compile(JSON.stringify(input));
