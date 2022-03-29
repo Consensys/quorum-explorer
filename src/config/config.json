@@ -9,31 +9,31 @@
     },
     {
       "name": "validator1",
-      "client": "goquorum",
+      "client": "besu",
       "rpcUrl": "http://127.0.0.1:21001",
       "privateTxUrl": ""
     },
     {
       "name": "validator2",
-      "client": "goquorum",
+      "client": "besu",
       "rpcUrl": "http://127.0.0.1:21002",
       "privateTxUrl": ""
     },
     {
       "name": "validator3",
-      "client": "goquorum",
+      "client": "besu",
       "rpcUrl": "http://127.0.0.1:21003",
       "privateTxUrl": ""
     },
     {
       "name": "validator4",
-      "client": "goquorum",
+      "client": "besu",
       "rpcUrl": "http://127.0.0.1:21004",
       "privateTxUrl": ""
     },
     {
       "name": "member1",
-      "client": "goquorum",
+      "client": "besu",
       "rpcUrl": "http://127.0.0.1:20000",
       "privateTxUrl": "http://127.0.0.1:9081",
       "privateKey": "0xb9a4bd1539c15bcc83fa9078fe89200b6e9e802ae992f13cd83c853f16e8bed4",
@@ -41,7 +41,7 @@
     },
     {
       "name": "member2",
-      "client": "goquorum",
+      "client": "besu",
       "rpcUrl": "http://127.0.0.1:20002",
       "privateTxUrl": "http://127.0.0.1:9082",
       "privateKey": "0xf18166704e19b895c1e2698ebc82b4e007e6d2933f4b31be23662dd0ec602570",
@@ -49,7 +49,7 @@
     },
     {
       "name": "member3",
-      "client": "goquorum",
+      "client": "besu",
       "rpcUrl": "http://127.0.0.1:20004",
       "privateTxUrl": "http://127.0.0.1:9083",
       "privateKey": "0x4107f0b6bf67a3bc679a15fe36f640415cf4da6a4820affaac89c8b280dfd1b3",

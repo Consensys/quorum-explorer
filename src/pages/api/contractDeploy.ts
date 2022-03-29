@@ -51,8 +51,8 @@ export async function deployContract(
   const web3 = new Web3(rpcUrl);
   const web3quorum = new Web3Quorum(
     web3,
-    { privateUrl: privateUrl },
-    client === "goquorum"
+    { privateUrl: privateUrl }
+    // client === "client"
   );
 
   const account = web3.eth.accounts.privateKeyToAccount(accountPrivateKey);
@@ -73,7 +73,8 @@ export async function deployContract(
     data: "0x" + bytecode + paddingHex(64, deployArgs), //+ paddingHex(64, deployArgs)
     from: account,
     isPrivate: true,
-    privateKey: accountPrivateKey,
+    privateKey:
+      client === "besu" ? accountPrivateKey.slice(2) : accountPrivateKey,
     privateFrom: fromTxPublicKey,
     privateFor: privateForList,
   };
@@ -82,5 +83,6 @@ export async function deployContract(
   // Generate and send the Raw transaction to the Besu node using the eea_sendRawTransaction JSON-RPC call
   const txHash = await web3quorum.priv.generateAndSendRawTransaction(txOptions);
   console.log("Getting contractAddress from txHash: ", txHash);
-  return txHash;
+  const result = await web3quorum.priv.waitForTransactionReceipt(txHash);
+  return result;
 }

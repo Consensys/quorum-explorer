@@ -9,15 +9,29 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  await readValueAtAddress(
-    req.body.client,
-    req.body.rpcUrl,
-    req.body.privateUrl,
-    req.body.contractAddress,
-    req.body.compiledContract
-  ).then((value) => {
-    res.status(200).json(value);
-  });
+  if (req.body.client === "besu") {
+    await besuGetValue(
+      // still needs to be updated with proper values
+      req.body.rpcUrl,
+      req.body.contractAddress,
+      req.body.compiledContract,
+      req.body.fromPrivateKey,
+      req.body.fromPublicKey,
+      req.body.toPublicKey
+    ).then((value) => {
+      res.status(200).json(value);
+    });
+  } else if (req.body.client === "goquorum") {
+    await readValueAtAddress(
+      req.body.client,
+      req.body.rpcUrl,
+      req.body.privateUrl,
+      req.body.contractAddress,
+      req.body.compiledContract
+    ).then((value) => {
+      res.status(200).json(value);
+    });
+  }
 }
 
 async function readValueAtAddress(
@@ -39,4 +53,38 @@ async function readValueAtAddress(
   const res = await contractInstance.methods.get().call().catch(console.error);
   console.log("obtained value at deployed contract is: " + res);
   return res;
+}
+
+async function besuGetValue(
+  rpcUrl: string,
+  contractAddress: string,
+  compiledContract: CompiledContract,
+  fromPrivateKey: string,
+  fromPublicKey: string,
+  toPublicKey: string[]
+) {
+  const web3 = new Web3(rpcUrl);
+  const chainId = await web3.eth.getChainId();
+  const web3quorum = new Web3Quorum(web3, chainId);
+  const contract = new web3quorum.eth.Contract(compiledContract.abi);
+  // eslint-disable-next-line no-underscore-dangle
+  const functionAbi = contract._jsonInterface.find((e: any) => {
+    return e.name === "get";
+  });
+  const functionParams = {
+    to: contractAddress,
+    data: functionAbi.signature,
+    privateKey: fromPrivateKey,
+    privateFrom: fromPublicKey,
+    privateFor: [toPublicKey],
+  };
+  const transactionHash = await web3quorum.priv.generateAndSendRawTransaction(
+    functionParams
+  );
+  console.log(`Transaction hash: ${transactionHash}`);
+  const result = await web3quorum.priv.waitForTransactionReceipt(
+    transactionHash
+  );
+  console.log("Value from deployed contract is: " + result.output);
+  return result;
 }
