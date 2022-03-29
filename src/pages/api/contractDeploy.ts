@@ -31,6 +31,11 @@ export default async function handler(
   });
 }
 
+function paddingHex(paddingNo = 64, toPad: string) {
+  const toHex = parseInt(toPad).toString(16);
+  return "0".repeat(paddingNo - toHex.length) + toHex;
+}
+
 export async function deployContract(
   client: string,
   rpcUrl: string,
@@ -65,7 +70,7 @@ export async function deployContract(
     gasPrice: 0, //ETH per unit of gas
     gasLimit: 0x24a22, //max number of gas units the tx is allowed to use
     value: 0,
-    data: "0x" + bytecode + deployArgs,
+    data: "0x" + bytecode + paddingHex(64, deployArgs), //+ paddingHex(64, deployArgs)
     from: account,
     isPrivate: true,
     privateKey: accountPrivateKey,

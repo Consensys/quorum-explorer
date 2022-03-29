@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FormControl,
   FormLabel,
@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 //@ts-ignore
 import { QuorumConfig } from "../../types/QuorumConfig";
-import { CompiledContract, } from "../../types/Contracts";
+import { CompiledContract } from "../../types/Contracts";
 import { getDetailsByNodeName, getPrivateKey } from "../../api/quorumConfig";
 import axios from "axios";
 
@@ -25,16 +25,21 @@ interface IProps {
   selectedNode: string;
   compiledContract: CompiledContract;
   contractAddress: string;
+  account: string;
+  setGetValue: any;
+  privateFor: string[];
 }
 
 export default function ContractsInteract(props: IProps) {
   const toast = useToast();
   const [contractAddress, setContractAddress] = useState(props.contractAddress);
-  const [readValue, setReadValue] = useState("");
   const [readButtonLoading, setReadButtonLoading] = useState(false);
   const [writeValue, setWriteValue] = useState("");
   const [writeButtonLoading, setWriteButtonLoading] = useState(false);
 
+  useEffect(() => {
+    setContractAddress(props.contractAddress);
+  }, [props.contractAddress]);
 
   const handleContractAddress = (e: any) => {
     setContractAddress(e.target.value);
@@ -48,6 +53,7 @@ export default function ContractsInteract(props: IProps) {
     e.preventDefault();
     setReadButtonLoading(true);
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
+    console.log(contractAddress);
     await axios({
       method: "POST",
       url: "/api/contractRead",
@@ -63,8 +69,9 @@ export default function ContractsInteract(props: IProps) {
       }),
     })
       .then((result) => {
-        console.log("?????>>>>>>")
-        console.log(result)
+        console.log("?????>>>>>>");
+        console.log(result);
+        props.setGetValue(result.data);
       })
       .catch((e) => {
         toast({
@@ -86,101 +93,94 @@ export default function ContractsInteract(props: IProps) {
   const handleWrite = async (e: any) => {
     e.preventDefault();
     setWriteButtonLoading(true);
-    await new Promise((r) => setTimeout(r, 2000));
     console.log("WRITE VALUE");
-    // toast({
-    //   title: "Eth Transfer",
-    //   description: `The eth transfer was successul! Transaction hash: ${tx.txHash}. Account ${wallet.account} has an updated balance of ${wallet.balance} Wei`,
-    //   status: "success",
-    //   duration: 5000,
-    //   position: "bottom",
-    //   isClosable: true,
-    // });
+    const needle = getDetailsByNodeName(props.config, props.selectedNode);
+    await axios({
+      method: "POST",
+      url: "/api/contractSet",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        client: needle.client,
+        rpcUrl: needle.rpcUrl,
+        privateUrl: needle.privateTxUrl,
+        contractAddress: contractAddress,
+        compiledContract: props.compiledContract,
+        value: parseInt(writeValue),
+        sender: props.account,
+        privateFor: props.privateFor,
+      }),
+    })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch(console.error);
     setWriteButtonLoading(false);
   };
 
-
-
   return (
     <>
-        <AccordionItem>
-          <AccordionButton>
-            <Box
-              color="purple.400"
-              fontWeight="bold"
-              flex="1"
-              textAlign="left"
+      <AccordionItem>
+        <AccordionButton>
+          <Box color="purple.400" fontWeight="bold" flex="1" textAlign="left">
+            3. Interact
+          </Box>
+          <AccordionIcon />
+        </AccordionButton>
+        <AccordionPanel pb={4}>
+          <FormControl>
+            <FormLabel htmlFor="contract-address">
+              Deployed Contract Address
+            </FormLabel>
+            <Input
+              id="contract-address"
+              placeholder="0x"
+              value={contractAddress}
+              onChange={handleContractAddress}
+              isDisabled
+            />
+          </FormControl>
+          <Flex justifyContent="space-between" alignItems="center" m={1}>
+            <Text fontWeight="semibold">get</Text>
+            <Button
+              type="submit"
+              backgroundColor="orange.200"
+              isLoading={readButtonLoading}
+              onClick={handleRead}
+              loadingText="Reading"
+              variant="solid"
             >
-              3. Interact
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            <FormControl>
-              <FormLabel htmlFor="contract-address">
-                Deployed Contract Address
-              </FormLabel>
-              <Input
-                id="contract-address"
-                placeholder="0x"
-                value={props.contractAddress}
-                onChange={handleContractAddress}
-              />
-            </FormControl>
-            <Flex
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
+              Read
+            </Button>
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center" m={1}>
+            <FormLabel htmlFor="set" fontWeight="semibold" m={0} mr={5}>
+              set
+            </FormLabel>
+            <Input
+              id="write-value"
+              placeholder=""
+              value={writeValue}
+              onChange={handleWriteValue}
+            />
+            <Button
+              type="submit"
+              backgroundColor="green.200"
+              isLoading={writeButtonLoading}
+              onClick={handleWrite}
+              loadingText="Writing"
+              variant="solid"
             >
-              <Text fontWeight="semibold">get</Text>
-              <Button 
-                type="submit"
-                backgroundColor="orange.200"
-                isLoading={readButtonLoading}
-                onClick={handleRead}
-                loadingText="Reading"
-                variant="solid"
-              >Read
-              </Button>
-            </Flex>
-            <Flex
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
-            >
-              <FormLabel
-                htmlFor="set"
-                fontWeight="semibold"
-                m={0}
-                mr={5}
-              >              set
-              </FormLabel>
-              <Input 
-                id="write-value"
-                placeholder=""
-                value={writeValue}
-                onChange={handleWriteValue}
-              />
-              <Button 
-                type="submit"
-                backgroundColor="green.200"
-                isLoading={writeButtonLoading}
-                onClick={handleWrite}
-                loadingText="Writing"
-                variant="solid"
-              >Transact
-              </Button>
-            </Flex>
-            <Flex
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
-            >
-              <Text fontWeight="semibold">storedData</Text>
-              <Button>Write</Button>
-            </Flex>
-          </AccordionPanel>
-        </AccordionItem>
+              Transact
+            </Button>
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center" m={1}>
+            <Text fontWeight="semibold">storedData</Text>
+            <Button>Write</Button>
+          </Flex>
+        </AccordionPanel>
+      </AccordionItem>
     </>
   );
 }

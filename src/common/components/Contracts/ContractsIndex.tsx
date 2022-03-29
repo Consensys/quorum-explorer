@@ -19,8 +19,6 @@ import {
   AccordionIcon,
   Box,
   Input,
-  Flex,
-  Text,
   Table,
   Thead,
   Tbody,
@@ -48,14 +46,13 @@ import { motion } from "framer-motion";
 import {
   SmartContract,
   defaultSmartContracts,
-  compiledContract,
+  CompiledContract,
 } from "../../types/Contracts";
 import axios from "axios";
 //@ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { getDetailsByNodeName, getPrivateKey } from "../../api/quorumConfig";
 import { Select as MultiSelect } from "chakra-react-select";
-import { getTesseraKeys } from "../../api/getTesseraKeys";
 import ContractsInteract from "./ContractsInteract";
 
 const MotionGrid = motion(SimpleGrid);
@@ -71,7 +68,7 @@ export default function ContractsIndex(props: IProps) {
   const contracts: SmartContract[] = defaultSmartContracts;
   const toast = useToast();
   const [code, setCode] = useState(contracts[0].contract);
-  const [compiledContract, setCompiledContract] = useState<compiledContract>({
+  const [compiledContract, setCompiledContract] = useState<CompiledContract>({
     abi: [],
     bytecode: "",
   });
@@ -88,12 +85,17 @@ export default function ContractsIndex(props: IProps) {
     privateKeyFrom: "",
     privateFor: [],
   });
+  const [readValue, setReadValue] = useState("-");
   const controller = new AbortController();
   const [simpleStorageValue, setSimpleStorageValue] = useState(0);
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
     Deploy: { status: false, isDisabled: true },
   });
+
+  const setGetValue = (value: string) => {
+    setReadValue(value);
+  };
 
   useEffect(() => {
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
@@ -166,9 +168,9 @@ export default function ContractsIndex(props: IProps) {
     })
       .then((response) => {
         if (response.status === 200) {
-          console.log("%%%%%%%%%%%%%%%%%%%%%%%%")
-          console.log(response.data)
-          console.log("%%%%%%%%%%%%%%%%%%%%%%%%")
+          console.log("%%%%%%%%%%%%%%%%%%%%%%%%");
+          console.log(response.data);
+          console.log("%%%%%%%%%%%%%%%%%%%%%%%%");
           setCompiledContract({
             abi: response.data.abi,
             bytecode: response.data.bytecode,
@@ -422,9 +424,15 @@ export default function ContractsIndex(props: IProps) {
                             placeholder="Select account"
                             onChange={setTargetAddress}
                           >
-                            {props.config.accounts.map((account, i) => (
-                              <option key={i}>{account.address}</option>
-                            ))}
+                            {props.config.nodes.map((account, i) => {
+                              if (account.accountAddress !== undefined) {
+                                return (
+                                  <option key={i}>
+                                    {account.accountAddress}
+                                  </option>
+                                );
+                              }
+                            })}
                           </Select>
                         </FormControl>
                       </AccordionPanel>
@@ -449,13 +457,21 @@ export default function ContractsIndex(props: IProps) {
                           <Input
                             id="private-from"
                             placeholder="0x"
-                            value={deployParams.privateKeyFrom}
-                            onChange={(e: any) => {
-                              setDeployParams({
-                                ...deployParams,
-                                privateKeyFrom: e.target.value,
-                              });
-                            }}
+                            value={
+                              deployParams.privateKeyFrom !== ""
+                                ? getPrivateKey(
+                                    props.config,
+                                    deployParams.privateKeyFrom
+                                  ).privateKey
+                                : ""
+                            }
+                            isDisabled
+                            // onChange={(e: any) => {
+                            //   setDeployParams({
+                            //     ...deployParams,
+                            //     privateKeyFrom: e.target.value,
+                            //   });
+                            // }}
                           />
                           <FormLabel htmlFor="private-for">
                             Private For
@@ -490,7 +506,15 @@ export default function ContractsIndex(props: IProps) {
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
-                    <ContractsInteract config={props.config} selectedNode={props.selectedNode} compiledContract={compiledContract} contractAddress={deployedAddress} />
+                    <ContractsInteract
+                      config={props.config}
+                      selectedNode={props.selectedNode}
+                      compiledContract={compiledContract}
+                      contractAddress={deployedAddress}
+                      account={accountAddress}
+                      setGetValue={setGetValue}
+                      privateFor={deployParams.privateFor}
+                    />
                   </Accordion>
                   <Accordion allowMultiple defaultIndex={[0, 1]}>
                     <AccordionItem>
@@ -517,7 +541,7 @@ export default function ContractsIndex(props: IProps) {
                           <Tbody>
                             <Tr>
                               <Td>get</Td>
-                              <Td isNumeric>0</Td>
+                              <Td isNumeric>{readValue}</Td>
                             </Tr>
                             <Tr>
                               <Td>storedData</Td>

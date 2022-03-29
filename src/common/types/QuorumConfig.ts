@@ -3,6 +3,8 @@ export type QuorumNode = {
   client: string;
   rpcUrl: string;
   privateTxUrl: string;
+  privateKey: string;
+  accountAddress: string;
 };
 
 export type QuorumAccount = {

@@ -8,11 +8,10 @@ export type CompiledContract = {
   bytecode: string;
 };
 
-
 export const defaultSmartContracts: SmartContract[] = [
   {
     name: "SimpleStorage",
-    contract: `pragma solidity >0.7.0;
+    contract: `pragma solidity ^0.7.6;
     contract SimpleStorage {
       uint public storedData;
       event stored(address _to, uint _amount);
@@ -185,4 +184,3 @@ contract Ballot {
 }`,
   },
 ];
-

@@ -39,7 +39,7 @@ export default function Nodes() {
   const refreshFrequency: number = 5000;
   const [node, setNode] = useState<IState>({
     selectedNode: config.nodes[0].name,
-    client: "",
+    client: config.nodes[0].client,
     nodeId: "",
     nodeName: "",
     enode: "",

@@ -25,8 +25,8 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-syntax-highlighter": "^15.5.0",
-    "solc": "^0.8.13",
-    "web3": "^1.5.3",
+    "solc": "^0.7.6",
+    "web3": "^1.5.2",
     "web3js-quorum": "^21.7.0-rc1"
   },
   "devDependencies": {

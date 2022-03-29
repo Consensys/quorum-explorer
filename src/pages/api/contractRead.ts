@@ -9,19 +9,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(
-    req.body.client,
-    req.body.rpcUrl,
-    req.body.privateUrl,
-    req.body.contractAddress,
-    req.body.compiledContract,
-  );
   await readValueAtAddress(
     req.body.client,
     req.body.rpcUrl,
     req.body.privateUrl,
     req.body.contractAddress,
-    req.body.compiledContract,
+    req.body.compiledContract
   ).then((value) => {
     res.status(200).json(value);
   });
@@ -43,7 +36,7 @@ async function readValueAtAddress(
   );
   const contractInstance = new web3.eth.Contract(abi, contractAddress);
   // contractInstance.defaultCommon.customChain = {name: 'GoQuorum', chainId: 1337};
-  const res = await contractInstance.methods.get().call().catch(() => {});
-  console.log("obtained value at deployed contract is: "+ res);
+  const res = await contractInstance.methods.get().call().catch(console.error);
+  console.log("obtained value at deployed contract is: " + res);
   return res;
 }

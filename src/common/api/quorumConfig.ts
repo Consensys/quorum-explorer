@@ -12,5 +12,7 @@ export function getPrivateKey(
   quorumConfig: QuorumConfig,
   accountAddress: string
 ) {
-  return quorumConfig.accounts.filter((_) => _.address === accountAddress)[0];
+  return quorumConfig.nodes.filter(
+    (_) => _.accountAddress === accountAddress
+  )[0];
 }
