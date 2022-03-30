@@ -1,27 +1,36 @@
 import { ConsensusAlgorithms, Clients } from "../types/Validator";
 import { ethApiCall } from "./common";
-import { getBlockByNumber } from "./explorer";
 
-export async function getCurrentValidators(url: string) {
-  const minersList: string[] = [];
-  let numBlocksPrev = 10;
+export async function getCurrentValidators(
+  rpcUrl: string,
+  client: string,
+  algorithm: string
+) {
+  const methodDict: Clients = {
+    goquorum: {
+      qbft: "istanbul_getValidators",
+      ibft: "istanbul_getValidators",
+      raft: "", // No pending should go through basically instantly
+    },
+    besu: {
+      qbft: "qbft_getValidatorsByBlockNumber",
+      ibft: "ibft_getValidatorsByBlockNumber",
+      clique: "clique_getSigners",
+    },
+  };
+
   try {
-    const latestBlock = await getBlockByNumber(url, "latest");
-    if (latestBlock.number < numBlocksPrev) {
-      numBlocksPrev = latestBlock.number;
-    }
-    const transformLatestBlock = parseInt(latestBlock.number.toString(), 16);
-
-    for (let i = 0; i < numBlocksPrev; i++) {
-      const wtf = "0x" + (transformLatestBlock - i).toString(16);
-      const responseBlock = await getBlockByNumber(url, wtf);
-      minersList.push(responseBlock.miner);
-    }
-    const uniqueList = [...new Set(minersList)];
-    return uniqueList.sort();
-  } catch (e) {
-    console.log(e);
-    return [];
+    const req = await ethApiCall(
+      rpcUrl,
+      methodDict[client as keyof Clients][
+        algorithm as keyof ConsensusAlgorithms
+      ]!,
+      ["latest"]
+    );
+    const listOfValidators = req.data.result;
+    return listOfValidators;
+  } catch (err) {
+    console.log(err);
   }
 }
 

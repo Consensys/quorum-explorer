@@ -78,6 +78,7 @@ export default function ContractsIndex(props: IProps) {
   const [logs, setLogs] = useState<string[]>([]);
   const [tesseraKeys, setTesseraKeys] =
     useState<{ label: string; value: string }[]>();
+  const [currentTesseraPublicKey, setCurrentTesseraPublicKey] = useState("");
   const [deployParams, setDeployParams] = useState<{
     privateKeyFrom: string;
     privateFor: string[];
@@ -97,6 +98,22 @@ export default function ContractsIndex(props: IProps) {
     setReadValue(value);
   };
 
+  // Set accountAddress if is a member
+  useEffect(() => {
+    const needle = getDetailsByNodeName(props.config, props.selectedNode);
+    if (needle.accountAddress !== undefined) {
+      setAccountAddress(needle.accountAddress);
+      setDeployParams({
+        ...deployParams,
+        privateKeyFrom: getPrivateKey(props.config, needle.accountAddress)
+          .privateKey,
+      });
+    } else {
+      setAccountAddress("");
+      setDeployParams({ ...deployParams, privateKeyFrom: "" });
+    }
+  }, [props.config, props.selectedNode]);
+
   useEffect(() => {
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
     if (needle.privateTxUrl == "") {
@@ -113,8 +130,9 @@ export default function ContractsIndex(props: IProps) {
         signal: controller.signal,
       })
         .then((res) => {
+          setCurrentTesseraPublicKey(res.data.self);
           const conformSelectList: { label: string; value: string }[] = [];
-          res.data.map((key: any) => {
+          res.data.all.map((key: any) => {
             conformSelectList.push({ label: key, value: key });
           });
           setTesseraKeys(conformSelectList);
@@ -416,10 +434,17 @@ export default function ContractsIndex(props: IProps) {
                       </AccordionButton>
                       <AccordionPanel pb={4}>
                         <FormControl>
-                          {/* <FormLabel htmlFor="predefined-account">
+                          <FormLabel htmlFor="predefined-account">
                             Account
-                          </FormLabel> */}
-                          <Select
+                          </FormLabel>
+                          <Input
+                            id="predefined-account"
+                            variant="filled"
+                            placeholder="Node is not a Member"
+                            value={accountAddress}
+                            isDisabled
+                          />
+                          {/* <Select
                             id="predefined-account"
                             placeholder="Select account"
                             onChange={setTargetAddress}
@@ -433,7 +458,7 @@ export default function ContractsIndex(props: IProps) {
                                 );
                               }
                             })}
-                          </Select>
+                          </Select> */}
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
@@ -457,21 +482,8 @@ export default function ContractsIndex(props: IProps) {
                           <Input
                             id="private-from"
                             placeholder="0x"
-                            value={
-                              deployParams.privateKeyFrom !== ""
-                                ? getPrivateKey(
-                                    props.config,
-                                    deployParams.privateKeyFrom
-                                  ).privateKey
-                                : ""
-                            }
+                            value={deployParams.privateKeyFrom}
                             isDisabled
-                            // onChange={(e: any) => {
-                            //   setDeployParams({
-                            //     ...deployParams,
-                            //     privateKeyFrom: e.target.value,
-                            //   });
-                            // }}
                           />
                           <FormLabel htmlFor="private-for">
                             Private For
@@ -496,7 +508,7 @@ export default function ContractsIndex(props: IProps) {
                             hideSelectedOptions={false}
                           />
                           <FormLabel htmlFor="storage-value">
-                            Storage Value
+                            Initial Storage Value
                           </FormLabel>
                           <Input
                             id="storage-value"
@@ -514,6 +526,8 @@ export default function ContractsIndex(props: IProps) {
                       account={accountAddress}
                       setGetValue={setGetValue}
                       privateFor={deployParams.privateFor}
+                      privateFrom={currentTesseraPublicKey}
+                      fromPrivateKey={deployParams.privateKeyFrom}
                     />
                   </Accordion>
                   <Accordion allowMultiple defaultIndex={[0, 1]}>

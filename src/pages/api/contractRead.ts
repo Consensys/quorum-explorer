@@ -16,8 +16,8 @@ export default async function handler(
       req.body.contractAddress,
       req.body.compiledContract,
       req.body.fromPrivateKey,
-      req.body.fromPublicKey,
-      req.body.toPublicKey
+      req.body.privateFrom,
+      req.body.privateFor
     ).then((value) => {
       res.status(200).json(value);
     });
@@ -45,10 +45,10 @@ async function readValueAtAddress(
   const web3 = new Web3(rpcUrl);
   const web3quorum = new Web3Quorum(
     web3,
-    { privateUrl: privateUrl },
-    client === "goquorum"
+    { privateUrl: privateUrl }
+    // client === "goquorum"
   );
-  const contractInstance = new web3.eth.Contract(abi, contractAddress);
+  const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
   // contractInstance.defaultCommon.customChain = {name: 'GoQuorum', chainId: 1337};
   const res = await contractInstance.methods.get().call().catch(console.error);
   console.log("obtained value at deployed contract is: " + res);
@@ -74,10 +74,11 @@ async function besuGetValue(
   const functionParams = {
     to: contractAddress,
     data: functionAbi.signature,
-    privateKey: fromPrivateKey,
+    privateKey: fromPrivateKey.slice(2),
     privateFrom: fromPublicKey,
-    privateFor: [toPublicKey],
+    privateFor: toPublicKey,
   };
+  console.log(functionParams);
   const transactionHash = await web3quorum.priv.generateAndSendRawTransaction(
     functionParams
   );
@@ -85,6 +86,7 @@ async function besuGetValue(
   const result = await web3quorum.priv.waitForTransactionReceipt(
     transactionHash
   );
-  console.log("Value from deployed contract is: " + result.output);
-  return result;
+  const convertToDec = parseInt(result.output, 16);
+  console.log("Value from deployed contract is: " + convertToDec);
+  return convertToDec;
 }

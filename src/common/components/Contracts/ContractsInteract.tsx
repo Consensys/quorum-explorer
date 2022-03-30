@@ -12,7 +12,12 @@ import {
   Input,
   Flex,
   Text,
-  useColorMode,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  HStack,
 } from "@chakra-ui/react";
 //@ts-ignore
 import { QuorumConfig } from "../../types/QuorumConfig";
@@ -28,13 +33,15 @@ interface IProps {
   account: string;
   setGetValue: any;
   privateFor: string[];
+  privateFrom: string;
+  fromPrivateKey: string;
 }
 
 export default function ContractsInteract(props: IProps) {
   const toast = useToast();
   const [contractAddress, setContractAddress] = useState(props.contractAddress);
   const [readButtonLoading, setReadButtonLoading] = useState(false);
-  const [writeValue, setWriteValue] = useState("");
+  const [writeValue, setWriteValue] = useState("0");
   const [writeButtonLoading, setWriteButtonLoading] = useState(false);
 
   useEffect(() => {
@@ -46,7 +53,8 @@ export default function ContractsInteract(props: IProps) {
   };
 
   const handleWriteValue = (e: any) => {
-    setWriteValue(e.target.value);
+    // setWriteValue(e.target.value);
+    setWriteValue(e);
   };
 
   const handleRead = async (e: any) => {
@@ -66,6 +74,9 @@ export default function ContractsInteract(props: IProps) {
         privateUrl: needle.privateTxUrl,
         contractAddress: contractAddress,
         compiledContract: props.compiledContract,
+        privateFrom: props.privateFrom,
+        privateFor: props.privateFor,
+        fromPrivateKey: props.fromPrivateKey,
       }),
     })
       .then((result) => {
@@ -114,8 +125,25 @@ export default function ContractsInteract(props: IProps) {
     })
       .then((result) => {
         console.log(result);
+        toast({
+          title: "Success!",
+          description: `Contract set function called successfully.`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
       })
-      .catch(console.error);
+      .catch((err) => {
+        toast({
+          title: "Error!",
+          description: `${err}`,
+          status: "error",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+      });
     setWriteButtonLoading(false);
   };
 
@@ -158,22 +186,38 @@ export default function ContractsInteract(props: IProps) {
             <FormLabel htmlFor="set" fontWeight="semibold" m={0} mr={5}>
               set
             </FormLabel>
-            <Input
+            <HStack>
+              <NumberInput
+                maxW={120}
+                size="sm"
+                defaultValue={writeValue}
+                onChange={handleWriteValue}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+              {/* <Input
               id="write-value"
               placeholder=""
               value={writeValue}
               onChange={handleWriteValue}
-            />
-            <Button
-              type="submit"
-              backgroundColor="green.200"
-              isLoading={writeButtonLoading}
-              onClick={handleWrite}
-              loadingText="Writing"
-              variant="solid"
-            >
-              Transact
-            </Button>
+              size="sm"
+            /> */}
+              <Button
+                type="submit"
+                backgroundColor="green.200"
+                isLoading={writeButtonLoading}
+                onClick={handleWrite}
+                loadingText="Writing"
+                variant="solid"
+                ml={5}
+              >
+                Transact
+              </Button>
+            </HStack>
           </Flex>
           <Flex justifyContent="space-between" alignItems="center" m={1}>
             <Text fontWeight="semibold">storedData</Text>

@@ -39,5 +39,5 @@ export async function getTesseraKeys(tesseraUrl: string) {
       return keyList;
     });
 
-  return [selfKeyRes, allKeysRes];
+  return { self: selfKeyRes, all: allKeysRes };
 }
