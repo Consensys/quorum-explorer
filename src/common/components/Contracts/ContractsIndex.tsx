@@ -112,6 +112,7 @@ export default function ContractsIndex(props: IProps) {
       setAccountAddress("");
       setDeployParams({ ...deployParams, privateKeyFrom: "" });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.config, props.selectedNode]);
 
   useEffect(() => {
@@ -144,11 +145,6 @@ export default function ContractsIndex(props: IProps) {
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.selectedNode]);
-
-  const setTargetAddress = (e: any) => {
-    setAccountAddress(e.target.value);
-    setDeployParams({ ...deployParams, privateKeyFrom: e.target.value });
-  };
 
   const setStorageValue = (e: any) => {
     setSimpleStorageValue(e.target.value);
@@ -444,21 +440,25 @@ export default function ContractsIndex(props: IProps) {
                             value={accountAddress}
                             isDisabled
                           />
-                          {/* <Select
-                            id="predefined-account"
-                            placeholder="Select account"
-                            onChange={setTargetAddress}
-                          >
-                            {props.config.nodes.map((account, i) => {
-                              if (account.accountAddress !== undefined) {
-                                return (
-                                  <option key={i}>
-                                    {account.accountAddress}
-                                  </option>
-                                );
-                              }
-                            })}
-                          </Select> */}
+                          <FormLabel htmlFor="private-from">
+                            PrivateKey From
+                          </FormLabel>
+                          <Input
+                            id="private-from"
+                            placeholder="0x"
+                            value={deployParams.privateKeyFrom}
+                            isDisabled
+                          />
+                          <FormLabel htmlFor="tessera-key">
+                            Tessera Public Key
+                          </FormLabel>
+                          <Input
+                            id="predefined-tessera-key"
+                            variant="filled"
+                            placeholder="Node is not a Member"
+                            value={currentTesseraPublicKey}
+                            isDisabled
+                          />
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
@@ -476,15 +476,6 @@ export default function ContractsIndex(props: IProps) {
                       </AccordionButton>
                       <AccordionPanel pb={4}>
                         <FormControl>
-                          <FormLabel htmlFor="private-from">
-                            PrivateKey From
-                          </FormLabel>
-                          <Input
-                            id="private-from"
-                            placeholder="0x"
-                            value={deployParams.privateKeyFrom}
-                            isDisabled
-                          />
                           <FormLabel htmlFor="private-for">
                             Private For
                           </FormLabel>

@@ -63,7 +63,7 @@ export default function ValidatorsActive(props: IProps) {
         <Center mb={5}>
           <Heading size="lg">Active Validators</Heading>
         </Center>
-        {props.minersList.length > 0 ? (
+        {props.minersList !== undefined && props.minersList.length > 0 ? (
           props.minersList.map((miner, i) => {
             return (
               <>

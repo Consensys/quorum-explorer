@@ -53,7 +53,6 @@ export default function ContractsInteract(props: IProps) {
   };
 
   const handleWriteValue = (e: any) => {
-    // setWriteValue(e.target.value);
     setWriteValue(e);
   };
 
@@ -61,89 +60,132 @@ export default function ContractsInteract(props: IProps) {
     e.preventDefault();
     setReadButtonLoading(true);
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
-    console.log(contractAddress);
-    await axios({
-      method: "POST",
-      url: "/api/contractRead",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: JSON.stringify({
-        client: needle.client,
-        rpcUrl: needle.rpcUrl,
-        privateUrl: needle.privateTxUrl,
-        contractAddress: contractAddress,
-        compiledContract: props.compiledContract,
-        privateFrom: props.privateFrom,
-        privateFor: props.privateFor,
-        fromPrivateKey: props.fromPrivateKey,
-      }),
-    })
-      .then((result) => {
-        console.log("?????>>>>>>");
-        console.log(result);
-        props.setGetValue(result.data);
-      })
-      .catch((e) => {
-        toast({
-          title: "Error!",
-          description: `There was an error reading from the contract.`,
-          status: "error",
-          duration: 5000,
-          position: "bottom",
-          isClosable: true,
-        });
-        // const joined = logs.concat(
-        //   "Error in deploying contract: " + selectedContract
-        // );
-        // setLogs(joined);
+    if (contractAddress.length < 1) {
+      toast({
+        title: "Notice",
+        description: `No contract has been deployed!`,
+        status: "warning",
+        duration: 5000,
+        position: "bottom",
+        isClosable: true,
       });
+    }
+    if (contractAddress.length > 0) {
+      await axios({
+        method: "POST",
+        url: "/api/contractRead",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          client: needle.client,
+          rpcUrl: needle.rpcUrl,
+          privateUrl: needle.privateTxUrl,
+          contractAddress: contractAddress,
+          compiledContract: props.compiledContract,
+          privateFrom: props.privateFrom,
+          privateFor: props.privateFor,
+          fromPrivateKey: props.fromPrivateKey,
+        }),
+      })
+        .then((result) => {
+          console.log("?????>>>>>>");
+          console.log(result);
+          if (result.data === null || result.data === "") {
+            props.setGetValue("-");
+            toast({
+              title: "Not a Party!",
+              description: `${props.selectedNode} is not a member to the transaction!`,
+              status: "info",
+              duration: 5000,
+              position: "bottom",
+              isClosable: true,
+            });
+          } else {
+            props.setGetValue(result.data);
+            toast({
+              title: "Read Success!",
+              description: `Value from contract: ${result.data}`,
+              status: "success",
+              duration: 5000,
+              position: "bottom",
+              isClosable: true,
+            });
+          }
+        })
+        .catch((e) => {
+          toast({
+            title: "Error!",
+            description: `There was an error reading from the contract.`,
+            status: "error",
+            duration: 5000,
+            position: "bottom",
+            isClosable: true,
+          });
+          // const joined = logs.concat(
+          //   "Error in deploying contract: " + selectedContract
+          // );
+          // setLogs(joined);
+        });
+    }
     setReadButtonLoading(false);
   };
 
   const handleWrite = async (e: any) => {
     e.preventDefault();
     setWriteButtonLoading(true);
-    console.log("WRITE VALUE");
-    const needle = getDetailsByNodeName(props.config, props.selectedNode);
-    await axios({
-      method: "POST",
-      url: "/api/contractSet",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: JSON.stringify({
-        client: needle.client,
-        rpcUrl: needle.rpcUrl,
-        privateUrl: needle.privateTxUrl,
-        contractAddress: contractAddress,
-        compiledContract: props.compiledContract,
-        value: parseInt(writeValue),
-        sender: props.account,
-        privateFor: props.privateFor,
-      }),
-    })
-      .then((result) => {
-        console.log(result);
-        toast({
-          title: "Success!",
-          description: `Contract set function called successfully.`,
-          status: "success",
-          duration: 5000,
-          position: "bottom",
-          isClosable: true,
-        });
-      })
-      .catch((err) => {
-        toast({
-          title: "Error!",
-          description: `${err}`,
-          status: "error",
-          duration: 5000,
-          position: "bottom",
-          isClosable: true,
-        });
+    if (contractAddress.length < 1) {
+      toast({
+        title: "Notice",
+        description: `No contract has been deployed!`,
+        status: "warning",
+        duration: 5000,
+        position: "bottom",
+        isClosable: true,
       });
+    }
+    if (contractAddress.length > 0) {
+      const needle = getDetailsByNodeName(props.config, props.selectedNode);
+      await axios({
+        method: "POST",
+        url: "/api/contractSet",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          client: needle.client,
+          rpcUrl: needle.rpcUrl,
+          privateUrl: needle.privateTxUrl,
+          value: parseInt(writeValue),
+          fromPrivateKey: props.fromPrivateKey,
+          contractAddress: contractAddress,
+          compiledContract: props.compiledContract,
+          sender: props.privateFrom,
+          privateFor: props.privateFor,
+        }),
+      })
+        .then((result) => {
+          console.log(result);
+          toast({
+            title: "Success!",
+            description: `Contract set function called successfully.`,
+            status: "success",
+            duration: 5000,
+            position: "bottom",
+            isClosable: true,
+          });
+        })
+        .catch((err) => {
+          toast({
+            title: "Error!",
+            description: `${err}`,
+            status: "error",
+            duration: 5000,
+            position: "bottom",
+            isClosable: true,
+          });
+        });
+    }
     setWriteButtonLoading(false);
   };
 
@@ -188,10 +230,12 @@ export default function ContractsInteract(props: IProps) {
             </FormLabel>
             <HStack>
               <NumberInput
+                min={0}
                 maxW={120}
                 size="sm"
                 defaultValue={writeValue}
                 onChange={handleWriteValue}
+                allowMouseWheel
               >
                 <NumberInputField />
                 <NumberInputStepper>
@@ -199,13 +243,6 @@ export default function ContractsInteract(props: IProps) {
                   <NumberDecrementStepper />
                 </NumberInputStepper>
               </NumberInput>
-              {/* <Input
-              id="write-value"
-              placeholder=""
-              value={writeValue}
-              onChange={handleWriteValue}
-              size="sm"
-            /> */}
               <Button
                 type="submit"
                 backgroundColor="green.200"

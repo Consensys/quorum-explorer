@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import Web3 from "web3";
 //@ts-ignore
 import Web3Quorum from "web3js-quorum";
-import axios from "axios";
 import { CompiledContract } from "../../common/types/Contracts";
 
 export default async function handler(

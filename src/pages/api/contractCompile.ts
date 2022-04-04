@@ -1,24 +1,18 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from "next";
+//@ts-ignore
 import solc from "solc";
-import { CompiledContract } from '../../common/types/Contracts';
-
+import { CompiledContract } from "../../common/types/Contracts";
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<CompiledContract>
 ) {
-  console.log(
-    req.body.name,
-    req.body.content,
-  );
-  let output = compile(req.body.content, req.body.name)
-  res.status(200).json(output)
+  console.log(req.body.name, req.body.content);
+  let output = compile(req.body.content, req.body.name);
+  res.status(200).json(output);
 }
 
-function compile(
-  sourceCode: any,
-  contractName: string
-) {
+function compile(sourceCode: any, contractName: string) {
   // Create the Solidity Compiler Standard Input and Output JSON
   const input = {
     language: "Solidity",

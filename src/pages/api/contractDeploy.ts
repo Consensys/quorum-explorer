@@ -49,11 +49,7 @@ export async function deployContract(
   const bytecode = compiledContract.bytecode;
 
   const web3 = new Web3(rpcUrl);
-  const web3quorum = new Web3Quorum(
-    web3,
-    { privateUrl: privateUrl }
-    // client === "client"
-  );
+  const web3quorum = new Web3Quorum(web3, { privateUrl: privateUrl });
 
   const account = web3.eth.accounts.privateKeyToAccount(accountPrivateKey);
   const txCount = await web3.eth.getTransactionCount(account.address);
