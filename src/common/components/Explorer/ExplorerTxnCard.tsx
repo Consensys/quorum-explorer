@@ -14,6 +14,7 @@ interface IProps {
 }
 
 export default function ExplorerTxnCard({ txn }: IProps) {
+  console.log(txn);
   return (
     <>
       <Container maxW={{ base: "container.sm", md: "container.xl" }}>

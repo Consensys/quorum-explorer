@@ -51,7 +51,11 @@ import {
 import axios from "axios";
 //@ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { getDetailsByNodeName, getPrivateKey } from "../../api/quorumConfig";
+import {
+  getDetailsByNodeName,
+  getPrivateKey,
+  getMemberList,
+} from "../../api/quorumConfig";
 import { Select as MultiSelect } from "chakra-react-select";
 import ContractsInteract from "./ContractsInteract";
 
@@ -86,17 +90,13 @@ export default function ContractsIndex(props: IProps) {
     privateKeyFrom: "",
     privateFor: [],
   });
-  const [readValue, setReadValue] = useState("-");
   const controller = new AbortController();
   const [simpleStorageValue, setSimpleStorageValue] = useState(0);
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
     Deploy: { status: false, isDisabled: true },
   });
-
-  const setGetValue = (value: string) => {
-    setReadValue(value);
-  };
+  const [selectLoading, setSelectLoading] = useState(true);
 
   // Set accountAddress if is a member
   useEffect(() => {
@@ -116,8 +116,10 @@ export default function ContractsIndex(props: IProps) {
   }, [props.config, props.selectedNode]);
 
   useEffect(() => {
+    setSelectLoading(true);
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
     if (needle.privateTxUrl == "") {
+      setCurrentTesseraPublicKey("");
       return;
     }
     const fetchData = async () => {
@@ -127,16 +129,17 @@ export default function ContractsIndex(props: IProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        data: JSON.stringify({ privateTxUrl: needle.privateTxUrl }),
+        data: JSON.stringify({ config: props.config }),
         signal: controller.signal,
       })
         .then((res) => {
-          setCurrentTesseraPublicKey(res.data.self);
-          const conformSelectList: { label: string; value: string }[] = [];
-          res.data.all.map((key: any) => {
-            conformSelectList.push({ label: key, value: key });
-          });
-          setTesseraKeys(conformSelectList);
+          setCurrentTesseraPublicKey(
+            res.data.filter((_: any) => _.label === props.selectedNode)[0][
+              "options"
+            ][0]["value"]
+          );
+          setTesseraKeys(res.data);
+          setSelectLoading(false);
         })
         .catch(console.error);
       return returnRes;
@@ -445,6 +448,7 @@ export default function ContractsIndex(props: IProps) {
                           </FormLabel>
                           <Input
                             id="private-from"
+                            variant="filled"
                             placeholder="0x"
                             value={deployParams.privateKeyFrom}
                             isDisabled
@@ -480,6 +484,7 @@ export default function ContractsIndex(props: IProps) {
                             Private For
                           </FormLabel>
                           <MultiSelect
+                            isLoading={selectLoading}
                             instanceId="private-for"
                             isMulti
                             options={tesseraKeys}
@@ -515,47 +520,12 @@ export default function ContractsIndex(props: IProps) {
                       compiledContract={compiledContract}
                       contractAddress={deployedAddress}
                       account={accountAddress}
-                      setGetValue={setGetValue}
                       privateFor={deployParams.privateFor}
                       privateFrom={currentTesseraPublicKey}
                       fromPrivateKey={deployParams.privateKeyFrom}
+                      tesseraKeys={tesseraKeys}
+                      selectLoading={selectLoading}
                     />
-                  </Accordion>
-                  <Accordion allowMultiple defaultIndex={[0, 1]}>
-                    <AccordionItem>
-                      <AccordionButton>
-                        <Box
-                          color="green.600"
-                          fontWeight="bold"
-                          flex="1"
-                          textAlign="left"
-                        >
-                          Contract State
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                      <AccordionPanel pb={4}>
-                        <Table variant="simple">
-                          <TableCaption>Read and Transact Results</TableCaption>
-                          <Thead>
-                            <Tr>
-                              <Th>Result</Th>
-                              <Th isNumeric>Value</Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            <Tr>
-                              <Td>get</Td>
-                              <Td isNumeric>{readValue}</Td>
-                            </Tr>
-                            <Tr>
-                              <Td>storedData</Td>
-                              <Td isNumeric>0</Td>
-                            </Tr>
-                          </Tbody>
-                        </Table>
-                      </AccordionPanel>
-                    </AccordionItem>
                   </Accordion>
                 </SimpleGrid>
               </TabPanel>

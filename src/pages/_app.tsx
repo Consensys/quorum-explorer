@@ -1,5 +1,5 @@
 import type { AppProps } from "next/app";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider } from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 import { createBreakpoints } from "@chakra-ui/theme-tools";
 import NavBar from "../common/components/NavBar/NavBar";
@@ -17,9 +17,13 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ChakraProvider theme={theme}>
-      <NavBar />
-      <Component {...pageProps} />
-      <Footer />
+      <Box pos="relative" minH="100vh">
+        <NavBar />
+        <Component {...pageProps} />
+        <Box pos="absolute" bottom={0} w="100%">
+          <Footer />
+        </Box>
+      </Box>
     </ChakraProvider>
   );
 }

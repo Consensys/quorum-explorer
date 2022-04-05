@@ -16,3 +16,9 @@ export function getPrivateKey(
     (_) => _.accountAddress === accountAddress
   )[0];
 }
+
+export function getMemberList(quorumConfig: QuorumConfig) {
+  return quorumConfig.nodes.filter(
+    (_) => _.privateTxUrl !== "" && _.hasOwnProperty("privateTxUrl")
+  );
+}
