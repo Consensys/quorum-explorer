@@ -19,18 +19,13 @@ import {
   AccordionIcon,
   Box,
   Input,
-  Table,
-  Thead,
-  Tbody,
   Code,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
   VStack,
   Divider,
   Select,
   useColorMode,
+  HStack,
+  Center,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -387,31 +382,6 @@ export default function ContractsIndex(props: IProps) {
               {code}
             </ChakraCode>
           </Box>
-          <Button
-            leftIcon={<FontAwesomeIcon icon={faHammer as IconProp} />}
-            isLoading={buttonLoading.Compile.status}
-            isDisabled={buttonLoading.Compile.isDisabled}
-            loadingText="Compiling..."
-            type="submit"
-            variant="solid"
-            backgroundColor="orange.200"
-            onClick={HandleCompile}
-            mr={2}
-          >
-            Compile
-          </Button>
-          <Button
-            leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
-            isLoading={buttonLoading.Deploy.status}
-            isDisabled={buttonLoading.Deploy.isDisabled}
-            loadingText="Deploying..."
-            type="submit"
-            variant="solid"
-            backgroundColor="green.200"
-            onClick={HandleDeploy}
-          >
-            Deploy
-          </Button>
         </Box>
 
         {/* tabs  */}
@@ -525,6 +495,43 @@ export default function ContractsIndex(props: IProps) {
                             placeholder={simpleStorageValue.toString()}
                             onChange={setStorageValue}
                           />
+                          <Center>
+                            <HStack mt={5}>
+                              <Button
+                                leftIcon={
+                                  <FontAwesomeIcon
+                                    icon={faHammer as IconProp}
+                                  />
+                                }
+                                isLoading={buttonLoading.Compile.status}
+                                isDisabled={buttonLoading.Compile.isDisabled}
+                                loadingText="Compiling..."
+                                type="submit"
+                                variant="solid"
+                                backgroundColor="orange.200"
+                                onClick={HandleCompile}
+                                mr={2}
+                              >
+                                Compile
+                              </Button>
+                              <Button
+                                leftIcon={
+                                  <FontAwesomeIcon
+                                    icon={faRocket as IconProp}
+                                  />
+                                }
+                                isLoading={buttonLoading.Deploy.status}
+                                isDisabled={buttonLoading.Deploy.isDisabled}
+                                loadingText="Deploying..."
+                                type="submit"
+                                variant="solid"
+                                backgroundColor="green.200"
+                                onClick={HandleDeploy}
+                              >
+                                Deploy
+                              </Button>
+                            </HStack>
+                          </Center>
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
@@ -552,10 +559,10 @@ export default function ContractsIndex(props: IProps) {
                 <VStack
                   align="left"
                   divider={<Divider borderColor="gray.200" />}
-                  spacing={1}
+                  spacing={5}
                 >
                   {compiledContract.abi.length && (
-                    <Code>{JSON.stringify(compiledContract.abi)}</Code>
+                    <pre>{JSON.stringify(compiledContract.abi, null, 2)}</pre>
                   )}
                   {compiledContract.bytecode && (
                     <Code>{compiledContract.bytecode.toString()}</Code>
