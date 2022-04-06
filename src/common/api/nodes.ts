@@ -39,8 +39,10 @@ export async function updateNodeInfo(url: string, client: string) {
         "TXPOOL API method is not set for rpc-http-api and rpc-ws-api for Besu"
       );
     }
-    nodeDetails["queuedTxns"] = besuOrGoQTxns.length;
-    nodeDetails["pendingTxns"] = besuOrGoQTxns.length;
+    nodeDetails["queuedTxns"] =
+      userClient === "besu" ? besuOrGoQTxns.length : besuOrGoQTxns;
+    nodeDetails["pendingTxns"] =
+      userClient === "besu" ? besuOrGoQTxns.length : besuOrGoQTxns;
   } catch (e) {
     console.error(
       "Node is unreachable. Ensure ports are open and client is running!"

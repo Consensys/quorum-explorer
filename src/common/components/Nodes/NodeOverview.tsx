@@ -1,7 +1,7 @@
 
 import { Box, Container, SimpleGrid } from "@chakra-ui/react";
 import NodeCard from "./NodeCard";
-import { QuorumStatCard } from "../Types/Nodes";
+import { QuorumStatCard } from "../../types/Nodes";
 import { motion } from "framer-motion";
 const BoxMotion = motion(Box);
 

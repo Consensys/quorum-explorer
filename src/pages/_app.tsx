@@ -17,6 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ChakraProvider theme={theme}>
+      <title>Quorum Explorer</title>
       <Box pos="relative" minH="100vh">
         <NavBar />
         <Component {...pageProps} />
