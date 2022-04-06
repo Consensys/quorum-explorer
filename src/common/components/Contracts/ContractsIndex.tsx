@@ -191,9 +191,7 @@ export default function ContractsIndex(props: IProps) {
     })
       .then((response) => {
         if (response.status === 200) {
-          console.log("%%%%%%%%%%%%%%%%%%%%%%%%");
-          console.log(response.data);
-          console.log("%%%%%%%%%%%%%%%%%%%%%%%%");
+          //console.log(response.data);
           setCompiledContract({
             abi: response.data.abi,
             bytecode: response.data.bytecode,

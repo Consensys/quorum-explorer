@@ -30,7 +30,9 @@ export async function updateNodeInfo(url: string, client: string) {
     nodeDetails["ip"] = adminNodeInfo.data.result.ip;
     nodeDetails["blocks"] = parseInt(ethBlockNumber.data.result, 16);
     nodeDetails["peers"] = parseInt(netPeerCount.data.result, 16);
-
+    // txpool results
+    // besu = {"jsonrpc": "2.0", "id": 1, "result": [] }
+    // goq = { "jsonrpc": "2.0", "id": 1, "result": : {pending: '0x0', queued: '0x0'} }
     const besuOrGoQTxns =
       userClient === "goquorum"
         ? parseInt(txPoolStatus.data.result.queued, 16)

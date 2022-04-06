@@ -100,7 +100,6 @@ export default function ContractsInteract(props: IProps) {
         }),
       })
         .then((result) => {
-          console.log("?????>>>>>>");
           console.log(result);
           if (result.data === null || result.data === "") {
             setReadValue("-");
