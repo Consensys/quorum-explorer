@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Container, SimpleGrid} from "@chakra-ui/react";
+import { Container, SimpleGrid } from "@chakra-ui/react";
 import PageHeader from "../common/components/Misc/PageHeader";
-import WalletsTransferEth from "../common/components/Wallets/WalletsTransferEth"
+import WalletsTransferEth from "../common/components/Wallets/WalletsTransferEth";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/api/quorumConfig";
 
@@ -12,7 +12,6 @@ interface IState {
 }
 
 export default function Wallets() {
-  
   const [wallet, setWallet] = useState<IState>({
     selectedNode: config.nodes[0].name,
   });
@@ -29,8 +28,11 @@ export default function Wallets() {
           config={config}
           selectNodeHandler={handleSelectNode}
         />
-        <SimpleGrid columns={1} minChildWidth="600px" height="600px">
-          <WalletsTransferEth config={config} selectedNode={wallet.selectedNode}  />
+        <SimpleGrid columns={1} minChildWidth="300px">
+          <WalletsTransferEth
+            config={config}
+            selectedNode={wallet.selectedNode}
+          />
         </SimpleGrid>
       </Container>
     </>

@@ -39,7 +39,7 @@ export default function Nodes() {
   const refreshFrequency: number = 5000;
   const [node, setNode] = useState<IState>({
     selectedNode: config.nodes[0].name,
-    client: "",
+    client: config.nodes[0].client,
     nodeId: "",
     nodeName: "",
     enode: "",
@@ -100,7 +100,7 @@ export default function Nodes() {
     async (name: string) => {
       const needle: QuorumNode = getDetailsByNodeName(config, name);
       const rpcUrl: string = needle.rpcUrl;
-      const res = await updateNodeInfo(rpcUrl);
+      const res = await updateNodeInfo(rpcUrl, node.client);
       setNode({
         selectedNode: name,
         client: needle.client,
@@ -116,6 +116,7 @@ export default function Nodes() {
         queuedTxns: res.queuedTxns,
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [config]
   );
 

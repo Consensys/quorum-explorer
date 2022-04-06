@@ -37,7 +37,7 @@ export default function Validators() {
     const client: string = needle.client;
 
     return Promise.all([
-      getCurrentValidators(rpcUrl),
+      getCurrentValidators(rpcUrl, client, config.algorithm),
       getPendingVotes(rpcUrl, client, config.algorithm),
     ]).then(([currentVal, pendingVal]) => {
       setValidators({

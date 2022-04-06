@@ -1,9 +1,23 @@
-
-import { Container, Stack, VStack, IconButton, ButtonGroup, Text, Divider, Box, Link, } from "@chakra-ui/react";
+import {
+  Container,
+  Stack,
+  VStack,
+  IconButton,
+  ButtonGroup,
+  Text,
+  Divider,
+  Box,
+  Link,
+  AbsoluteCenter,
+} from "@chakra-ui/react";
 import { ConsensysIcon } from "./ConsensysIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faTwitter, faGithub, faLinkedin, } from "@fortawesome/free-brands-svg-icons";
+import {
+  faTwitter,
+  faGithub,
+  faLinkedin,
+} from "@fortawesome/free-brands-svg-icons";
 import { motion } from "framer-motion";
 const MotionBox = motion(Box);
 const MotionContainer = motion(Container);
@@ -42,7 +56,10 @@ export default function Footer() {
                 <IconButton
                   aria-label="LinkedIn"
                   icon={
-                    <FontAwesomeIcon icon={faLinkedin as IconProp} fontSize="1.25rem" />
+                    <FontAwesomeIcon
+                      icon={faLinkedin as IconProp}
+                      fontSize="1.25rem"
+                    />
                   }
                 />
               </Link>
@@ -52,13 +69,23 @@ export default function Footer() {
               >
                 <IconButton
                   aria-label="GitHub"
-                  icon={<FontAwesomeIcon icon={faGithub as IconProp} fontSize="1.25rem" />}
+                  icon={
+                    <FontAwesomeIcon
+                      icon={faGithub as IconProp}
+                      fontSize="1.25rem"
+                    />
+                  }
                 />
               </Link>
               <Link isExternal href="https://twitter.com/ConsenSys">
                 <IconButton
                   aria-label="Twitter"
-                  icon={<FontAwesomeIcon icon={faTwitter as IconProp} fontSize="1.25rem" />}
+                  icon={
+                    <FontAwesomeIcon
+                      icon={faTwitter as IconProp}
+                      fontSize="1.25rem"
+                    />
+                  }
                 />
               </Link>
             </ButtonGroup>
@@ -121,4 +148,3 @@ export default function Footer() {
     </>
   );
 }
-
