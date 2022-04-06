@@ -19,6 +19,7 @@ import { updateNodeInfo } from "../common/api/nodes";
 
 const config: QuorumConfig = require("../config/config.json");
 
+console.log()
 interface IState {
   selectedNode: string;
   client: string;

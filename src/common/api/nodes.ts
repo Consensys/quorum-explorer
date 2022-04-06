@@ -30,25 +30,23 @@ export async function updateNodeInfo(url: string, client: string) {
     nodeDetails["ip"] = adminNodeInfo.data.result.ip;
     nodeDetails["blocks"] = parseInt(ethBlockNumber.data.result, 16);
     nodeDetails["peers"] = parseInt(netPeerCount.data.result, 16);
+
     const besuOrGoQTxns =
       userClient === "goquorum"
         ? parseInt(txPoolStatus.data.result.queued, 16)
-        : txPoolStatus.data["result"];
+        : txPoolStatus.data.result.length;
+
     if (txPoolStatus.data.result === undefined) {
       console.log(
         "TXPOOL API method is not set for rpc-http-api and rpc-ws-api for Besu"
       );
     }
-    nodeDetails["queuedTxns"] =
-      userClient === "besu" ? besuOrGoQTxns.length : besuOrGoQTxns;
-    nodeDetails["pendingTxns"] =
-      userClient === "besu" ? besuOrGoQTxns.length : besuOrGoQTxns;
+    nodeDetails["queuedTxns"] = besuOrGoQTxns;
+    nodeDetails["pendingTxns"] = besuOrGoQTxns;
   } catch (e) {
-    console.error(
-      "Node is unreachable. Ensure ports are open and client is running!"
-    );
-    nodeDetails["statusText"] = "error";
     console.error(e);
+    console.error("Node is unreachable. Ensure ports are open and client is running!" );
+    nodeDetails["statusText"] = "error";
   } finally {
     return nodeDetails;
   }
