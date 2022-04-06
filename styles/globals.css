@@ -1,16 +1,21 @@
-html,
+:root,
 body {
-  padding: 0;
+  height: 100%;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  padding: 0;
+  width: 100%;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+#__next {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
 }
 
-* {
-  box-sizing: border-box;
+main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }

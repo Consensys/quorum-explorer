@@ -61,7 +61,7 @@ export default function ExplorerTxns({ txns, url }: IProps) {
         transition={{ duration: 1 }}
         as="section"
         py={{ base: "4", md: "6" }}
-        h={800}
+        // h={800}
       >
         <Flex
           justifyContent="space-between"

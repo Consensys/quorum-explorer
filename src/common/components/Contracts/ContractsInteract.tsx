@@ -3,7 +3,6 @@ import {
   FormControl,
   FormLabel,
   Button,
-  useToast,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
@@ -20,11 +19,14 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { Select as MultiSelect } from "chakra-react-select";
+import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 //@ts-ignore
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract } from "../../types/Contracts";
 import { getDetailsByNodeName } from "../../api/quorumConfig";
 import axios from "axios";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface IProps {
   config: QuorumConfig;
@@ -225,22 +227,6 @@ export default function ContractsInteract(props: IProps) {
               onChange={props.handleContractAddress}
               isDisabled
             />
-            <FormLabel htmlFor="private-for-deploy">Recipient</FormLabel>
-            <MultiSelect
-              isLoading={props.selectLoading}
-              instanceId="private-for-deploy"
-              isMulti
-              options={props.tesseraKeys}
-              onChange={(e) => {
-                const myList: string[] = [];
-                e.map((k) => myList.push(k.value));
-                setGetSetTessera(myList);
-              }}
-              placeholder="Select Tessera node..."
-              closeMenuOnSelect={false}
-              selectedOptionStyle="check"
-              hideSelectedOptions={false}
-            />
           </FormControl>
 
           <Flex justifyContent="space-between" alignItems="center" m={1}>
@@ -253,13 +239,14 @@ export default function ContractsInteract(props: IProps) {
                 textAlign="center"
               />
               <Button
+                leftIcon={<FontAwesomeIcon icon={faDatabase as IconProp} />}
                 type="submit"
                 backgroundColor="orange.200"
                 isLoading={readButtonLoading}
                 onClick={handleRead}
                 loadingText=""
                 variant="solid"
-                minW={100}
+                minW={125}
               >
                 Read
               </Button>
@@ -285,7 +272,8 @@ export default function ContractsInteract(props: IProps) {
                 </NumberInputStepper>
               </NumberInput>
               <Button
-                minW={100}
+                leftIcon={<FontAwesomeIcon icon={faPencilAlt as IconProp} />}
+                minW={125}
                 type="submit"
                 backgroundColor="green.200"
                 isLoading={writeButtonLoading}
@@ -298,6 +286,22 @@ export default function ContractsInteract(props: IProps) {
               </Button>
             </HStack>
           </Flex>
+          {/* <FormLabel htmlFor="private-for-deploy">Recipient</FormLabel> */}
+          <MultiSelect
+            isLoading={props.selectLoading}
+            instanceId="private-for-deploy"
+            isMulti
+            options={props.tesseraKeys}
+            onChange={(e) => {
+              const myList: string[] = [];
+              e.map((k) => myList.push(k.value));
+              setGetSetTessera(myList);
+            }}
+            placeholder="Select Tessera node..."
+            closeMenuOnSelect={false}
+            selectedOptionStyle="check"
+            hideSelectedOptions={false}
+          />
         </AccordionPanel>
       </AccordionItem>
     </>

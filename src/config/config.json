@@ -54,12 +54,6 @@
       "privateTxUrl": "http://127.0.0.1:9083",
       "privateKey": "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
       "accountAddress": "0xf17f52151EbEF6C7334FAD080c5704D77216b732"
-    },
-    {
-      "name": "broken",
-      "client": "goquorum",
-      "rpcUrl": "http://127.0.0.1:9000",
-      "wsUrl": "local"
     }
   ]
 }

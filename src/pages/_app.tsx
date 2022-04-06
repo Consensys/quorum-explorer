@@ -1,9 +1,10 @@
 import type { AppProps } from "next/app";
-import { Box, ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 import { createBreakpoints } from "@chakra-ui/theme-tools";
 import NavBar from "../common/components/NavBar/NavBar";
 import Footer from "../common/components/Footer/Footer";
+import "../../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const breakpoints = createBreakpoints({
@@ -13,16 +14,18 @@ function MyApp({ Component, pageProps }: AppProps) {
     xl: "1200px",
     "2xl": "1536px",
   });
-  const theme = extendTheme({ breakpoints });
+  const theme = extendTheme({
+    breakpoints,
+  });
 
   return (
     <ChakraProvider theme={theme}>
       <title>Quorum Explorer</title>
-      <Box pos="relative" minH="100vh">
+      <main>
         <NavBar />
         <Component {...pageProps} />
-        <Footer />
-      </Box>
+      </main>
+      <Footer />
     </ChakraProvider>
   );
 }
