@@ -49,7 +49,11 @@ export async function deployContract(
   const bytecode = compiledContract.bytecode;
 
   const web3 = new Web3(rpcUrl);
-  const web3quorum = new Web3Quorum(web3, { privateUrl: privateUrl });
+  const web3quorum = new Web3Quorum(
+    web3,
+    { privateUrl: privateUrl },
+    client === "goquorum" ? true : false
+  );
 
   const account = web3.eth.accounts.privateKeyToAccount(accountPrivateKey);
   const txCount = await web3.eth.getTransactionCount(account.address);
@@ -66,11 +70,10 @@ export async function deployContract(
     gasPrice: 0, //ETH per unit of gas
     gasLimit: 0x24a22, //max number of gas units the tx is allowed to use
     value: 0,
-    data: "0x" + bytecode + paddingHex(64, deployArgs), //+ paddingHex(64, deployArgs)
+    data: "0x" + bytecode + paddingHex(64, deployArgs),
     from: account,
     isPrivate: true,
-    privateKey:
-      client === "besu" ? accountPrivateKey.slice(2) : accountPrivateKey,
+    privateKey: accountPrivateKey.slice(2),
     privateFrom: fromTxPublicKey,
     privateFor: privateForList,
   };

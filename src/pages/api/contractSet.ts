@@ -8,16 +8,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(
-    req.body.rpcUrl,
-    req.body.privateUrl,
-    req.body.value,
-    req.body.contractAddress,
-    req.body.compiledContract,
-    req.body.fromPrivateKey,
-    req.body.sender,
-    req.body.privateFor
-  );
   if (req.body.client === "besu") {
     await besuSetValue(
       req.body.rpcUrl,
@@ -33,13 +23,13 @@ export default async function handler(
     });
   } else if (req.body.client === "goquorum") {
     await setValueAtAddress(
-      req.body.client,
       req.body.rpcUrl,
       req.body.privateUrl,
       req.body.contractAddress,
       req.body.compiledContract,
       req.body.value,
       req.body.sender,
+      req.body.fromPrivateKey,
       req.body.privateFor
     ).then((value) => {
       res.status(200).json(value);
@@ -48,34 +38,58 @@ export default async function handler(
 }
 
 async function setValueAtAddress(
-  client: string,
   rpcUrl: string,
   privateUrl: string,
   contractAddress: string,
   compiledContract: CompiledContract,
   value: number,
   fromPublicKey: string,
+  fromPrivateKey: string,
   privateFor: string[]
 ) {
   const abi = compiledContract.abi;
   const web3 = new Web3(rpcUrl);
-  const web3quorum = new Web3Quorum(
-    web3,
-    { privateUrl: privateUrl },
-    client === "goquorum"
-  );
-
+  const chainId = await web3.eth.getChainId();
+  const web3quorum = new Web3Quorum(web3, { privateUrl: privateUrl });
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
-  const res = await contractInstance.methods
-    .set(value)
-    .send({
-      from: fromPublicKey,
-      privateFor: privateFor,
-      gasLimit: "0x24A22",
-    })
-    .catch(console.error);
-  console.log(`set value` + res);
-  return res;
+
+  // eslint-disable-next-line no-underscore-dangle
+  const functionAbi = contractInstance._jsonInterface.find((e: any) => {
+    return e.name === "set";
+  });
+
+  const functionArgs = web3quorum.eth.abi
+    .encodeParameters(functionAbi.inputs, [value])
+    .slice(2);
+
+  const slicedKey = fromPrivateKey.slice(2);
+  console.log(slicedKey);
+  const from = web3.eth.accounts.privateKeyToAccount(slicedKey);
+  // get the nonce for the sender ethereum account
+  const txCount = await web3.eth.getTransactionCount(from.address);
+  const data = functionAbi.signature + functionArgs;
+
+  const functionParams = {
+    chainId,
+    nonce: txCount,
+    gasPrice: 0, //ETH per unit of gas
+    gasLimit: 0x24a22, //max number of gas units the tx is allowed to use
+    value: 0,
+    data,
+    to: contractAddress,
+    from,
+    isPrivate: true,
+    privateFrom: fromPublicKey,
+    privateFor: privateFor,
+  };
+
+  const transaction = await web3quorum.priv.generateAndSendRawTransaction(
+    functionParams
+  );
+  const result = await web3quorum.priv.waitForTransactionReceipt(
+    transaction.transactionHash
+  );
+  return result;
 }
 
 async function besuSetValue(

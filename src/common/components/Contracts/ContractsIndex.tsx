@@ -149,6 +149,17 @@ export default function ContractsIndex(props: IProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.selectedNode]);
 
+  const handleContractAddress = (e: any) => {
+    setDeployedAddress(e.target.value);
+  };
+
+  function closeAll() {
+    // you may optionally pass an object of positions to exclusively close
+    // keeping other positions opened
+    // e.g. `{ positions: ['bottom'] }`
+    toast.closeAll();
+  }
+
   const setStorageValue = (e: any) => {
     setSimpleStorageValue(e.target.value);
   };
@@ -192,6 +203,7 @@ export default function ContractsIndex(props: IProps) {
             abi: response.data.abi,
             bytecode: response.data.bytecode,
           });
+          closeAll();
           toast({
             title: "Compiled Contract!",
             description: `The contract was successfully compiled. Please check the compiled code tab for details `,
@@ -203,6 +215,7 @@ export default function ContractsIndex(props: IProps) {
           const joined = logs.concat("Compiled contract: " + selectedContract);
           setLogs(joined);
         } else {
+          closeAll();
           toast({
             title: "Contract Compilation Failed",
             description: `Issue encountered compiling contract!`,
@@ -252,6 +265,7 @@ export default function ContractsIndex(props: IProps) {
       deployParams.privateKeyFrom.length === 0
     ) {
       // check if nothing has been selected for account
+      closeAll();
       toast({
         title: "Missing Details",
         description: `You must choose account to deploy and private for.`,
@@ -295,6 +309,7 @@ export default function ContractsIndex(props: IProps) {
         }),
       })
         .then((result) => {
+          closeAll();
           toast({
             title: "Deployed Contract!",
             description: `The contract was successfully deployed through ${props.selectedNode} @ address: ${result.data.contractAddress}`,
@@ -314,6 +329,7 @@ export default function ContractsIndex(props: IProps) {
           setLogs(joined);
         })
         .catch((e) => {
+          closeAll();
           toast({
             title: "Error!",
             description: `There was an error deploying the contract.`,
@@ -489,8 +505,6 @@ export default function ContractsIndex(props: IProps) {
                             isMulti
                             options={tesseraKeys}
                             onChange={(e) => {
-                              // convert from [{label: "", value:""}]
-                              // to [value, value, value]
                               const myList: string[] = [];
                               e.map((k) => myList.push(k.value));
                               setDeployParams({
@@ -525,6 +539,9 @@ export default function ContractsIndex(props: IProps) {
                       fromPrivateKey={deployParams.privateKeyFrom}
                       tesseraKeys={tesseraKeys}
                       selectLoading={selectLoading}
+                      closeAllToasts={closeAll}
+                      reuseToast={toast}
+                      handleContractAddress={handleContractAddress}
                     />
                   </Accordion>
                 </SimpleGrid>

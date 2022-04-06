@@ -20,9 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Box pos="relative" minH="100vh">
         <NavBar />
         <Component {...pageProps} />
-        <Box pos="absolute" bottom={0} w="100%">
-          <Footer />
-        </Box>
+        <Footer />
       </Box>
     </ChakraProvider>
   );

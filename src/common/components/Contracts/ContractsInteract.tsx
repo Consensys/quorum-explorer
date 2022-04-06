@@ -37,24 +37,17 @@ interface IProps {
   fromPrivateKey: string;
   tesseraKeys: { label: string; value: string }[] | undefined;
   selectLoading: boolean;
+  closeAllToasts: () => void;
+  reuseToast: any;
+  handleContractAddress: (e: any) => void;
 }
 
 export default function ContractsInteract(props: IProps) {
-  const toast = useToast();
-  const [contractAddress, setContractAddress] = useState(props.contractAddress);
   const [readButtonLoading, setReadButtonLoading] = useState(false);
   const [writeValue, setWriteValue] = useState("0");
   const [writeButtonLoading, setWriteButtonLoading] = useState(false);
   const [getSetTessera, setGetSetTessera] = useState<string[]>();
   const [readValue, setReadValue] = useState("-");
-
-  useEffect(() => {
-    setContractAddress(props.contractAddress);
-  }, [props.contractAddress]);
-
-  const handleContractAddress = (e: any) => {
-    setContractAddress(e.target.value);
-  };
 
   const handleWriteValue = (e: any) => {
     setWriteValue(e);
@@ -64,8 +57,9 @@ export default function ContractsInteract(props: IProps) {
     e.preventDefault();
     setReadButtonLoading(true);
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
-    if (contractAddress.length < 1) {
-      toast({
+    if (props.contractAddress.length < 1) {
+      props.closeAllToasts();
+      props.reuseToast({
         title: "Notice",
         description: `No contract has been deployed!`,
         status: "warning",
@@ -75,7 +69,8 @@ export default function ContractsInteract(props: IProps) {
       });
     }
     if (getSetTessera === undefined || getSetTessera.length < 1) {
-      toast({
+      props.closeAllToasts();
+      props.reuseToast({
         title: "Notice",
         description: `No Tessera recipients selected`,
         status: "warning",
@@ -84,7 +79,7 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
-    if (contractAddress.length > 0) {
+    if (props.contractAddress.length > 0) {
       await axios({
         method: "POST",
         url: "/api/contractRead",
@@ -95,7 +90,7 @@ export default function ContractsInteract(props: IProps) {
           client: needle.client,
           rpcUrl: needle.rpcUrl,
           privateUrl: needle.privateTxUrl,
-          contractAddress: contractAddress,
+          contractAddress: props.contractAddress,
           compiledContract: props.compiledContract,
           privateFrom: props.privateFrom,
           privateFor: getSetTessera,
@@ -107,7 +102,8 @@ export default function ContractsInteract(props: IProps) {
           console.log(result);
           if (result.data === null || result.data === "") {
             setReadValue("-");
-            toast({
+            props.closeAllToasts();
+            props.reuseToast({
               title: "Not a Party!",
               description: `${props.selectedNode} is not a member to the transaction!`,
               status: "info",
@@ -117,7 +113,8 @@ export default function ContractsInteract(props: IProps) {
             });
           } else {
             setReadValue(result.data);
-            toast({
+            props.closeAllToasts();
+            props.reuseToast({
               title: "Read Success!",
               description: `Value from contract: ${result.data}`,
               status: "success",
@@ -128,7 +125,8 @@ export default function ContractsInteract(props: IProps) {
           }
         })
         .catch((e) => {
-          toast({
+          props.closeAllToasts();
+          props.reuseToast({
             title: "Error!",
             description: `There was an error reading from the contract.`,
             status: "error",
@@ -148,8 +146,9 @@ export default function ContractsInteract(props: IProps) {
   const handleWrite = async (e: any) => {
     e.preventDefault();
     setWriteButtonLoading(true);
-    if (contractAddress.length < 1) {
-      toast({
+    if (props.contractAddress.length < 1) {
+      props.closeAllToasts();
+      props.reuseToast({
         title: "Notice",
         description: `No contract has been deployed!`,
         status: "warning",
@@ -158,7 +157,7 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
-    if (contractAddress.length > 0) {
+    if (props.contractAddress.length > 0) {
       const needle = getDetailsByNodeName(props.config, props.selectedNode);
       await axios({
         method: "POST",
@@ -172,7 +171,7 @@ export default function ContractsInteract(props: IProps) {
           privateUrl: needle.privateTxUrl,
           value: parseInt(writeValue),
           fromPrivateKey: props.fromPrivateKey,
-          contractAddress: contractAddress,
+          contractAddress: props.contractAddress,
           compiledContract: props.compiledContract,
           sender: props.privateFrom,
           privateFor: getSetTessera,
@@ -180,7 +179,8 @@ export default function ContractsInteract(props: IProps) {
       })
         .then((result) => {
           console.log(result);
-          toast({
+          props.closeAllToasts();
+          props.reuseToast({
             title: "Success!",
             description: `Contract set function called successfully.`,
             status: "success",
@@ -190,7 +190,8 @@ export default function ContractsInteract(props: IProps) {
           });
         })
         .catch((err) => {
-          toast({
+          props.closeAllToasts();
+          props.reuseToast({
             title: "Error!",
             description: `${err}`,
             status: "error",
@@ -220,8 +221,8 @@ export default function ContractsInteract(props: IProps) {
             <Input
               id="contract-address"
               placeholder="0x"
-              value={contractAddress}
-              onChange={handleContractAddress}
+              value={props.contractAddress}
+              onChange={props.handleContractAddress}
               isDisabled
             />
             <FormLabel htmlFor="private-for-deploy">Recipient</FormLabel>
@@ -256,7 +257,7 @@ export default function ContractsInteract(props: IProps) {
                 backgroundColor="orange.200"
                 isLoading={readButtonLoading}
                 onClick={handleRead}
-                loadingText="Reading"
+                loadingText=""
                 variant="solid"
                 minW={100}
               >
@@ -289,7 +290,7 @@ export default function ContractsInteract(props: IProps) {
                 backgroundColor="green.200"
                 isLoading={writeButtonLoading}
                 onClick={handleWrite}
-                loadingText="Writing"
+                loadingText=""
                 variant="solid"
                 ml={5}
               >
