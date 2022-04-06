@@ -14,6 +14,7 @@ import {
 
 const config: QuorumConfig = require("../config/config.json");
 
+
 interface IState {
   selectedNode: string;
   blocks: QuorumBlock[];
