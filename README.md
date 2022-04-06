@@ -30,8 +30,17 @@ or equivalent
 
 ``` bash
 npm i
+npm run dev
+```
+
+4. For a production build:
+```bash
+npm i 
+npm run lint
+npm run build
 npm run start
 ```
+
 
 ## Development
 
@@ -64,10 +73,3 @@ Use a backend as well, either via express or something like NextJS(which is what
 
 
 
-# TODO: remove me later
-link to test the api compileContract code
-
-```
-curl http://localhost:3000/api/compileContract -X POST -H "Content-Type: application/json" \
--d '{"name":"SimpleStorage", "content":"pragma solidity >0.8.10;\n        contract SimpleStorage {\n          uint public storedData;\n          event stored(address _to, uint _amount);\n        \n          constructor(uint initVal) public {\n            emit stored(msg.sender, initVal);\n            storedData = initVal;\n          }\n        \n          function set(uint x) public {\n            emit stored(msg.sender, x);\n            storedData = x;\n          }\n        \n          function get() view public returns (uint retVal) {\n            return storedData;\n          }\n        }"}'
-```

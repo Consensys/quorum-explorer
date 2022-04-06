@@ -6,7 +6,6 @@ export default class Document extends NextDocument {
     return (
       <Html lang="en">
         <Head>
-          <title>Quorum Explorer</title>
           <link rel="shortcut icon" href="/favicon.svg" />
         </Head>
         <body>
