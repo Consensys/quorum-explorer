@@ -50,7 +50,7 @@ async function setValueAtAddress(
   const abi = compiledContract.abi;
   const web3 = new Web3(rpcUrl);
   const chainId = await web3.eth.getChainId();
-  const web3quorum = new Web3Quorum(web3, { privateUrl: privateUrl });
+  const web3quorum = new Web3Quorum(web3, { privateUrl: privateUrl }, true);
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
 
   // eslint-disable-next-line no-underscore-dangle
@@ -62,9 +62,7 @@ async function setValueAtAddress(
     .encodeParameters(functionAbi.inputs, [value])
     .slice(2);
 
-  const slicedKey = fromPrivateKey.slice(2);
-  console.log(slicedKey);
-  const from = web3.eth.accounts.privateKeyToAccount(slicedKey);
+  const from = web3.eth.accounts.privateKeyToAccount(fromPrivateKey);
   // get the nonce for the sender ethereum account
   const txCount = await web3.eth.getTransactionCount(from.address);
   const data = functionAbi.signature + functionArgs;
