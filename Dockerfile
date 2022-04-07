@@ -21,4 +21,6 @@ COPY . /app
 # potentially exposes secrets. So do the following step in your 
 # dockerfile after copying your config file to /app/src/config/config.js
 # 
-# RUN npm run build && npm run start
+# RUN npm run build
+
+CMD "npm" "run" "start"
