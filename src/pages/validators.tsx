@@ -11,8 +11,7 @@ import {
   getPendingVotes,
 } from "../common/api/validators";
 import { getDetailsByNodeName } from "../common/api/quorumConfig";
-
-const config: QuorumConfig = require("../config/config.json");
+import axios from "axios";
 
 interface IState {
   selectedNode: string;
@@ -21,7 +20,8 @@ interface IState {
   pendingList: string[];
 }
 
-export default function Validators() {
+//@ts-ignore
+export default function Validators({ config }) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const refreshFrequency: number = 1000;
   const [validators, setValidators] = useState<IState>({
@@ -101,3 +101,7 @@ export default function Validators() {
     </>
   );
 }
+Validators.getInitialProps = async () => {
+  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/getConfig`);
+  return { config: res.data };
+};

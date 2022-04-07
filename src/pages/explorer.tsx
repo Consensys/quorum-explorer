@@ -11,9 +11,7 @@ import {
   updateBlockArray,
   updateTxnArray,
 } from "../common/api/explorer";
-
-const config: QuorumConfig = require("../config/config.json");
-
+import axios from "axios";
 
 interface IState {
   selectedNode: string;
@@ -21,7 +19,7 @@ interface IState {
   transactions: QuorumTxn[];
 }
 
-export default function Explorer() {
+export default function Explorer({ config }) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const refreshFrequency: number = 5000;
   const [explorer, setExplorer] = useState<IState>({
@@ -97,3 +95,8 @@ export default function Explorer() {
     </>
   );
 }
+
+Explorer.getInitialProps = async () => {
+  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/getConfig`);
+  return { config: res.data };
+};

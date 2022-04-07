@@ -16,10 +16,11 @@ import { QuorumStatCard } from "../common/types/Nodes";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/api/quorumConfig";
 import { updateNodeInfo } from "../common/api/nodes";
+import axios from "axios";
 
-const config: QuorumConfig = require("../config/config.json");
+// const config: QuorumConfig = require("../config/config.json");
 
-console.log()
+console.log();
 interface IState {
   selectedNode: string;
   client: string;
@@ -35,7 +36,8 @@ interface IState {
   pendingTxns: number;
 }
 
-export default function Nodes() {
+//@ts-ignore
+export default function Nodes({ config }) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const refreshFrequency: number = 5000;
   const [node, setNode] = useState<IState>({
@@ -159,3 +161,8 @@ export default function Nodes() {
     </>
   );
 }
+
+Nodes.getInitialProps = async () => {
+  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/getConfig`);
+  return { config: res.data };
+};
