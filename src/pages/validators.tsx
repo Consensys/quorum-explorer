@@ -12,6 +12,7 @@ import {
 } from "../common/api/validators";
 import { getDetailsByNodeName } from "../common/api/quorumConfig";
 import axios from "axios";
+const config: QuorumConfig = require('../config/config.json')
 
 interface IState {
   selectedNode: string;
@@ -20,28 +21,24 @@ interface IState {
   pendingList: string[];
 }
 
-interface IProps {
-  config: QuorumConfig;
-}
-
-export default function Validators(props: IProps) {
+export default function Validators() {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const refreshFrequency: number = 1000;
   const [validators, setValidators] = useState<IState>({
-    selectedNode: props.config.nodes[0].name,
-    rpcUrl: props.config.nodes[0].rpcUrl,
+    selectedNode: config.nodes[0].name,
+    rpcUrl: config.nodes[0].rpcUrl,
     minersList: [],
     pendingList: [],
   });
 
   const nodeInfoHandler = useCallback(async (node: string) => {
-    const needle: QuorumNode = getDetailsByNodeName(props.config, node);
+    const needle: QuorumNode = getDetailsByNodeName(config, node);
     const rpcUrl: string = needle.rpcUrl;
     const client: string = needle.client;
 
     return Promise.all([
-      getCurrentValidators(rpcUrl, client, props.config.algorithm),
-      getPendingVotes(rpcUrl, client, props.config.algorithm),
+      getCurrentValidators(rpcUrl, client, config.algorithm),
+      getPendingVotes(rpcUrl, client, config.algorithm),
     ]).then(([currentVal, pendingVal]) => {
       setValidators({
         selectedNode: node,
@@ -79,23 +76,23 @@ export default function Validators(props: IProps) {
       <Container maxW={{ base: "container.sm", md: "container.xl" }}>
         <PageHeader
           title="Validators"
-          config={props.config}
+          config={config}
           selectNodeHandler={handleSelectNode}
         />
         <Divider my={8} />
         <SimpleGrid columns={2} minChildWidth="600px">
           <ValidatorsAbout />
           <ValidatorsActive
-            config={props.config}
+            config={config}
             minersList={validators.minersList}
             selectedNode={validators.selectedNode}
           />
           <ValidatorsPropose
-            config={props.config}
+            config={config}
             selectedNode={validators.selectedNode}
           />
           <ValidatorsPending
-            config={props.config}
+            config={config}
             pendingList={validators.pendingList}
             selectedNode={validators.selectedNode}
           />
@@ -104,7 +101,3 @@ export default function Validators(props: IProps) {
     </>
   );
 }
-Validators.getInitialProps = async () => {
-  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/getConfig`);
-  return { config: res.data };
-};

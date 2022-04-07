@@ -3,7 +3,6 @@ module.exports = {
   basePath: process.env.QE_BASEPATH ? process.env.QE_BASEPATH : "",
   reactStrictMode: true,
   env: {
-    QE_BACKEND_URL: process.env.QE_BACKEND_URL,
     QE_CONFIG_PATH: process.env.QE_CONFIG_PATH,
   },
   async redirects() {

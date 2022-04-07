@@ -3,6 +3,7 @@ FROM node:16-alpine3.14
 ENV PORT 3000
 ENV NODE_ENV production
 ENV QE_BASEPATH "/explorer"
+EXPOSE 3000
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -14,9 +15,10 @@ RUN npm install
 # Copying source files
 COPY . /app
 
-# Building app
-RUN npm run build
-EXPOSE 3000
-
-# Running the app in prod mode
-CMD "npm" "run" "start"
+# NOTE: not doing this here because there is no safe way to pass in 
+# a config file that works without issues (CORS & exposing secrets)
+# We can use an env var with the config file as base64 but this
+# potentially exposes secrets. So do the following step in your 
+# dockerfile after copying your config file to /app/src/config/config.js
+# 
+# RUN npm run build && npm run start
