@@ -70,6 +70,3 @@ For reference, please see the [package.json](./package.json) of this project
 ### 2. Solc doesn't compile on the frontend and requires a backend
 
 Use a backend as well, either via express or something like NextJS(which is what we've done)
-
-
-
