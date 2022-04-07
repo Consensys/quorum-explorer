@@ -251,6 +251,22 @@ export default function ContractsInteract(props: IProps) {
               </Button>
             </HStack>
           </Flex>
+          {/* <FormLabel htmlFor="private-for-deploy">Recipient</FormLabel> */}
+          <MultiSelect
+            isLoading={props.selectLoading}
+            instanceId="private-for-deploy"
+            isMulti
+            options={props.tesseraKeys}
+            onChange={(e) => {
+              const myList: string[] = [];
+              e.map((k) => myList.push(k.value));
+              setGetSetTessera(myList);
+            }}
+            placeholder="Select Tessera node for the set function below..."
+            closeMenuOnSelect={false}
+            selectedOptionStyle="check"
+            hideSelectedOptions={false}
+          />
           <Flex justifyContent="space-between" alignItems="center" m={1}>
             <FormLabel htmlFor="set" fontWeight="semibold" m={0} mr={5}>
               set
@@ -285,22 +301,7 @@ export default function ContractsInteract(props: IProps) {
               </Button>
             </HStack>
           </Flex>
-          {/* <FormLabel htmlFor="private-for-deploy">Recipient</FormLabel> */}
-          <MultiSelect
-            isLoading={props.selectLoading}
-            instanceId="private-for-deploy"
-            isMulti
-            options={props.tesseraKeys}
-            onChange={(e) => {
-              const myList: string[] = [];
-              e.map((k) => myList.push(k.value));
-              setGetSetTessera(myList);
-            }}
-            placeholder="Select Tessera node..."
-            closeMenuOnSelect={false}
-            selectedOptionStyle="check"
-            hideSelectedOptions={false}
-          />
+
         </AccordionPanel>
       </AccordionItem>
     </>
