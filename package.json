@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='-r next-logger' next dev",
+    "dev": "NODE_OPTIONS='-r next-logger' next dev -p 25000",
     "build": "next build",
-    "start": "NODE_OPTIONS='-r next-logger' next start",
+    "start": "NODE_OPTIONS='-r next-logger' next start -p 25000",
     "lint": "next lint"
   },
   "dependencies": {

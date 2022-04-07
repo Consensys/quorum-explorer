@@ -1,9 +1,9 @@
 FROM node:16-alpine3.14
 
-ENV PORT 3000
 ENV NODE_ENV production
 ENV QE_BASEPATH "/explorer"
-EXPOSE 3000
+ENV PORT 25000
+EXPOSE 25000
 
 RUN mkdir -p /app
 WORKDIR /app

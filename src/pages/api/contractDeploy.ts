@@ -63,7 +63,6 @@ export async function deployContract(
       headers: { "Content-Type": "application/json" },
     })
     .then((res) => res.data.keys[0].key);
-
   const txOptions = {
     chainId,
     nonce: txCount,
