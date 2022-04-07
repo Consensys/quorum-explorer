@@ -9,10 +9,14 @@ interface IState {
   selectedNode: string;
 }
 
-export default function Contracts({ config }) {
+interface IProps {
+  config: QuorumConfig;
+}
+
+export default function Contracts(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [contracts, setContracts] = useState<IState>({
-    selectedNode: config.nodes[0].name,
+    selectedNode: props.config.nodes[0].name,
   });
 
   const handleSelectNode = (e: any) => {
@@ -25,10 +29,10 @@ export default function Contracts({ config }) {
       <Container maxW={{ base: "container.sm", md: "container.xl" }}>
         <PageHeader
           title="Contracts"
-          config={config}
+          config={props.config}
           selectNodeHandler={handleSelectNode}
         />
-        <ContractsIndex config={config} selectedNode={contracts.selectedNode} />
+        <ContractsIndex config={props.config} selectedNode={contracts.selectedNode} />
       </Container>
     </>
   );

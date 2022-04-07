@@ -18,9 +18,6 @@ import { getDetailsByNodeName } from "../common/api/quorumConfig";
 import { updateNodeInfo } from "../common/api/nodes";
 import axios from "axios";
 
-// const config: QuorumConfig = require("../config/config.json");
-
-console.log();
 interface IState {
   selectedNode: string;
   client: string;
@@ -36,13 +33,16 @@ interface IState {
   pendingTxns: number;
 }
 
-//@ts-ignore
-export default function Nodes({ config }) {
+interface IProps {
+  config: QuorumConfig;
+}
+
+export default function Nodes(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const refreshFrequency: number = 5000;
   const [node, setNode] = useState<IState>({
-    selectedNode: config.nodes[0].name,
-    client: config.nodes[0].client,
+    selectedNode: props.config.nodes[0].name,
+    client: props.config.nodes[0].client,
     nodeId: "",
     nodeName: "",
     enode: "",
@@ -101,7 +101,7 @@ export default function Nodes({ config }) {
   // useEffect is go to re-render and causes a memory leek issue - every time react renders Nodes its re-create the api call, you can prevent this case by using useCallBack,
   const nodeInfoHandler = useCallback(
     async (name: string) => {
-      const needle: QuorumNode = getDetailsByNodeName(config, name);
+      const needle: QuorumNode = getDetailsByNodeName(props.config, name);
       const rpcUrl: string = needle.rpcUrl;
       const res = await updateNodeInfo(rpcUrl, node.client);
       setNode({
@@ -120,7 +120,7 @@ export default function Nodes({ config }) {
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [config]
+    [props.config]
   );
 
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function Nodes({ config }) {
       <Container maxW={{ base: "container.sm", md: "container.xl" }}>
         <PageHeader
           title="Nodes"
-          config={config}
+          config={props.config}
           selectNodeHandler={handleSelectNode}
         />
         <NodeOverview stats={stats} statusText={node.statusText} />

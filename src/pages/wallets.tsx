@@ -9,11 +9,14 @@ import axios from "axios";
 interface IState {
   selectedNode: string;
 }
-//@ts-ignore
 
-export default function Wallets({ config }) {
+interface IProps {
+  config: QuorumConfig;
+}
+
+export default function Wallets(props: IProps) {
   const [wallet, setWallet] = useState<IState>({
-    selectedNode: config.nodes[0].name,
+    selectedNode: props.config.nodes[0].name,
   });
 
   const handleSelectNode = (e: any) => {
@@ -25,12 +28,12 @@ export default function Wallets({ config }) {
       <Container maxW={{ base: "container.sm", md: "container.xl" }}>
         <PageHeader
           title="Wallets"
-          config={config}
+          config={props.config}
           selectNodeHandler={handleSelectNode}
         />
         <SimpleGrid columns={1} minChildWidth="300px">
           <WalletsTransferEth
-            config={config}
+            config={props.config}
             selectedNode={wallet.selectedNode}
           />
         </SimpleGrid>
