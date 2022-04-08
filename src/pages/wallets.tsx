@@ -4,15 +4,18 @@ import PageHeader from "../common/components/Misc/PageHeader";
 import WalletsTransferEth from "../common/components/Wallets/WalletsTransferEth";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import axios from "axios";
-const config: QuorumConfig = require('../config/config.json')
 
 interface IState {
   selectedNode: string;
 }
 
-export default function Wallets() {
+interface IProps {
+  config: QuorumConfig;
+}
+
+export default function Wallets(props: IProps) {
   const [wallet, setWallet] = useState<IState>({
-    selectedNode: config.nodes[0].name,
+    selectedNode: props.config.nodes[0].name,
   });
 
   const handleSelectNode = (e: any) => {
@@ -24,12 +27,12 @@ export default function Wallets() {
       <Container maxW={{ base: "container.sm", md: "container.xl" }}>
         <PageHeader
           title="Wallets"
-          config={config}
+          config={props.config}
           selectNodeHandler={handleSelectNode}
         />
         <SimpleGrid columns={1} minChildWidth="300px">
           <WalletsTransferEth
-            config={config}
+            config={props.config}
             selectedNode={wallet.selectedNode}
           />
         </SimpleGrid>
@@ -37,3 +40,8 @@ export default function Wallets() {
     </>
   );
 }
+
+Wallets.getInitialProps = async () => {
+  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/getConfig`);
+  return { config: res.data };
+};
