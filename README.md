@@ -30,6 +30,9 @@ or equivalent
 
 ``` bash
 npm i
+# create an .env.local at the root of the project with the following in it (without the hashes)
+# QE_BACKEND_URL="http://localhost:25000"
+# QE_CONFIG_PATH="src/config/config.json"
 npm run dev
 ```
 
