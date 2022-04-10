@@ -106,6 +106,6 @@ export default function Validators(props: IProps) {
 }
 
 Validators.getInitialProps = async () => {
-  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/getConfig`);
+  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/configGet`);
   return { config: res.data };
 };

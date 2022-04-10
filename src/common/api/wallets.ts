@@ -10,26 +10,6 @@ export async function getAccountBalance(url: string, account: string) {
   return QuorumWallet;
 }
 
-// not needed as this only works for goquorum
-// export async function updateAccountsInfo(url: string, client?: string) {
-//   let wallets: QuorumWallet[] = []
-//   try {
-//     const accountsInfo = await ethApiCall(url, 'eth_accounts');
-//     const accounts = accountsInfo.data.result;
-//     wallets = await Promise.all(
-//       accounts.map(async (a: string): Promise<QuorumWallet> => {
-//         let w = await getAccountBalance(url, a);
-//         return w;
-//       }
-//     ));
-//   } catch (e) {
-//     console.error("Node is unreachable. Ensure ports are open and client is running!")
-//     console.error(e);
-//   } finally {
-//     return wallets;
-//   }
-// }
-
 export async function transferEth(url:string, privateKeyFrom:string, accountTo:string, amount:string) {
   let status = { "error": 1, "txHash":"", "txReceipt":{} }
   try {
