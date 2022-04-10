@@ -7,7 +7,6 @@ import { QuorumBlock, QuorumTxn } from "../common/types/Explorer";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/api/quorumConfig";
 import {
-  getBlockByNumber,
   updateBlockArray,
   updateTxnArray,
 } from "../common/api/explorer";
@@ -37,10 +36,20 @@ export default function Explorer(props: IProps) {
   const nodeInfoHandler = useCallback(
     async (name: string) => {
       const needle: QuorumNode = getDetailsByNodeName(props.config, name);
-      const rpcUrl: string = needle.rpcUrl;
-      const quorumBlock = await getBlockByNumber(rpcUrl, "latest");
+      const res = await axios({
+        method: "POST",
+        url: "/api/getBlockByNumber",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          rpcUrl: needle.rpcUrl,
+          blockNumber: "latest"
+        })
+      })
+      var quorumBlock : QuorumBlock = res.data as QuorumBlock;
       var tmpTxns: QuorumTxn[] = explorer.transactions;
-      if (quorumBlock.transactions.length > 0) {
+      if (res.data.transactions.length > 0) {
         tmpTxns = updateTxnArray(
           explorer.transactions,
           quorumBlock.transactions,
@@ -72,7 +81,7 @@ export default function Explorer(props: IProps) {
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [explorer.selectedNode]);
-
+  
   const handleSelectNode = (e: any) => {
     clearInterval(intervalRef.current as NodeJS.Timeout);
     setExplorer({ ...explorer, selectedNode: e.target.value });

@@ -9,10 +9,10 @@ import {
   FormControl,
   useToast,
 } from "@chakra-ui/react";
+import axios from "axios";
 import ExplorerTxnCard from "./ExplorerTxnCard";
 import ExplorerTxnToast from "./ExplorerTxnToast";
 import { QuorumTxn } from "../../types/Explorer";
-import { getTxnByHash } from "../../api/explorer";
 import { motion } from "framer-motion";
 const BoxMotion = motion(Box);
 
@@ -39,7 +39,18 @@ export default function ExplorerTxns({ txns, url }: IProps) {
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
-    const txn = await getTxnByHash(url, txnSearch);
+    const res = await axios({
+      method: "POST",
+      url: "/api/getTxnByHash",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        rpcUrl: url,
+        txnHash: txnSearch
+      })
+    })
+    var txn : QuorumTxn = res.data as QuorumTxn;
     // console.log(txn);
     toastIdRef.current = toast({
       position: "top-right",

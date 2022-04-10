@@ -9,10 +9,10 @@ import {
   FormControl,
   useToast,
 } from "@chakra-ui/react";
+import axios from "axios";
 import ExplorerBlockCard from "./ExplorerBlockCard";
 import ExplorerBlockToast from "./ExplorerBlockToast";
 import { QuorumBlock } from "../../types/Explorer";
-import { getBlockByNumber } from "../../api/explorer";
 import { motion } from "framer-motion";
 const BoxMotion = motion(Box);
 
@@ -39,7 +39,18 @@ export default function ExplorerBlocks(props: IProps) {
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
-    const block = await getBlockByNumber(props.url, blockSearch);
+    const res = await axios({
+      method: "POST",
+      url: "/api/getBlockByNumber",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        rpcUrl: props.url,
+        blockNumber: blockSearch
+      })
+    });
+    var block : QuorumBlock = res.data as QuorumBlock;
     // console.log(block);
     toastIdRef.current = toast({
       position: "top-right",
