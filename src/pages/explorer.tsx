@@ -6,6 +6,7 @@ import PageHeader from "../common/components/Misc/PageHeader";
 import { QuorumBlock, QuorumTxn } from "../common/types/Explorer";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
+import { refreshFrequency } from "../common/lib/common"
 import {
   updateBlockArray,
   updateTxnArray,
@@ -24,7 +25,6 @@ interface IProps {
 
 export default function Explorer(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refreshFrequency: number = 5000;
   const [explorer, setExplorer] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
     blocks: [],

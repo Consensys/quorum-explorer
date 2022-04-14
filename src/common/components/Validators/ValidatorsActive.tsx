@@ -9,12 +9,11 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import axios from "axios";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
-import { proposeValidator } from "../../lib/validators";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import { buttonState } from "../../types/Validator";
 import { motion } from "framer-motion";
-
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
 interface IProps {
@@ -35,14 +34,23 @@ export default function ValidatorsActive(props: IProps) {
     );
     const rpcUrl: string = needle.rpcUrl;
     const client: string = needle.client;
-    const removeValidator = await proposeValidator(
-      rpcUrl,
-      client,
-      props.config.algorithm,
-      e,
-      false
-    );
-    if (removeValidator === 200) {
+
+    const removeValidator = await axios({
+      method: "POST",
+      url: "/api/validatorsPropose",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        rpcUrl: rpcUrl,
+        client: client,
+        algorithm: props.config.algorithm,
+        address: e,
+        vote: "false"
+
+      })
+    });
+    if (removeValidator.status === 200) {
       console.log("Proposal to remove initiated: " + e);
     }
     setButtonLoading({ [index]: false });

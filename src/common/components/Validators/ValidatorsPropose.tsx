@@ -9,7 +9,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
-import { proposeValidator } from "../../lib/validators";
+import axios from "axios";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import { motion } from "framer-motion";
 const MotionBox = motion(Box);
@@ -40,14 +40,24 @@ export default function ValidatorsPropose(props: IProps) {
     );
     const rpcUrl: string = needle.rpcUrl;
     const client: string = needle.client;
-    const removeValidator = await proposeValidator(
-      rpcUrl,
-      client,
-      props.config.algorithm,
-      propose.address_input,
-      true
-    );
-    if (removeValidator === 200) {
+
+    const removeValidator = await axios({
+      method: "POST",
+      url: "/api/validatorsPropose",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        rpcUrl: rpcUrl,
+        client: client,
+        algorithm: props.config.algorithm,
+        address: propose.address_input,
+        vote: "true"
+
+      })
+    });
+    console.log(removeValidator);
+    if (removeValidator.status === 200) {
       console.log("Successful proposed: " + propose.address_input);
     }
     setButtonLoading(false);

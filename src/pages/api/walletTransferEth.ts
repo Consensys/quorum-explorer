@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ethApiCall } from "../../common/lib/common";
+import { ethApiCall } from "../../common/lib/ethApiCall";
 import { QuorumWallet } from '../../common/types/Wallets';
 import Web3 from 'web3';
 import { SignedTransaction, TransactionConfig } from 'web3-core';

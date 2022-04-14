@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ethApiCall } from "../../common/lib/common";
+import { ethApiCall } from "../../common/lib/ethApiCall";
 import { QuorumTxn } from "../../common/types/Explorer"
 
 export default async function handler(

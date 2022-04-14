@@ -15,6 +15,7 @@ import {
 import { QuorumStatCard } from "../common/types/Nodes";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
+import { refreshFrequency } from "../common/lib/common"
 import axios from "axios";
 
 interface IState {
@@ -38,7 +39,6 @@ interface IProps {
 
 export default function Nodes(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refreshFrequency: number = 5000;
   const [node, setNode] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
     client: props.config.nodes[0].client,

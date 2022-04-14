@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { NodeDetails } from "../../common/types/api/responses";
-import { ethApiCall } from "../../common/lib/common";
+import { ethApiCall } from "../../common/lib/ethApiCall";
 
 export default async function handler(
   req: NextApiRequest,

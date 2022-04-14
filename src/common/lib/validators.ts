@@ -1,5 +1,5 @@
 import { ConsensusAlgorithms, Clients } from "../types/Validator";
-import { ethApiCall } from "./common";
+import { ethApiCall } from "./ethApiCall";
 
 export async function getCurrentValidators(
   rpcUrl: string,
@@ -70,74 +70,3 @@ export async function getPendingVotes(
   }
 }
 
-export async function proposeValidator(
-  rpcUrl: string,
-  client: string,
-  algorithm: string,
-  address: string,
-  vote: boolean // true to vote in, false to vote out
-) {
-  const methodDict: Clients = {
-    goquorum: {
-      qbft: "istanbul_propose",
-      ibft: "istanbul_propose",
-      raft: "raft_addPeer",
-    },
-    besu: {
-      clique: "clique_proposals",
-      ibft: "ibft_proposeValidatorVote",
-      qbft: "qbft_proposeValidatorVote",
-    },
-  };
-  try {
-    const req = await ethApiCall(
-      rpcUrl,
-      methodDict[client as keyof Clients][
-        algorithm as keyof ConsensusAlgorithms
-      ]!,
-      [address, vote]
-    );
-    console.log(req);
-    const status = req.status;
-    return status;
-  } catch (e) {
-    console.log(e);
-    return 500;
-  }
-}
-
-export async function discardProposal(
-  rpcUrl: string,
-  client: string,
-  algorithm: string,
-  address: string
-) {
-  const methodDict: Clients = {
-    goquorum: {
-      qbft: "istanbul_discard",
-      ibft: "istanbul_discard",
-      raft: "raft_removePeer",
-    },
-    besu: {
-      qbft: "qbft_discardValidatorVote",
-      ibft: "ibft_discardValidatorVote",
-      clique: "clique_discard",
-    },
-  };
-
-  try {
-    const req = await ethApiCall(
-      rpcUrl,
-      methodDict[client as keyof Clients][
-        algorithm as keyof ConsensusAlgorithms
-      ]!,
-      [address]
-    );
-    // console.log(req);
-    const status = req.status;
-    return status;
-  } catch (e) {
-    console.log(e);
-    return 500;
-  }
-}

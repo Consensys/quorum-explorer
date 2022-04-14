@@ -10,12 +10,11 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import axios from "axios";
 import { buttonState } from "../../types/Validator";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
-import { discardProposal } from "../../lib/validators";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import { motion } from "framer-motion";
-
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
 
@@ -37,13 +36,22 @@ export default function ValidatorsPending(props: IProps) {
     );
     const rpcUrl: string = needle.rpcUrl;
     const client: string = needle.client;
-    const discardStatus = await discardProposal(
-      rpcUrl,
-      client,
-      props.config.algorithm,
-      e[0]
-    );
-    if (discardStatus === 200) {
+   
+    const discardStatus = await axios({
+      method: "POST",
+      url: "/api/validatorsDiscardProposal",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        rpcUrl: rpcUrl,
+        client: client,
+        algorithm: props.config.algorithm,
+        address: e[0]
+      })
+    });
+    console.log(discardStatus);
+    if (discardStatus.status === 200) {
       console.log("Address discarded: " + e);
     }
     setButtonLoading({ [index]: false });
