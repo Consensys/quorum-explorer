@@ -15,6 +15,7 @@ interface IProps {
 }
 
 export default function ExplorerBlockCard({ block }: IProps) {
+  console.log(block);
   return (
     <>
       <Flex

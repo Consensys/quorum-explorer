@@ -27,7 +27,7 @@ interface IProps {
 export default function ValidatorsPending(props: IProps) {
   const [buttonLoading, setButtonLoading] = useState<buttonState>({});
   const handleClick = async (e: any, index: number) => {
-    console.log(e);
+    // console.log(e);
     setButtonLoading({ [index]: true });
     await new Promise((r) => setTimeout(r, 1000));
     const needle: QuorumNode = getDetailsByNodeName(
@@ -50,7 +50,7 @@ export default function ValidatorsPending(props: IProps) {
         address: e[0]
       })
     });
-    console.log(discardStatus);
+    // console.log(discardStatus);
     if (discardStatus.status === 200) {
       console.log("Address discarded: " + e);
     }

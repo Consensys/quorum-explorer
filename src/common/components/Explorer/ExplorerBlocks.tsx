@@ -34,7 +34,6 @@ export default function ExplorerBlocks(props: IProps) {
 
   const onChange = (e: any) => {
     setBlockSearch(e.target.value);
-    // console.log(blockSearch);
   };
 
   const onSubmit = async (e: any) => {
@@ -51,7 +50,6 @@ export default function ExplorerBlocks(props: IProps) {
       })
     });
     var block : QuorumBlock = res.data as QuorumBlock;
-    // console.log(block);
     toastIdRef.current = toast({
       position: "top-right",
       isClosable: true,

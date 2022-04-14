@@ -6,7 +6,7 @@ import PageHeader from "../common/components/Misc/PageHeader";
 import { QuorumBlock, QuorumTxn } from "../common/types/Explorer";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
-import { refreshFrequency } from "../common/lib/common"
+import { refresh5s } from "../common/lib/common"
 import {
   updateBlockArray,
   updateTxnArray,
@@ -72,11 +72,11 @@ export default function Explorer(props: IProps) {
   );
 
   useEffect(() => {
-    console.log("component rendered to screen");
     nodeInfoHandler(explorer.selectedNode);
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(explorer.selectedNode);
-    }, refreshFrequency);
+      console.log("explorer > called for new info...");
+    }, refresh5s);
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps

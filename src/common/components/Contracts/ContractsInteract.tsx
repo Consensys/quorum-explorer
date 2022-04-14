@@ -100,7 +100,7 @@ export default function ContractsInteract(props: IProps) {
         }),
       })
         .then((result) => {
-          console.log(result);
+          // console.log(result);
           if (result.data === null || result.data === "") {
             setReadValue("-");
             props.closeAllToasts();
@@ -179,7 +179,7 @@ export default function ContractsInteract(props: IProps) {
         }),
       })
         .then((result) => {
-          console.log(result);
+          // console.log(result);
           props.closeAllToasts();
           props.reuseToast({
             title: "Success!",

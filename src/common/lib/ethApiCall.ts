@@ -18,5 +18,3 @@ export async function ethApiCall(
     headers: { 'Content-Type': 'application/json' }
   })
 }
-
-export const refreshFrequency: number = 5000;

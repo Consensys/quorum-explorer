@@ -10,34 +10,39 @@ export default async function handler(
   const client = req.body.client; 
   const algorithm = req.body.algorithm;
   const rpcUrl = req.body.rpcUrl;
-  const address = req.body.address;
-  const vote : Boolean = req.body.vote; // true to vote in, false to vote out
+  let status = { "error": 1, "validators": [] }
+  const pendingVotes: any = [];
   const methodDict: Clients = {
     goquorum: {
-      qbft: "istanbul_propose",
-      ibft: "istanbul_propose",
-      raft: "raft_addPeer",
+      qbft: "istanbul_candidates",
+      ibft: "istanbul_candidates",
+      raft: "", // No pending should go through basically instantly
     },
     besu: {
+      qbft: "qbft_getPendingVotes",
+      ibft: "ibft_getPendingVotes",
       clique: "clique_proposals",
-      ibft: "ibft_proposeValidatorVote",
-      qbft: "qbft_proposeValidatorVote",
     },
   };
+
   try {
-    const res = await ethApiCall(
+    const res = await await ethApiCall(
       rpcUrl,
       methodDict[client as keyof Clients][
         algorithm as keyof ConsensusAlgorithms
-      ]!,
-      [address, vote]
+      ]!
     );
-    console.log(res);
+    const listOfCandidates = res.data.result;
+    if (Object.keys(listOfCandidates).length !== 0) {
+      Object.entries(listOfCandidates).map((values) => pendingVotes.push(values));
+    }
+    status = { "error": res.status, "validators": pendingVotes }
   } catch (e) {
     console.error(e);
     console.error("Node is unreachable. Ensure ports are open and client is running!" );
-    res.status(500).json({});
   } finally {
-    res.status(200).json({});
+    res.status(200).json(status);
   }
 }
+
+

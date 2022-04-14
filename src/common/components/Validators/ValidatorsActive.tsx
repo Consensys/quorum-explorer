@@ -25,7 +25,7 @@ interface IProps {
 export default function ValidatorsActive(props: IProps) {
   const [buttonLoading, setButtonLoading] = useState<buttonState>({});
   const handleClick = async (e: any, index: number) => {
-    console.log(e);
+    // console.log(e);
     setButtonLoading({ [index]: true });
     await new Promise((r) => setTimeout(r, 1000));
     const needle: QuorumNode = getDetailsByNodeName(
@@ -46,7 +46,7 @@ export default function ValidatorsActive(props: IProps) {
         client: client,
         algorithm: props.config.algorithm,
         address: e,
-        vote: "false"
+        vote: false
 
       })
     });

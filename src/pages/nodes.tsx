@@ -15,7 +15,7 @@ import {
 import { QuorumStatCard } from "../common/types/Nodes";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
-import { refreshFrequency } from "../common/lib/common"
+import { refresh5s } from "../common/lib/common"
 import axios from "axios";
 
 interface IState {
@@ -134,11 +134,11 @@ export default function Nodes(props: IProps) {
   );
 
   useEffect(() => {
-    console.log("component rendered to screen");
     nodeInfoHandler(node.selectedNode);
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(node.selectedNode);
-    }, refreshFrequency);
+      console.log("nodes > called for new info...");
+    }, refresh5s);
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps

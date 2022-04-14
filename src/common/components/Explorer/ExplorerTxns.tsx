@@ -34,7 +34,6 @@ export default function ExplorerTxns({ txns, url }: IProps) {
 
   const onChange = (e: any) => {
     setTxnSearch(e.target.value);
-    // console.log(txnSearch);
   };
 
   const onSubmit = async (e: any) => {
@@ -51,7 +50,6 @@ export default function ExplorerTxns({ txns, url }: IProps) {
       })
     })
     var txn : QuorumTxn = res.data as QuorumTxn;
-    // console.log(txn);
     toastIdRef.current = toast({
       position: "top-right",
       isClosable: true,

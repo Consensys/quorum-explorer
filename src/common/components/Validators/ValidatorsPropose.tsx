@@ -31,7 +31,7 @@ export default function ValidatorsPropose(props: IProps) {
 
   const handleClick = async (e: any) => {
     e.preventDefault();
-    console.log(e);
+    // console.log(e);
     setButtonLoading(true);
     await new Promise((r) => setTimeout(r, 1000));
     const needle: QuorumNode = getDetailsByNodeName(
@@ -41,7 +41,7 @@ export default function ValidatorsPropose(props: IProps) {
     const rpcUrl: string = needle.rpcUrl;
     const client: string = needle.client;
 
-    const removeValidator = await axios({
+    const addValidator = await axios({
       method: "POST",
       url: "/api/validatorsPropose",
       headers: {
@@ -52,13 +52,13 @@ export default function ValidatorsPropose(props: IProps) {
         client: client,
         algorithm: props.config.algorithm,
         address: propose.address_input,
-        vote: "true"
+        vote: true
 
       })
     });
-    console.log(removeValidator);
-    if (removeValidator.status === 200) {
-      console.log("Successful proposed: " + propose.address_input);
+    // console.log(addValidator);
+    if (addValidator.status === 200) {
+      console.log("Successfully proposed: " + propose.address_input);
     }
     setButtonLoading(false);
   };
