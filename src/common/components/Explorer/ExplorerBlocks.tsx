@@ -41,7 +41,7 @@ export default function ExplorerBlocks(props: IProps) {
     e.preventDefault();
     const res = await axios({
       method: "POST",
-      url: "/api/getBlockByNumber",
+      url: "/api/blockGetByNumber",
       headers: {
         "Content-Type": "application/json",
       },

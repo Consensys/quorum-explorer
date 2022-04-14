@@ -1,21 +1,23 @@
-
-import { ethApiCall } from './common';
-import { QuorumWallet } from '../types/Wallets';
+import type { NextApiRequest, NextApiResponse } from "next";
+import { ethApiCall } from "../../common/lib/common";
+import { QuorumWallet } from '../../common/types/Wallets';
 import Web3 from 'web3';
 import { SignedTransaction, TransactionConfig } from 'web3-core';
 
-export async function getAccountBalance(url: string, account: string) {
-  const balanceInfo = await ethApiCall(url, 'eth_getBalance', [account, 'latest'])
-  const QuorumWallet = {"account": account, "balance": balanceInfo.data.result}
-  return QuorumWallet;
-}
-
-export async function transferEth(url:string, privateKeyFrom:string, accountTo:string, amount:string) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  console.log(req.body)
+  const amount = req.body.amount; 
+  const accountTo = req.body.accountTo;
+  const privateKeyFrom = req.body.privateKeyFrom; 
+  const rpcUrl = req.body.rpcUrl;
   let status = { "error": 1, "txHash":"", "txReceipt":{} }
   try {
-    const web3 = new Web3(url);
+    const web3 = new Web3(rpcUrl);
     const accountFrom = web3.eth.accounts.privateKeyToAccount(privateKeyFrom);
-    var accountFromBalance = web3.utils.fromWei(await web3.eth.getBalance(accountFrom.address));
+    // var accountFromBalance = web3.utils.fromWei(await web3.eth.getBalance(accountFrom.address));
     console.log("Creating transaction options...");
     const rawTxOptions :  TransactionConfig = {
       nonce: await web3.eth.getTransactionCount(accountFrom.address),
@@ -33,8 +35,9 @@ export async function transferEth(url:string, privateKeyFrom:string, accountTo:s
     status = { "error": 0, "txHash": receiptTx.transactionHash, "txReceipt": receiptTx }
   } catch (e) {
     console.error(e);
+    console.error("Node is unreachable. Ensure ports are open and client is running!" );
   } finally {
-    return status;
+    res.status(200).json(status);
   }
-
 }
+

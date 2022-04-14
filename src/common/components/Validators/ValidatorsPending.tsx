@@ -12,8 +12,8 @@ import {
 import { useState } from "react";
 import { buttonState } from "../../types/Validator";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
-import { discardProposal } from "../../api/validators";
-import { getDetailsByNodeName } from "../../api/quorumConfig";
+import { discardProposal } from "../../lib/validators";
+import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import { motion } from "framer-motion";
 
 const MotionBox = motion(Box);

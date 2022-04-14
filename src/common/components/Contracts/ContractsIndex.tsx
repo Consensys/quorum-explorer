@@ -50,7 +50,7 @@ import {
   getDetailsByNodeName,
   getPrivateKey,
   getMemberList,
-} from "../../api/quorumConfig";
+} from "../../lib/quorumConfig";
 import { Select as MultiSelect } from "chakra-react-select";
 import ContractsInteract from "./ContractsInteract";
 
@@ -120,7 +120,7 @@ export default function ContractsIndex(props: IProps) {
     const fetchData = async () => {
       const returnRes = await axios({
         method: "POST",
-        url: "/api/getTesseraKeys",
+        url: "/api/tesseraGetKeys",
         headers: {
           "Content-Type": "application/json",
         },

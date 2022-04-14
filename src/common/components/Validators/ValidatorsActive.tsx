@@ -10,8 +10,8 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
-import { proposeValidator } from "../../api/validators";
-import { getDetailsByNodeName } from "../../api/quorumConfig";
+import { proposeValidator } from "../../lib/validators";
+import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import { buttonState } from "../../types/Validator";
 import { motion } from "framer-motion";
 

@@ -9,8 +9,8 @@ import ValidatorsAbout from "../common/components/Validators/ValidatorAbout";
 import {
   getCurrentValidators,
   getPendingVotes,
-} from "../common/api/validators";
-import { getDetailsByNodeName } from "../common/api/quorumConfig";
+} from "../common/lib/validators";
+import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import axios from "axios";
 
 interface IState {

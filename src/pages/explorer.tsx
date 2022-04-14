@@ -5,11 +5,11 @@ import ExplorerTxns from "../common/components/Explorer/ExplorerTxns";
 import PageHeader from "../common/components/Misc/PageHeader";
 import { QuorumBlock, QuorumTxn } from "../common/types/Explorer";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
-import { getDetailsByNodeName } from "../common/api/quorumConfig";
+import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import {
   updateBlockArray,
   updateTxnArray,
-} from "../common/api/explorer";
+} from "../common/lib/explorer";
 import axios from "axios";
 
 interface IState {
@@ -38,7 +38,7 @@ export default function Explorer(props: IProps) {
       const needle: QuorumNode = getDetailsByNodeName(props.config, name);
       const res = await axios({
         method: "POST",
-        url: "/api/getBlockByNumber",
+        url: "/api/blockGetByNumber",
         headers: {
           "Content-Type": "application/json",
         },

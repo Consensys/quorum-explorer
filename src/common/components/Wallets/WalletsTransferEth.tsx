@@ -11,8 +11,8 @@ import {
   Input,
   Button,
 } from "@chakra-ui/react";
-import { getDetailsByNodeName } from "../../api/quorumConfig";
-import { transferEth, getAccountBalance } from "../../api/wallets";
+import { getDetailsByNodeName } from "../../lib/quorumConfig";
+import axios from "axios";
 import { motion } from "framer-motion";
 const MotionBox = motion(Box);
 
@@ -48,22 +48,34 @@ export default function WalletsTransferEth(props: IProps) {
   const handleTransfer = async (e: any) => {
     e.preventDefault();
     setButtonLoading(true);
-    const tx = await transferEth(
-      needle.rpcUrl,
-      privateKeyFrom,
-      accountTo,
-      amount
-    );
-    console.log(tx);
-
-    const wallet: QuorumWallet = await getAccountBalance(
-      needle.rpcUrl,
-      accountTo
-    );
-    console.log(wallet);
+    const ethRes = await axios({
+      method: "POST",
+      url: "/api/walletTransferEth",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        rpcUrl: needle.rpcUrl,
+        privateKeyFrom: privateKeyFrom,
+        accountTo: accountTo,
+        amount: amount
+      })
+    })
+    const walletRes = await axios({
+      method: "POST",
+      url: "/api/walletGetBalance",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        rpcUrl: needle.rpcUrl,
+        account: accountTo,
+      })
+    })
+    var wallet : QuorumWallet = walletRes.data as QuorumWallet;
     toast({
       title: "Eth Transfer",
-      description: `The eth transfer was successul! Transaction hash: ${tx.txHash}. Account ${wallet.account} has an updated balance of ${wallet.balance} Wei`,
+      description: `The eth transfer was successul! Transaction hash: ${ethRes.data.txHash}. Account ${wallet.account} has an updated balance of ${wallet.balance} Wei`,
       status: "success",
       duration: 5000,
       position: "bottom",

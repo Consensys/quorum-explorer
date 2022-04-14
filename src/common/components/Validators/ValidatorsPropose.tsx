@@ -9,8 +9,8 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
-import { proposeValidator } from "../../api/validators";
-import { getDetailsByNodeName } from "../../api/quorumConfig";
+import { proposeValidator } from "../../lib/validators";
+import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import { motion } from "framer-motion";
 const MotionBox = motion(Box);
 

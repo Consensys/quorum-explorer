@@ -14,7 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { QuorumStatCard } from "../common/types/Nodes";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
-import { getDetailsByNodeName } from "../common/api/quorumConfig";
+import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import axios from "axios";
 
 interface IState {

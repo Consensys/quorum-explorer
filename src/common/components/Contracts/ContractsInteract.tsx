@@ -23,7 +23,7 @@ import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 //@ts-ignore
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract } from "../../types/Contracts";
-import { getDetailsByNodeName } from "../../api/quorumConfig";
+import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
