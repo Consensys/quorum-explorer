@@ -23,7 +23,7 @@ import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 //@ts-ignore
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract } from "../../types/Contracts";
-import { getDetailsByNodeName } from "../../api/quorumConfig";
+import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -100,7 +100,7 @@ export default function ContractsInteract(props: IProps) {
         }),
       })
         .then((result) => {
-          console.log(result);
+          // console.log(result);
           if (result.data === null || result.data === "") {
             setReadValue("-");
             props.closeAllToasts();
@@ -179,7 +179,7 @@ export default function ContractsInteract(props: IProps) {
         }),
       })
         .then((result) => {
-          console.log(result);
+          // console.log(result);
           props.closeAllToasts();
           props.reuseToast({
             title: "Success!",

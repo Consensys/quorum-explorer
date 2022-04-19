@@ -9,15 +9,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(
-    req.body.client,
-    req.body.rpcUrl,
-    req.body.privateUrl,
-    req.body.accountPrivateKey,
-    req.body.privateForList,
-    req.body.compiledContract,
-    req.body.deployArgs
-  );
+  console.log(req.body);
   await deployContract(
     req.body.client,
     req.body.rpcUrl,

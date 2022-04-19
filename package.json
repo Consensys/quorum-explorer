@@ -1,6 +1,6 @@
 {
   "name": "quorum-explorer-next",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='-r next-logger' next dev -p 25000",

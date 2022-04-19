@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../../types/QuorumConfig";
-import { getNodeKeys } from "../../api/quorumConfig";
+import { getNodeKeys } from "../../lib/quorumConfig";
 import { motion } from "framer-motion";
 const MotionContainer = motion(Container);
 

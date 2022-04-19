@@ -1,16 +1,17 @@
+import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
-import { QuorumNode, QuorumConfig } from "../types/QuorumConfig";
-import { getMemberList } from "./quorumConfig";
+import { QuorumNode, QuorumConfig } from "../../common/types/QuorumConfig";
+import { getMemberList } from "../../common/lib/quorumConfig";
 
-export type allKeys = {
-  keys: singleKey[];
+type KeysList = {
+  keys: SingleKey[];
 };
 
-export type singleKey = {
+type SingleKey = {
   key: string;
 };
 
-export async function getTesseraKeys(config: QuorumConfig) {
+async function getTesseraKeys(config: QuorumConfig) {
   // get self Tessera key with /keys
   // get all Tessera keys on network with /partyinfo/keys
   // either remove self key from output or give indicator that it is current selection
@@ -21,7 +22,7 @@ export async function getTesseraKeys(config: QuorumConfig) {
     const getAllKeys = x.privateTxUrl + "/partyinfo/keys";
 
     await axios
-      .get<allKeys>(selfKey, {
+      .get<KeysList>(selfKey, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -36,4 +37,12 @@ export async function getTesseraKeys(config: QuorumConfig) {
       });
   }
   return final;
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const result = await getTesseraKeys(req.body.config);
+  res.status(200).json(result);
 }

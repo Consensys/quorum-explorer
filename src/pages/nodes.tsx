@@ -14,8 +14,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { QuorumStatCard } from "../common/types/Nodes";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
-import { getDetailsByNodeName } from "../common/api/quorumConfig";
-import { updateNodeInfo } from "../common/api/nodes";
+import { getDetailsByNodeName } from "../common/lib/quorumConfig";
+import { refresh5s } from "../common/lib/common"
 import axios from "axios";
 
 interface IState {
@@ -39,7 +39,6 @@ interface IProps {
 
 export default function Nodes(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refreshFrequency: number = 5000;
   const [node, setNode] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
     client: props.config.nodes[0].client,
@@ -102,21 +101,32 @@ export default function Nodes(props: IProps) {
   const nodeInfoHandler = useCallback(
     async (name: string) => {
       const needle: QuorumNode = getDetailsByNodeName(props.config, name);
-      const rpcUrl: string = needle.rpcUrl;
-      const res = await updateNodeInfo(rpcUrl, node.client);
-      setNode({
-        selectedNode: name,
-        client: needle.client,
-        nodeId: res.nodeId,
-        nodeName: res.nodeName,
-        enode: res.enode,
-        ip: res.ip,
-        statusText: res.statusText,
-        rpcUrl: rpcUrl,
-        blocks: res.blocks,
-        peers: res.peers,
-        pendingTxns: res.pendingTxns,
-        queuedTxns: res.queuedTxns,
+      const res = await axios({
+        method: "POST",
+        url: "/api/nodeGetDetails",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          client: needle.client,
+          rpcUrl: needle.rpcUrl
+        })
+      })
+      .then((res) => {
+        setNode({
+          selectedNode: name,
+          client: needle.client,
+          nodeId: res.data.nodeId,
+          nodeName: res.data.nodeName,
+          enode: res.data.enode,
+          ip: res.data.ip,
+          statusText: res.statusText,
+          rpcUrl: needle.rpcUrl,
+          blocks: res.data.blocks,
+          peers: res.data.peers,
+          pendingTxns: res.data.pendingTxns,
+          queuedTxns: res.data.queuedTxns,
+        });
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,11 +134,11 @@ export default function Nodes(props: IProps) {
   );
 
   useEffect(() => {
-    console.log("component rendered to screen");
     nodeInfoHandler(node.selectedNode);
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(node.selectedNode);
-    }, refreshFrequency);
+      console.log("nodes > called for new info...");
+    }, refresh5s);
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -163,7 +173,7 @@ export default function Nodes(props: IProps) {
 }
 
 Nodes.getInitialProps = async () => {
-  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/getConfig`);
+  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/configGet`);
   return { config: res.data };
 };
 

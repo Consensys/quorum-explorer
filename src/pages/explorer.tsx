@@ -5,12 +5,12 @@ import ExplorerTxns from "../common/components/Explorer/ExplorerTxns";
 import PageHeader from "../common/components/Misc/PageHeader";
 import { QuorumBlock, QuorumTxn } from "../common/types/Explorer";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
-import { getDetailsByNodeName } from "../common/api/quorumConfig";
+import { getDetailsByNodeName } from "../common/lib/quorumConfig";
+import { refresh5s } from "../common/lib/common"
 import {
-  getBlockByNumber,
   updateBlockArray,
   updateTxnArray,
-} from "../common/api/explorer";
+} from "../common/lib/explorer";
 import axios from "axios";
 
 interface IState {
@@ -25,7 +25,6 @@ interface IProps {
 
 export default function Explorer(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refreshFrequency: number = 5000;
   const [explorer, setExplorer] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
     blocks: [],
@@ -37,10 +36,20 @@ export default function Explorer(props: IProps) {
   const nodeInfoHandler = useCallback(
     async (name: string) => {
       const needle: QuorumNode = getDetailsByNodeName(props.config, name);
-      const rpcUrl: string = needle.rpcUrl;
-      const quorumBlock = await getBlockByNumber(rpcUrl, "latest");
+      const res = await axios({
+        method: "POST",
+        url: "/api/blockGetByNumber",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          rpcUrl: needle.rpcUrl,
+          blockNumber: "latest"
+        })
+      })
+      var quorumBlock : QuorumBlock = res.data as QuorumBlock;
       var tmpTxns: QuorumTxn[] = explorer.transactions;
-      if (quorumBlock.transactions.length > 0) {
+      if (res.data.transactions.length > 0) {
         tmpTxns = updateTxnArray(
           explorer.transactions,
           quorumBlock.transactions,
@@ -63,16 +72,16 @@ export default function Explorer(props: IProps) {
   );
 
   useEffect(() => {
-    console.log("component rendered to screen");
     nodeInfoHandler(explorer.selectedNode);
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(explorer.selectedNode);
-    }, refreshFrequency);
+      console.log("explorer > called for new info...");
+    }, refresh5s);
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [explorer.selectedNode]);
-
+  
   const handleSelectNode = (e: any) => {
     clearInterval(intervalRef.current as NodeJS.Timeout);
     setExplorer({ ...explorer, selectedNode: e.target.value });
@@ -101,6 +110,6 @@ export default function Explorer(props: IProps) {
 }
 
 Explorer.getInitialProps = async () => {
-  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/getConfig`);
+  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/configGet`);
   return { config: res.data };
 };

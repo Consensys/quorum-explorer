@@ -39,6 +39,6 @@ export default function Contracts(props: IProps) {
 }
 
 Contracts.getInitialProps = async () => {
-  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/getConfig`);
+  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/configGet`);
   return { config: res.data };
 };

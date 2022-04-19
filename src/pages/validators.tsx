@@ -1,17 +1,14 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { Divider, Container, SimpleGrid } from "@chakra-ui/react";
 import PageHeader from "../common/components/Misc/PageHeader";
+import axios from "axios";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import ValidatorsActive from "../common/components/Validators/ValidatorsActive";
 import ValidatorsPending from "../common/components/Validators/ValidatorsPending";
 import ValidatorsPropose from "../common/components/Validators/ValidatorsPropose";
 import ValidatorsAbout from "../common/components/Validators/ValidatorAbout";
-import {
-  getCurrentValidators,
-  getPendingVotes,
-} from "../common/api/validators";
-import { getDetailsByNodeName } from "../common/api/quorumConfig";
-import axios from "axios";
+import { getDetailsByNodeName } from "../common/lib/quorumConfig";
+import { refresh3s } from "../common/lib/common"
 
 interface IState {
   selectedNode: string;
@@ -26,7 +23,6 @@ interface IProps {
 
 export default function Validators(props: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refreshFrequency: number = 1000;
   const [validators, setValidators] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
     rpcUrl: props.config.nodes[0].rpcUrl,
@@ -36,31 +32,52 @@ export default function Validators(props: IProps) {
 
   const nodeInfoHandler = useCallback(async (node: string) => {
     const needle: QuorumNode = getDetailsByNodeName(props.config, node);
-    const rpcUrl: string = needle.rpcUrl;
-    const client: string = needle.client;
 
     return Promise.all([
-      getCurrentValidators(rpcUrl, client, props.config.algorithm),
-      getPendingVotes(rpcUrl, client, props.config.algorithm),
+      
+      axios({
+        method: "POST",
+        url: "/api/validatorsGetCurrent",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          rpcUrl: needle.rpcUrl,
+          client: needle.client,
+          algorithm: props.config.algorithm
+        })
+      }),
+
+      axios({
+        method: "POST",
+        url: "/api/validatorsGetPendingVotes",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          rpcUrl: needle.rpcUrl,
+          client: needle.client,
+          algorithm: props.config.algorithm
+        })
+      })
+
     ]).then(([currentVal, pendingVal]) => {
       setValidators({
         selectedNode: node,
-        rpcUrl: rpcUrl,
-        minersList: currentVal,
-        pendingList: pendingVal,
+        rpcUrl: needle.rpcUrl,
+        minersList: currentVal.data.validators,
+        pendingList: pendingVal.data.validators,
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    console.log("rendering...");
     // nodeInfoHandler(validators.selectedNode);
-
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(validators.selectedNode);
-      console.log("called for new info...");
-    }, refreshFrequency);
+      console.log("validators > called for new info...");
+    }, refresh3s);
 
     return () => {
       clearInterval(intervalRef.current as NodeJS.Timeout);
@@ -70,7 +87,6 @@ export default function Validators(props: IProps) {
 
   const handleSelectNode = (e: any) => {
     clearInterval(intervalRef.current as NodeJS.Timeout);
-    console.log("cleaned up: " + intervalRef.current);
     setValidators({ ...validators, selectedNode: e.target.value });
   };
 
@@ -106,6 +122,6 @@ export default function Validators(props: IProps) {
 }
 
 Validators.getInitialProps = async () => {
-  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/getConfig`);
+  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/configGet`);
   return { config: res.data };
 };

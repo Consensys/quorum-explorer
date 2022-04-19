@@ -18,4 +18,3 @@ export async function ethApiCall(
     headers: { 'Content-Type': 'application/json' }
   })
 }
-

@@ -1,8 +1,14 @@
-import { ethApiCall } from "./common";
-import { NodeDetails } from "../types/api/responses";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { NodeDetails } from "../../common/types/api/responses";
+import { ethApiCall } from "../../common/lib/ethApiCall";
 
-export async function updateNodeInfo(url: string, client: string) {
-  const userClient = client; // hack not sure why getting client directly breaks
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  console.log(req.body)
+  const userClient = req.body.client; 
+  const rpcUrl = req.body.rpcUrl;
   let nodeDetails: NodeDetails = {
     statusText: "error",
     nodeId: "",
@@ -16,11 +22,11 @@ export async function updateNodeInfo(url: string, client: string) {
   };
 
   try {
-    const adminNodeInfo = await ethApiCall(url, "admin_nodeInfo");
-    const ethBlockNumber = await ethApiCall(url, "eth_blockNumber");
-    const netPeerCount = await ethApiCall(url, "net_peerCount");
+    const adminNodeInfo = await ethApiCall(rpcUrl, "admin_nodeInfo");
+    const ethBlockNumber = await ethApiCall(rpcUrl, "eth_blockNumber");
+    const netPeerCount = await ethApiCall(rpcUrl, "net_peerCount");
     const txPoolStatus = await ethApiCall(
-      url,
+      rpcUrl,
       userClient === "goquorum" ? "txpool_status" : "txpool_besuTransactions"
     );
     nodeDetails["statusText"] = adminNodeInfo.statusText;
@@ -50,6 +56,6 @@ export async function updateNodeInfo(url: string, client: string) {
     console.error("Node is unreachable. Ensure ports are open and client is running!" );
     nodeDetails["statusText"] = "error";
   } finally {
-    return nodeDetails;
+    res.status(200).json(nodeDetails);
   }
 }

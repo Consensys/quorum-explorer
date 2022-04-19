@@ -8,13 +8,14 @@ import {
 } from "@chakra-ui/react";
 import ExplorerBlockDetails from "./ExplorerBlockDetails";
 import { QuorumBlock } from "../../types/Explorer";
-import { getSecsAgo, abbreviateValidator } from "../../api/explorer";
+import { getSecsAgo, abbreviateValidator } from "../../lib/explorer";
 
 interface IProps {
   block: QuorumBlock;
 }
 
 export default function ExplorerBlockCard({ block }: IProps) {
+  console.log(block);
   return (
     <>
       <Flex

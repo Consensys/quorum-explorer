@@ -9,8 +9,8 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
-import { proposeValidator } from "../../api/validators";
-import { getDetailsByNodeName } from "../../api/quorumConfig";
+import axios from "axios";
+import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import { motion } from "framer-motion";
 const MotionBox = motion(Box);
 
@@ -31,7 +31,7 @@ export default function ValidatorsPropose(props: IProps) {
 
   const handleClick = async (e: any) => {
     e.preventDefault();
-    console.log(e);
+    // console.log(e);
     setButtonLoading(true);
     await new Promise((r) => setTimeout(r, 1000));
     const needle: QuorumNode = getDetailsByNodeName(
@@ -40,15 +40,25 @@ export default function ValidatorsPropose(props: IProps) {
     );
     const rpcUrl: string = needle.rpcUrl;
     const client: string = needle.client;
-    const removeValidator = await proposeValidator(
-      rpcUrl,
-      client,
-      props.config.algorithm,
-      propose.address_input,
-      true
-    );
-    if (removeValidator === 200) {
-      console.log("Successful proposed: " + propose.address_input);
+
+    const addValidator = await axios({
+      method: "POST",
+      url: "/api/validatorsPropose",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        rpcUrl: rpcUrl,
+        client: client,
+        algorithm: props.config.algorithm,
+        address: propose.address_input,
+        vote: true
+
+      })
+    });
+    // console.log(addValidator);
+    if (addValidator.status === 200) {
+      console.log("Successfully proposed: " + propose.address_input);
     }
     setButtonLoading(false);
   };
