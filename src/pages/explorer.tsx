@@ -6,11 +6,8 @@ import PageHeader from "../common/components/Misc/PageHeader";
 import { QuorumBlock, QuorumTxn } from "../common/types/Explorer";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
-import { refresh5s } from "../common/lib/common"
-import {
-  updateBlockArray,
-  updateTxnArray,
-} from "../common/lib/explorer";
+import { refresh5s } from "../common/lib/common";
+import { updateBlockArray, updateTxnArray } from "../common/lib/explorer";
 import axios from "axios";
 
 interface IState {
@@ -24,6 +21,7 @@ interface IProps {
 }
 
 export default function Explorer(props: IProps) {
+  const controller = new AbortController();
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [explorer, setExplorer] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
@@ -44,10 +42,11 @@ export default function Explorer(props: IProps) {
         },
         data: JSON.stringify({
           rpcUrl: needle.rpcUrl,
-          blockNumber: "latest"
-        })
-      })
-      var quorumBlock : QuorumBlock = res.data as QuorumBlock;
+          blockNumber: "latest",
+        }),
+        signal: controller.signal,
+      });
+      var quorumBlock: QuorumBlock = res.data as QuorumBlock;
       var tmpTxns: QuorumTxn[] = explorer.transactions;
       if (res.data.transactions.length > 0) {
         tmpTxns = updateTxnArray(
@@ -81,8 +80,9 @@ export default function Explorer(props: IProps) {
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [explorer.selectedNode]);
-  
+
   const handleSelectNode = (e: any) => {
+    controller.abort();
     clearInterval(intervalRef.current as NodeJS.Timeout);
     setExplorer({ ...explorer, selectedNode: e.target.value });
   };
