@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FormControl,
   FormLabel,
@@ -81,7 +81,11 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
-    if (props.contractAddress.length > 0) {
+    if (
+      props.contractAddress.length > 0 &&
+      getSetTessera !== undefined &&
+      getSetTessera.length > 0
+    ) {
       await axios({
         method: "POST",
         url: "/api/contractRead",
@@ -158,7 +162,22 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
-    if (props.contractAddress.length > 0) {
+    if (getSetTessera === undefined || getSetTessera.length < 1) {
+      props.closeAllToasts();
+      props.reuseToast({
+        title: "Notice",
+        description: `No Tessera recipients selected`,
+        status: "warning",
+        duration: 5000,
+        position: "bottom",
+        isClosable: true,
+      });
+    }
+    if (
+      props.contractAddress.length > 0 &&
+      getSetTessera !== undefined &&
+      getSetTessera.length > 0
+    ) {
       const needle = getDetailsByNodeName(props.config, props.selectedNode);
       await axios({
         method: "POST",
@@ -266,6 +285,8 @@ export default function ContractsInteract(props: IProps) {
             closeMenuOnSelect={false}
             selectedOptionStyle="check"
             hideSelectedOptions={false}
+            // menuPortalTarget={document.body}
+            // styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
           />
           <Flex justifyContent="space-between" alignItems="center" m={1}>
             <FormLabel htmlFor="set" fontWeight="semibold" m={0} mr={5}>
@@ -301,7 +322,6 @@ export default function ContractsInteract(props: IProps) {
               </Button>
             </HStack>
           </Flex>
-
         </AccordionPanel>
       </AccordionItem>
     </>

@@ -8,7 +8,7 @@ import ValidatorsPending from "../common/components/Validators/ValidatorsPending
 import ValidatorsPropose from "../common/components/Validators/ValidatorsPropose";
 import ValidatorsAbout from "../common/components/Validators/ValidatorAbout";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
-import { refresh3s } from "../common/lib/common"
+import { refresh3s } from "../common/lib/common";
 
 interface IState {
   selectedNode: string;
@@ -22,6 +22,7 @@ interface IProps {
 }
 
 export default function Validators(props: IProps) {
+  const controller = new AbortController();
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [validators, setValidators] = useState<IState>({
     selectedNode: props.config.nodes[0].name,
@@ -34,7 +35,6 @@ export default function Validators(props: IProps) {
     const needle: QuorumNode = getDetailsByNodeName(props.config, node);
 
     return Promise.all([
-      
       axios({
         method: "POST",
         url: "/api/validatorsGetCurrent",
@@ -44,8 +44,9 @@ export default function Validators(props: IProps) {
         data: JSON.stringify({
           rpcUrl: needle.rpcUrl,
           client: needle.client,
-          algorithm: props.config.algorithm
-        })
+          algorithm: props.config.algorithm,
+        }),
+        signal: controller.signal,
       }),
 
       axios({
@@ -57,10 +58,9 @@ export default function Validators(props: IProps) {
         data: JSON.stringify({
           rpcUrl: needle.rpcUrl,
           client: needle.client,
-          algorithm: props.config.algorithm
-        })
-      })
-
+          algorithm: props.config.algorithm,
+        }),
+      }),
     ]).then(([currentVal, pendingVal]) => {
       setValidators({
         selectedNode: node,
@@ -73,7 +73,7 @@ export default function Validators(props: IProps) {
   }, []);
 
   useEffect(() => {
-    // nodeInfoHandler(validators.selectedNode);
+    nodeInfoHandler(validators.selectedNode);
     intervalRef.current = setInterval(() => {
       nodeInfoHandler(validators.selectedNode);
       console.log("validators > called for new info...");
@@ -86,6 +86,7 @@ export default function Validators(props: IProps) {
   }, [validators.selectedNode]);
 
   const handleSelectNode = (e: any) => {
+    controller.abort();
     clearInterval(intervalRef.current as NodeJS.Timeout);
     setValidators({ ...validators, selectedNode: e.target.value });
   };
