@@ -1,6 +1,4 @@
-
 # Quorum Explorer
-
 
 ## Table of Contents
 
@@ -8,10 +6,10 @@
 2. [Prerequisites](#prerequisites)
 3. [Usage](#usage)
 4. [Development](#development)
-4. [Troubleshooting](#troubleshooting)
-
+5. [Troubleshooting](#troubleshooting)
 
 ## Description
+
 This is a lightweight explorer that is designed to get you up and running really quickly to give you an overview of yout chain.
 It has not been designed for production use yet!
 
@@ -22,13 +20,13 @@ It has not been designed for production use yet!
 ## Usage
 
 1. Start your existing network using something like the [Quorum Dev Quickstart](https://www.npmjs.com/package/quorum-dev-quickstart)
-or equivalent
+   or equivalent
 
-2. Create a [config file](./src/Config/config.json) with the nodes you wish to monitor
+2. Create a [config file](./src/config/config.json) with the nodes you wish to monitor
 
-3. Start the application 
+3. Start the application
 
-``` bash
+```bash
 npm i
 # create an .env.local at the root of the project with the following in it (without the hashes)
 # QE_BACKEND_URL="http://localhost:25000"
@@ -37,13 +35,13 @@ npm run dev
 ```
 
 4. For a production build:
+
 ```bash
-npm i 
+npm i
 npm run lint
 npm run build
 npm run start
 ```
-
 
 ## Development
 
@@ -51,8 +49,8 @@ We welcome PRs for bugs or added functionality :) Please sign the CLA and submit
 
 If you raise an issue, please include steps for us to reproduce your issue so we can solve it faster.
 
-Handy links:
-------------
+## Handy links:
+
 [Fontawesome icons ](https://fontawesome.com/v5/cheatsheet/free/solid)
 
 ## Troubleshooting
@@ -65,10 +63,10 @@ NodeJS polyfills are not included in v5 of create-react-app. Full details can be
 [here](https://github.com/ChainSafe/web3.js#web3-and-create-react-app)
 
 To workaround this issue:
+
 1. Create your new react app with create-react-app
 2. Install [react-app-rewired](https://github.com/ChainSafe/web3.js#solution) and a few missing modules which should get your app working again.
-For reference, please see the [package.json](./package.json) of this project
-
+   For reference, please see the [package.json](./package.json) of this project
 
 ### 2. Solc doesn't compile on the frontend and requires a backend
 
