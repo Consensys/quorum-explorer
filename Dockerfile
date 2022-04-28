@@ -7,15 +7,15 @@ ENV QE_BACKEND_URL "http://localhost:25000"
 ENV PORT 25000
 EXPOSE 25000
 
-RUN mkdir -p /app
+# RUN mkdir -p /app
 WORKDIR /app
 
 # Installing dependencies
-COPY package*.json /app/
+COPY package*.json ./
 RUN npm install
 
 # Copying source files
-COPY . /app
+COPY . .
 
 RUN npm run build
 
