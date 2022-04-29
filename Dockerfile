@@ -1,7 +1,7 @@
 FROM node:16-alpine3.14
 
 ENV NODE_ENV production
-ENV QE_BASEPATH "/explorer"
+ENV NEXT_PUBLIC_QE_BASEPATH "/explorer"
 ENV QE_CONFIG_PATH "/app/config.json"
 ENV QE_BACKEND_URL "http://localhost:25000"
 ENV PORT 25000
