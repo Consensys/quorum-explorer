@@ -50,7 +50,7 @@ export default function WalletsTransferEth(props: IProps) {
     setButtonLoading(true);
     const ethRes = await axios({
       method: "POST",
-      url: `${process.env.QE_BASEPATH}/api/walletTransferEth`,
+      url: `/api/walletTransferEth`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -63,7 +63,7 @@ export default function WalletsTransferEth(props: IProps) {
     });
     const walletRes = await axios({
       method: "POST",
-      url: `${process.env.QE_BASEPATH}/api/walletGetBalance`,
+      url: `/api/walletGetBalance`,
       headers: {
         "Content-Type": "application/json",
       },

@@ -40,7 +40,7 @@ export default function ExplorerTxns({ txns, url }: IProps) {
     e.preventDefault();
     const res = await axios({
       method: "POST",
-      url: `${process.env.QE_BASEPATH}/api/txnGetByHash`,
+      url: `/api/txnGetByHash`,
       headers: {
         "Content-Type": "application/json",
       },

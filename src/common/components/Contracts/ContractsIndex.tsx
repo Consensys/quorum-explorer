@@ -120,7 +120,7 @@ export default function ContractsIndex(props: IProps) {
     const fetchData = async () => {
       const returnRes = await axios({
         method: "POST",
-        url: `${process.env.QE_BASEPATH}/api/tesseraGetKeys`,
+        url: `/api/tesseraGetKeys`,
         headers: {
           "Content-Type": "application/json",
         },
@@ -183,7 +183,7 @@ export default function ContractsIndex(props: IProps) {
 
     axios({
       method: "POST",
-      url: `${process.env.QE_BASEPATH}/api/contractCompile`,
+      url: `/api/contractCompile`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -287,7 +287,7 @@ export default function ContractsIndex(props: IProps) {
       const needle = getDetailsByNodeName(props.config, props.selectedNode);
       await axios({
         method: "POST",
-        url: `${process.env.QE_BASEPATH}/api/contractDeploy`,
+        url: `/api/contractDeploy`,
         headers: {
           "Content-Type": "application/json",
         },

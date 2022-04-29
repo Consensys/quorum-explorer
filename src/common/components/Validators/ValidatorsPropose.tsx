@@ -43,7 +43,7 @@ export default function ValidatorsPropose(props: IProps) {
 
     const addValidator = await axios({
       method: "POST",
-      url: `${process.env.QE_BASEPATH}/api/validatorsPropose`,
+      url: `/api/validatorsPropose`,
       headers: {
         "Content-Type": "application/json",
       },

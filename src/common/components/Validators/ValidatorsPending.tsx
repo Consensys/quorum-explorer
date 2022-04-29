@@ -39,7 +39,7 @@ export default function ValidatorsPending(props: IProps) {
 
     const discardStatus = await axios({
       method: "POST",
-      url: `${process.env.QE_BASEPATH}/api/validatorsDiscardProposal`,
+      url: `/api/validatorsDiscardProposal`,
       headers: {
         "Content-Type": "application/json",
       },

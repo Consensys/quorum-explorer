@@ -37,7 +37,7 @@ export default function ValidatorsActive(props: IProps) {
 
     const removeValidator = await axios({
       method: "POST",
-      url: `${process.env.QE_BASEPATH}/api/validatorsPropose`,
+      url: `/api/validatorsPropose`,
       headers: {
         "Content-Type": "application/json",
       },

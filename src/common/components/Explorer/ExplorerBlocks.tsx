@@ -40,7 +40,7 @@ export default function ExplorerBlocks(props: IProps) {
     e.preventDefault();
     const res = await axios({
       method: "POST",
-      url: `${process.env.QE_BASEPATH}/api/blockGetByNumber`,
+      url: `/api/blockGetByNumber`,
       headers: {
         "Content-Type": "application/json",
       },

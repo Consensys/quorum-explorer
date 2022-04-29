@@ -104,7 +104,7 @@ export default function Nodes({ config }: IProps) {
       const needle: QuorumNode = getDetailsByNodeName(config, name);
       const res = await axios({
         method: "POST",
-        url: `${process.env.QE_BASEPATH}/api/nodeGetDetails`,
+        url: `/api/nodeGetDetails`,
         headers: {
           "Content-Type": "application/json",
         },

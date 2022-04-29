@@ -88,7 +88,7 @@ export default function ContractsInteract(props: IProps) {
     ) {
       await axios({
         method: "POST",
-        url: `${process.env.QE_BASEPATH}/api/contractRead`,
+        url: `/api/contractRead`,
         headers: {
           "Content-Type": "application/json",
         },
@@ -181,7 +181,7 @@ export default function ContractsInteract(props: IProps) {
       const needle = getDetailsByNodeName(props.config, props.selectedNode);
       await axios({
         method: "POST",
-        url: `${process.env.QE_BASEPATH}/api/contractSet`,
+        url: `/api/contractSet`,
         headers: {
           "Content-Type": "application/json",
         },

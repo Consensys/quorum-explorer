@@ -38,7 +38,7 @@ export default function Explorer({ config }: IProps) {
       const needle: QuorumNode = getDetailsByNodeName(config, name);
       const res = await axios({
         method: "POST",
-        url: `${process.env.QE_BASEPATH}/api/blockGetByNumber`,
+        url: `/api/blockGetByNumber`,
         headers: {
           "Content-Type": "application/json",
         },
