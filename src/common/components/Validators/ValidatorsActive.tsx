@@ -37,7 +37,7 @@ export default function ValidatorsActive(props: IProps) {
 
     const removeValidator = await axios({
       method: "POST",
-      url: "/api/validatorsPropose",
+      url: `${process.env.QE_BASEPATH}/api/validatorsPropose`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -46,9 +46,8 @@ export default function ValidatorsActive(props: IProps) {
         client: client,
         algorithm: props.config.algorithm,
         address: e,
-        vote: false
-
-      })
+        vote: false,
+      }),
     });
     if (removeValidator.status === 200) {
       console.log("Proposal to remove initiated: " + e);

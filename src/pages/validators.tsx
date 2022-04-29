@@ -38,7 +38,7 @@ export default function Validators({ config }: IProps) {
     return Promise.all([
       axios({
         method: "POST",
-        url: "/api/validatorsGetCurrent",
+        url: `${process.env.QE_BASEPATH}/api/validatorsGetCurrent`,
         headers: {
           "Content-Type": "application/json",
         },
@@ -52,7 +52,7 @@ export default function Validators({ config }: IProps) {
 
       axios({
         method: "POST",
-        url: "/api/validatorsGetPendingVotes",
+        url: `${process.env.QE_BASEPATH}/api/validatorsGetPendingVotes`,
         headers: {
           "Content-Type": "application/json",
         },

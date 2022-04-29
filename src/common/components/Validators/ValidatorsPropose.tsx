@@ -43,7 +43,7 @@ export default function ValidatorsPropose(props: IProps) {
 
     const addValidator = await axios({
       method: "POST",
-      url: "/api/validatorsPropose",
+      url: `${process.env.QE_BASEPATH}/api/validatorsPropose`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -52,9 +52,8 @@ export default function ValidatorsPropose(props: IProps) {
         client: client,
         algorithm: props.config.algorithm,
         address: propose.address_input,
-        vote: true
-
-      })
+        vote: true,
+      }),
     });
     // console.log(addValidator);
     if (addValidator.status === 200) {

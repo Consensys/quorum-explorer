@@ -40,16 +40,16 @@ export default function ExplorerBlocks(props: IProps) {
     e.preventDefault();
     const res = await axios({
       method: "POST",
-      url: "/api/blockGetByNumber",
+      url: `${process.env.QE_BASEPATH}/api/blockGetByNumber`,
       headers: {
         "Content-Type": "application/json",
       },
       data: JSON.stringify({
         rpcUrl: props.url,
-        blockNumber: blockSearch
-      })
+        blockNumber: blockSearch,
+      }),
     });
-    var block : QuorumBlock = res.data as QuorumBlock;
+    var block: QuorumBlock = res.data as QuorumBlock;
     toastIdRef.current = toast({
       position: "top-right",
       isClosable: true,

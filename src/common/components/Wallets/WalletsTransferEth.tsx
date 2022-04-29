@@ -50,7 +50,7 @@ export default function WalletsTransferEth(props: IProps) {
     setButtonLoading(true);
     const ethRes = await axios({
       method: "POST",
-      url: "/api/walletTransferEth",
+      url: `${process.env.QE_BASEPATH}/api/walletTransferEth`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -58,21 +58,21 @@ export default function WalletsTransferEth(props: IProps) {
         rpcUrl: needle.rpcUrl,
         privateKeyFrom: privateKeyFrom,
         accountTo: accountTo,
-        amount: amount
-      })
-    })
+        amount: amount,
+      }),
+    });
     const walletRes = await axios({
       method: "POST",
-      url: "/api/walletGetBalance",
+      url: `${process.env.QE_BASEPATH}/api/walletGetBalance`,
       headers: {
         "Content-Type": "application/json",
       },
       data: JSON.stringify({
         rpcUrl: needle.rpcUrl,
         account: accountTo,
-      })
-    })
-    var wallet : QuorumWallet = walletRes.data as QuorumWallet;
+      }),
+    });
+    var wallet: QuorumWallet = walletRes.data as QuorumWallet;
     toast({
       title: "Eth Transfer",
       description: `The eth transfer was successul! Transaction hash: ${ethRes.data.txHash}. Account ${wallet.account} has an updated balance of ${wallet.balance} Wei`,

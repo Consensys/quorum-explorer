@@ -36,10 +36,10 @@ export default function ValidatorsPending(props: IProps) {
     );
     const rpcUrl: string = needle.rpcUrl;
     const client: string = needle.client;
-   
+
     const discardStatus = await axios({
       method: "POST",
-      url: "/api/validatorsDiscardProposal",
+      url: `${process.env.QE_BASEPATH}/api/validatorsDiscardProposal`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -47,8 +47,8 @@ export default function ValidatorsPending(props: IProps) {
         rpcUrl: rpcUrl,
         client: client,
         algorithm: props.config.algorithm,
-        address: e[0]
-      })
+        address: e[0],
+      }),
     });
     // console.log(discardStatus);
     if (discardStatus.status === 200) {

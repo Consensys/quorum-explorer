@@ -40,16 +40,16 @@ export default function ExplorerTxns({ txns, url }: IProps) {
     e.preventDefault();
     const res = await axios({
       method: "POST",
-      url: "/api/txnGetByHash",
+      url: `${process.env.QE_BASEPATH}/api/txnGetByHash`,
       headers: {
         "Content-Type": "application/json",
       },
       data: JSON.stringify({
         rpcUrl: url,
-        txnHash: txnSearch
-      })
-    })
-    var txn : QuorumTxn = res.data as QuorumTxn;
+        txnHash: txnSearch,
+      }),
+    });
+    var txn: QuorumTxn = res.data as QuorumTxn;
     toastIdRef.current = toast({
       position: "top-right",
       isClosable: true,
