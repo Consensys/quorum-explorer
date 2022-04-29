@@ -9,6 +9,7 @@ import ValidatorsPropose from "../common/components/Validators/ValidatorsPropose
 import ValidatorsAbout from "../common/components/Validators/ValidatorAbout";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import { refresh3s } from "../common/lib/common";
+import { configReader } from "../common/lib/getConfig";
 
 interface IState {
   selectedNode: string;
@@ -21,18 +22,18 @@ interface IProps {
   config: QuorumConfig;
 }
 
-export default function Validators(props: IProps) {
+export default function Validators({ config }: IProps) {
   const controller = new AbortController();
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [validators, setValidators] = useState<IState>({
-    selectedNode: props.config.nodes[0].name,
-    rpcUrl: props.config.nodes[0].rpcUrl,
+    selectedNode: config.nodes[0].name,
+    rpcUrl: config.nodes[0].rpcUrl,
     minersList: [],
     pendingList: [],
   });
 
   const nodeInfoHandler = useCallback(async (node: string) => {
-    const needle: QuorumNode = getDetailsByNodeName(props.config, node);
+    const needle: QuorumNode = getDetailsByNodeName(config, node);
 
     return Promise.all([
       axios({
@@ -44,7 +45,7 @@ export default function Validators(props: IProps) {
         data: JSON.stringify({
           rpcUrl: needle.rpcUrl,
           client: needle.client,
-          algorithm: props.config.algorithm,
+          algorithm: config.algorithm,
         }),
         signal: controller.signal,
       }),
@@ -58,7 +59,7 @@ export default function Validators(props: IProps) {
         data: JSON.stringify({
           rpcUrl: needle.rpcUrl,
           client: needle.client,
-          algorithm: props.config.algorithm,
+          algorithm: config.algorithm,
         }),
       }),
     ]).then(([currentVal, pendingVal]) => {
@@ -96,23 +97,23 @@ export default function Validators(props: IProps) {
       <Container maxW={{ base: "container.sm", md: "container.xl" }}>
         <PageHeader
           title="Validators"
-          config={props.config}
+          config={config}
           selectNodeHandler={handleSelectNode}
         />
         <Divider my={8} />
         <SimpleGrid columns={2} minChildWidth="600px">
           <ValidatorsAbout />
           <ValidatorsActive
-            config={props.config}
+            config={config}
             minersList={validators.minersList}
             selectedNode={validators.selectedNode}
           />
           <ValidatorsPropose
-            config={props.config}
+            config={config}
             selectedNode={validators.selectedNode}
           />
           <ValidatorsPending
-            config={props.config}
+            config={config}
             pendingList={validators.pendingList}
             selectedNode={validators.selectedNode}
           />
@@ -122,7 +123,8 @@ export default function Validators(props: IProps) {
   );
 }
 
-Validators.getInitialProps = async () => {
-  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/configGet`);
-  return { config: res.data };
-};
+export async function getServerSideProps() {
+  const res = await configReader();
+  const config: QuorumConfig = JSON.parse(res);
+  return { props: { config } };
+}
