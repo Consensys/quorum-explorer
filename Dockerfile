@@ -12,7 +12,12 @@ WORKDIR /app
 
 # Installing dependencies
 COPY package*.json ./
-RUN npm install
+RUN apk add --no-cache --virtual .gyp \
+  python3 \
+  make \
+  g++ \
+  && npm install \
+  && apk del .gyp
 
 # Copying source files
 COPY . .
