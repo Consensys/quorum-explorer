@@ -8,6 +8,8 @@ import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import { refresh5s } from "../common/lib/common";
 import { updateBlockArray, updateTxnArray } from "../common/lib/explorer";
+import { configReader } from "../common/lib/getConfig";
+
 import axios from "axios";
 
 interface IState {
@@ -20,11 +22,11 @@ interface IProps {
   config: QuorumConfig;
 }
 
-export default function Explorer(props: IProps) {
+export default function Explorer({ config }: IProps) {
   const controller = new AbortController();
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [explorer, setExplorer] = useState<IState>({
-    selectedNode: props.config.nodes[0].name,
+    selectedNode: config.nodes[0].name,
     blocks: [],
     transactions: [],
   });
@@ -33,7 +35,7 @@ export default function Explorer(props: IProps) {
   // useEffect is go to re-render and causes a memory leek issue - every time react renders Nodes its re-create the api call, you can prevent this case by using useCallBack,
   const nodeInfoHandler = useCallback(
     async (name: string) => {
-      const needle: QuorumNode = getDetailsByNodeName(props.config, name);
+      const needle: QuorumNode = getDetailsByNodeName(config, name);
       const res = await axios({
         method: "POST",
         url: "/api/blockGetByNumber",
@@ -67,7 +69,7 @@ export default function Explorer(props: IProps) {
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.config]
+    [config]
   );
 
   useEffect(() => {
@@ -92,24 +94,25 @@ export default function Explorer(props: IProps) {
       <Container maxW={{ base: "container.sm", md: "container.xl" }} p={0}>
         <PageHeader
           title="Explorer"
-          config={props.config}
+          config={config}
           selectNodeHandler={handleSelectNode}
         />
         <ExplorerBlocks
           blocks={explorer.blocks}
-          url={getDetailsByNodeName(props.config, explorer.selectedNode).rpcUrl}
+          url={getDetailsByNodeName(config, explorer.selectedNode).rpcUrl}
         />
         <Divider />
         <ExplorerTxns
           txns={explorer.transactions}
-          url={getDetailsByNodeName(props.config, explorer.selectedNode).rpcUrl}
+          url={getDetailsByNodeName(config, explorer.selectedNode).rpcUrl}
         />
       </Container>
     </>
   );
 }
 
-Explorer.getInitialProps = async () => {
-  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/configGet`);
-  return { config: res.data };
-};
+export async function getServerSideProps() {
+  const res = await configReader();
+  const config: QuorumConfig = JSON.parse(res);
+  return { props: { config } };
+}

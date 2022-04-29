@@ -15,8 +15,9 @@ import {
 import { QuorumStatCard } from "../common/types/Nodes";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
-import { refresh5s } from "../common/lib/common"
+import { refresh5s } from "../common/lib/common";
 import axios from "axios";
+import { configReader } from "../common/lib/getConfig";
 
 interface IState {
   selectedNode: string;
@@ -37,11 +38,11 @@ interface IProps {
   config: QuorumConfig;
 }
 
-export default function Nodes(props: IProps) {
+export default function Nodes({ config }: IProps) {
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [node, setNode] = useState<IState>({
-    selectedNode: props.config.nodes[0].name,
-    client: props.config.nodes[0].client,
+    selectedNode: config.nodes[0].name,
+    client: config.nodes[0].client,
     nodeId: "",
     nodeName: "",
     enode: "",
@@ -100,7 +101,7 @@ export default function Nodes(props: IProps) {
   // useEffect is go to re-render and causes a memory leek issue - every time react renders Nodes its re-create the api call, you can prevent this case by using useCallBack,
   const nodeInfoHandler = useCallback(
     async (name: string) => {
-      const needle: QuorumNode = getDetailsByNodeName(props.config, name);
+      const needle: QuorumNode = getDetailsByNodeName(config, name);
       const res = await axios({
         method: "POST",
         url: "/api/nodeGetDetails",
@@ -109,10 +110,9 @@ export default function Nodes(props: IProps) {
         },
         data: JSON.stringify({
           client: needle.client,
-          rpcUrl: needle.rpcUrl
-        })
-      })
-      .then((res) => {
+          rpcUrl: needle.rpcUrl,
+        }),
+      }).then((res) => {
         setNode({
           selectedNode: name,
           client: needle.client,
@@ -130,7 +130,7 @@ export default function Nodes(props: IProps) {
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.config]
+    [config]
   );
 
   useEffect(() => {
@@ -154,7 +154,7 @@ export default function Nodes(props: IProps) {
       <Container maxW={{ base: "container.sm", md: "container.xl" }}>
         <PageHeader
           title="Nodes"
-          config={props.config}
+          config={config}
           selectNodeHandler={handleSelectNode}
         />
         <NodeOverview stats={stats} statusText={node.statusText} />
@@ -172,8 +172,8 @@ export default function Nodes(props: IProps) {
   );
 }
 
-Nodes.getInitialProps = async () => {
-  const res = await axios.get(`${process.env.QE_BACKEND_URL}/api/configGet`);
-  return { config: res.data };
-};
-
+export async function getServerSideProps() {
+  const res = await configReader();
+  const config: QuorumConfig = JSON.parse(res);
+  return { props: { config } };
+}
