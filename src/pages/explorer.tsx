@@ -47,7 +47,7 @@ export default function Explorer({ config }: IProps) {
           blockNumber: "latest",
         }),
         signal: controller.signal,
-        baseURL: `${process.env.QE_BASEPATH}`,
+        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
       });
       var quorumBlock: QuorumBlock = res.data as QuorumBlock;
       var tmpTxns: QuorumTxn[] = explorer.transactions;

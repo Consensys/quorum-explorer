@@ -48,7 +48,7 @@ export default function Validators({ config }: IProps) {
           algorithm: config.algorithm,
         }),
         signal: controller.signal,
-        baseURL: `${process.env.QE_BASEPATH}`,
+        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
       }),
 
       axios({
@@ -62,7 +62,7 @@ export default function Validators({ config }: IProps) {
           client: needle.client,
           algorithm: config.algorithm,
         }),
-        baseURL: `${process.env.QE_BASEPATH}`,
+        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
       }),
     ]).then(([currentVal, pendingVal]) => {
       setValidators({

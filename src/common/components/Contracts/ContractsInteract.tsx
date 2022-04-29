@@ -102,7 +102,7 @@ export default function ContractsInteract(props: IProps) {
           privateFor: getSetTessera,
           fromPrivateKey: props.fromPrivateKey,
         }),
-        baseURL: `${process.env.QE_BASEPATH}`,
+        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
       })
         .then((result) => {
           // console.log(result);
@@ -197,7 +197,7 @@ export default function ContractsInteract(props: IProps) {
           sender: props.privateFrom,
           privateFor: getSetTessera,
         }),
-        baseURL: `${process.env.QE_BASEPATH}`,
+        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
       })
         .then((result) => {
           // console.log(result);

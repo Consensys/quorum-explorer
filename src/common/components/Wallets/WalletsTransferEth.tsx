@@ -60,7 +60,7 @@ export default function WalletsTransferEth(props: IProps) {
         accountTo: accountTo,
         amount: amount,
       }),
-      baseURL: `${process.env.QE_BASEPATH}`,
+      baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
     });
     const walletRes = await axios({
       method: "POST",
@@ -72,7 +72,7 @@ export default function WalletsTransferEth(props: IProps) {
         rpcUrl: needle.rpcUrl,
         account: accountTo,
       }),
-      baseURL: `${process.env.QE_BASEPATH}`,
+      baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
     });
     var wallet: QuorumWallet = walletRes.data as QuorumWallet;
     toast({

@@ -112,7 +112,7 @@ export default function Nodes({ config }: IProps) {
           client: needle.client,
           rpcUrl: needle.rpcUrl,
         }),
-        baseURL: `${process.env.QE_BASEPATH}`,
+        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
       }).then((res) => {
         setNode({
           selectedNode: name,
