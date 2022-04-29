@@ -6,7 +6,7 @@ export default class Document extends NextDocument {
     return (
       <Html lang="en">
         <Head>
-          <link rel="shortcut icon" href="/favicon.svg" />
+          <link rel="shortcut icon" href="/images/favicon.svg" />
         </Head>
         <body>
           {/* 👇 Here's the script */}
