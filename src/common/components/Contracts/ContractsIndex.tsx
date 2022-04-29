@@ -126,6 +126,7 @@ export default function ContractsIndex(props: IProps) {
         },
         data: JSON.stringify({ config: props.config }),
         signal: controller.signal,
+        baseURL: `${process.env.QE_BASEPATH}`,
       })
         .then((res) => {
           setCurrentTesseraPublicKey(
@@ -188,6 +189,7 @@ export default function ContractsIndex(props: IProps) {
         "Content-Type": "application/json",
       },
       data: JSON.stringify({ name: selectedContract, content: code }),
+      baseURL: `${process.env.QE_BASEPATH}`,
     })
       .then((response) => {
         if (response.status === 200) {
@@ -300,6 +302,7 @@ export default function ContractsIndex(props: IProps) {
           compiledContract: compiledContract,
           deployArgs: simpleStorageValue,
         }),
+        baseURL: `${process.env.QE_BASEPATH}`,
       })
         .then((result) => {
           closeAll();

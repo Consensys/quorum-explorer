@@ -30,6 +30,12 @@ module.exports = {
           basePath: false,
           permanent: false,
         },
+        {
+          source: this.basePath,
+          destination: this.basePath + "/nodes",
+          basePath: false,
+          permanent: false,
+        },
       ];
     }
   },

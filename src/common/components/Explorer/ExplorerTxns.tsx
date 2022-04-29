@@ -48,6 +48,7 @@ export default function ExplorerTxns({ txns, url }: IProps) {
         rpcUrl: url,
         txnHash: txnSearch,
       }),
+      baseURL: `${process.env.QE_BASEPATH}`,
     });
     var txn: QuorumTxn = res.data as QuorumTxn;
     toastIdRef.current = toast({

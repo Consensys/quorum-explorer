@@ -49,6 +49,7 @@ export default function ValidatorsPending(props: IProps) {
         algorithm: props.config.algorithm,
         address: e[0],
       }),
+      baseURL: `${process.env.QE_BASEPATH}`,
     });
     // console.log(discardStatus);
     if (discardStatus.status === 200) {

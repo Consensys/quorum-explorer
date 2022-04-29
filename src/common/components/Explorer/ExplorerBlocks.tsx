@@ -48,6 +48,7 @@ export default function ExplorerBlocks(props: IProps) {
         rpcUrl: props.url,
         blockNumber: blockSearch,
       }),
+      baseURL: `${process.env.QE_BASEPATH}`,
     });
     var block: QuorumBlock = res.data as QuorumBlock;
     toastIdRef.current = toast({

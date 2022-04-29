@@ -48,6 +48,7 @@ export default function ValidatorsActive(props: IProps) {
         address: e,
         vote: false,
       }),
+      baseURL: `${process.env.QE_BASEPATH}`,
     });
     if (removeValidator.status === 200) {
       console.log("Proposal to remove initiated: " + e);

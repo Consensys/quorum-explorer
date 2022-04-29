@@ -54,6 +54,7 @@ export default function ValidatorsPropose(props: IProps) {
         address: propose.address_input,
         vote: true,
       }),
+      baseURL: `${process.env.QE_BASEPATH}`,
     });
     // console.log(addValidator);
     if (addValidator.status === 200) {
