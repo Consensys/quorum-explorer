@@ -248,6 +248,25 @@ export default function ContractsInteract(props: IProps) {
               isDisabled
             />
           </FormControl>
+          <Box mt={1}>
+            <MultiSelect
+              isLoading={props.selectLoading}
+              instanceId="private-for-deploy"
+              isMulti
+              options={props.tesseraKeys}
+              onChange={(e) => {
+                const myList: string[] = [];
+                e.map((k) => myList.push(k.value));
+                setGetSetTessera(myList);
+              }}
+              placeholder="Select Tessera node recipients to use the functions below..."
+              closeMenuOnSelect={false}
+              selectedOptionStyle="check"
+              hideSelectedOptions={false}
+              // menuPortalTarget={document.body}
+              // styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+            />
+          </Box>
 
           <Flex justifyContent="space-between" alignItems="center" m={1}>
             <Text fontWeight="semibold">get</Text>
@@ -273,23 +292,6 @@ export default function ContractsInteract(props: IProps) {
             </HStack>
           </Flex>
           {/* <FormLabel htmlFor="private-for-deploy">Recipient</FormLabel> */}
-          <MultiSelect
-            isLoading={props.selectLoading}
-            instanceId="private-for-deploy"
-            isMulti
-            options={props.tesseraKeys}
-            onChange={(e) => {
-              const myList: string[] = [];
-              e.map((k) => myList.push(k.value));
-              setGetSetTessera(myList);
-            }}
-            placeholder="Select Tessera node for the set function below..."
-            closeMenuOnSelect={false}
-            selectedOptionStyle="check"
-            hideSelectedOptions={false}
-            // menuPortalTarget={document.body}
-            // styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-          />
           <Flex justifyContent="space-between" alignItems="center" m={1}>
             <FormLabel htmlFor="set" fontWeight="semibold" m={0} mr={5}>
               set
