@@ -1,4 +1,3 @@
-
 import { Box, Container, SimpleGrid } from "@chakra-ui/react";
 import NodeCard from "./NodeCard";
 import { QuorumStatCard } from "../../types/Nodes";
@@ -10,8 +9,7 @@ interface IProps {
   statusText: string;
 }
 
-export default function NodeOverview (props : IProps) {
-
+export default function NodeOverview(props: IProps) {
   return (
     <>
       <BoxMotion
@@ -22,10 +20,7 @@ export default function NodeOverview (props : IProps) {
         py={{ base: "4", md: "9" }}
       >
         <Container maxW={{ base: "container.sm", md: "container.xl" }}>
-          <SimpleGrid
-            columns={{ base: 1, md: 4 }}
-            gap={{ base: "5", md: "7" }}
-          >
+          <SimpleGrid columns={{ base: 1, md: 4 }} gap={{ base: "5", md: "7" }}>
             {props.stats.map(({ label, value, icon }) => (
               <NodeCard
                 key={label}

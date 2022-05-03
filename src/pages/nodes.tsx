@@ -121,7 +121,7 @@ export default function Nodes({ config }: IProps) {
           nodeName: res.data.nodeName,
           enode: res.data.enode,
           ip: res.data.ip,
-          statusText: res.statusText,
+          statusText: res.data.statusText,
           rpcUrl: needle.rpcUrl,
           blocks: res.data.blocks,
           peers: res.data.peers,

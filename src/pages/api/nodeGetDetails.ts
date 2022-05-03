@@ -6,8 +6,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body)
-  const userClient = req.body.client; 
+  console.log(req.body);
+  const userClient = req.body.client;
   const rpcUrl = req.body.rpcUrl;
   let nodeDetails: NodeDetails = {
     statusText: "error",
@@ -53,7 +53,9 @@ export default async function handler(
     nodeDetails["pendingTxns"] = besuOrGoQTxns;
   } catch (e) {
     console.error(e);
-    console.error("Node is unreachable. Ensure ports are open and client is running!" );
+    console.error(
+      "Node is unreachable. Ensure ports are open and client is running!"
+    );
     nodeDetails["statusText"] = "error";
   } finally {
     res.status(200).json(nodeDetails);
