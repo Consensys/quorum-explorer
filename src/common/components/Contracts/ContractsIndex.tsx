@@ -209,6 +209,10 @@ export default function ContractsIndex(props: IProps) {
           });
           const joined = logs.concat("Compiled contract: " + selectedContract);
           setLogs(joined);
+          setButtonLoading({
+            Deploy: { status: false, isDisabled: false },
+            Compile: { status: false, isDisabled: false },
+          });
         } else {
           closeAll();
           toast({
@@ -224,6 +228,10 @@ export default function ContractsIndex(props: IProps) {
           );
           setLogs(joined);
         }
+        setButtonLoading({
+          Deploy: { status: false, isDisabled: false },
+          Compile: { status: false, isDisabled: true },
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -240,12 +248,11 @@ export default function ContractsIndex(props: IProps) {
             selectedContract
         );
         setLogs(joined);
+        setButtonLoading({
+          Deploy: { status: false, isDisabled: false },
+          Compile: { status: false, isDisabled: true },
+        });
       });
-
-    setButtonLoading({
-      Deploy: { status: false, isDisabled: false },
-      Compile: { status: false, isDisabled: false },
-    });
   };
 
   const HandleDeploy = async (e: any) => {
