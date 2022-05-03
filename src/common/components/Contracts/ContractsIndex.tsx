@@ -168,8 +168,8 @@ export default function ContractsIndex(props: IProps) {
     const joined = logs.concat("Navigated to: " + e.target.value);
     setLogs(joined);
     setButtonLoading({
-      ...buttonLoading,
       Deploy: { status: false, isDisabled: true },
+      Compile: { status: false, isDisabled: false },
     });
     setSelectedContract(e.target.value);
     setCode(needle.contract);
@@ -210,7 +210,7 @@ export default function ContractsIndex(props: IProps) {
           const joined = logs.concat("Compiled contract: " + selectedContract);
           setLogs(joined);
           setButtonLoading({
-            Deploy: { status: false, isDisabled: false },
+            ...buttonLoading,
             Compile: { status: false, isDisabled: false },
           });
         } else {
@@ -230,7 +230,7 @@ export default function ContractsIndex(props: IProps) {
         }
         setButtonLoading({
           Deploy: { status: false, isDisabled: false },
-          Compile: { status: false, isDisabled: true },
+          Compile: { status: false, isDisabled: false },
         });
       })
       .catch((error) => {
@@ -249,8 +249,8 @@ export default function ContractsIndex(props: IProps) {
         );
         setLogs(joined);
         setButtonLoading({
-          Deploy: { status: false, isDisabled: false },
-          Compile: { status: false, isDisabled: true },
+          Deploy: { status: false, isDisabled: true },
+          Compile: { status: false, isDisabled: false },
         });
       });
   };
@@ -277,8 +277,8 @@ export default function ContractsIndex(props: IProps) {
         isClosable: true,
       });
       setButtonLoading({
-        ...buttonLoading,
         Deploy: { status: false, isDisabled: false },
+        Compile: { status: false, isDisabled: false },
       });
       return;
     }
@@ -330,6 +330,10 @@ export default function ContractsIndex(props: IProps) {
               result.data.contractAddress
           );
           setLogs(joined);
+          setButtonLoading({
+            Deploy: { status: false, isDisabled: false },
+            Compile: { status: false, isDisabled: false },
+          });
         })
         .catch((e) => {
           closeAll();
@@ -345,12 +349,11 @@ export default function ContractsIndex(props: IProps) {
             "Error in deploying contract: " + selectedContract
           );
           setLogs(joined);
+          setButtonLoading({
+            Compile: { status: false, isDisabled: false },
+            Deploy: { status: false, isDisabled: false },
+          });
         });
-
-      setButtonLoading({
-        ...buttonLoading,
-        Deploy: { status: false, isDisabled: false },
-      });
     }
   };
   return (
