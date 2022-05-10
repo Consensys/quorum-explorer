@@ -1,17 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ethApiCall } from "../../common/lib/ethApiCall";
-import { QuorumBlock } from "../../common/types/Explorer"
+import { QuorumBlock } from "../../common/types/Explorer";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body)
-  const blockNumber = req.body.blockNumber; 
+  console.log(req.body);
+  const blockNumber = req.body.blockNumber;
   const rpcUrl = req.body.rpcUrl;
   let quorumBlock: QuorumBlock = {
     statusText: "error",
-    number: -1,
+    number: "-1",
     hash: "",
     transactionsRoot: "",
     stateRoot: "",
@@ -33,7 +33,8 @@ export default async function handler(
     quorumBlock["statusText"] = ethBlockByNumber.statusText;
     quorumBlock["number"] = ethBlockByNumber.data.result.number;
     quorumBlock["hash"] = ethBlockByNumber.data.result.hash;
-    quorumBlock["transactionsRoot"] = ethBlockByNumber.data.result.transactionsRoot;
+    quorumBlock["transactionsRoot"] =
+      ethBlockByNumber.data.result.transactionsRoot;
     quorumBlock["stateRoot"] = ethBlockByNumber.data.result.stateRoot;
     quorumBlock["receiptsRoot"] = ethBlockByNumber.data.result.receiptsRoot;
     quorumBlock["miner"] = ethBlockByNumber.data.result.miner;
@@ -46,10 +47,10 @@ export default async function handler(
     quorumBlock["transactions"] = ethBlockByNumber.data.result.transactions;
   } catch (e) {
     console.error(e);
-    console.error("Node is unreachable. Ensure ports are open and client is running!" );
+    console.error(
+      "Node is unreachable. Ensure ports are open and client is running!"
+    );
   } finally {
     res.status(200).json(quorumBlock);
   }
 }
-
-

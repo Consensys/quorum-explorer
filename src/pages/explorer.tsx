@@ -22,6 +22,11 @@ interface IProps {
   config: QuorumConfig;
 }
 
+const range = (start: number, stop: number, step = 1) =>
+  Array(Math.ceil((stop - start) / step))
+    .fill(start)
+    .map((x, y) => x + y * step);
+
 export default function Explorer({ config }: IProps) {
   const controller = new AbortController();
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -49,24 +54,36 @@ export default function Explorer({ config }: IProps) {
         signal: controller.signal,
         baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
       });
-      var quorumBlock: QuorumBlock = res.data as QuorumBlock;
-      var tmpTxns: QuorumTxn[] = explorer.transactions;
-      if (res.data.transactions.length > 0) {
-        tmpTxns = updateTxnArray(
-          explorer.transactions,
-          quorumBlock.transactions,
-          4
-        );
-      }
-      var tmpBlocks: QuorumBlock[] = updateBlockArray(
-        explorer.blocks,
-        quorumBlock,
-        4
-      );
-      setExplorer({
-        selectedNode: name,
-        blocks: tmpBlocks,
-        transactions: tmpTxns,
+      const quorumBlock: QuorumBlock = res.data as QuorumBlock;
+      const currentBlock = parseInt(quorumBlock.number, 16);
+      const last10BlockArray = range(currentBlock, currentBlock - 10, -1);
+      const returns = last10BlockArray.map(async (block) => {
+        const res = await axios({
+          method: "POST",
+          url: `/api/blockGetByNumber`,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: JSON.stringify({
+            rpcUrl: needle.rpcUrl,
+            blockNumber: "0x" + block.toString(16),
+          }),
+          signal: controller.signal,
+          baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        });
+        return res.data;
+      });
+      Promise.all(returns).then((values: QuorumBlock[]) => {
+        const slicedBlocks = values.slice(0, 4);
+        const slicedTxns = values
+          .filter((a) => a.transactions.length > 0)
+          .map((a) => a.transactions)
+          .flat();
+        setExplorer({
+          selectedNode: name,
+          blocks: slicedBlocks,
+          transactions: slicedTxns,
+        });
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
