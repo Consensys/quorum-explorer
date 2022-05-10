@@ -1,17 +1,15 @@
 import fs from "fs";
 
+const defaultConfig = require("../../config/config.json");
+
 export async function configReader() {
-  //@ts-ignore
-  const data = await fs.promises.readFile(
-    `${process.env.QE_CONFIG_PATH}`,
-    "utf8"
-  );
-  // fs.readFile(`${process.env.QE_CONFIG_PATH}`, "utf8", (err, data) => {
-  //   if (err) {
-  //     console.error(err);
-  //     return;
-  //   }
-  //   return data;
-  // });
-  return data;
+  if (process.env.QE_CONFIG_PATH) {
+    const data = await fs.promises.readFile(
+      `${process.env.QE_CONFIG_PATH}`,
+      "utf8"
+    );
+    return data;
+  } else {
+    return JSON.stringify(defaultConfig);
+  }
 }
