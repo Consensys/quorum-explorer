@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ master]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -51,7 +51,7 @@ jobs:
             consensys/quorum-explorer:latest
             consensys/quorum-explorer:${{ env.DOCKER_TAG }}
 
-       # setting up trivy security scanner  
+# setting up trivy security scanner  
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -60,7 +60,7 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'CRITICAL'
           exit-code: '1'
-     
+
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
         with:

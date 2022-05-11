@@ -10,11 +10,6 @@ RUN apk add --no-cache --virtual .gyp \
 
 FROM node:lts-alpine as builder
 WORKDIR /app
-ENV NODE_ENV production
-ENV NEXT_PUBLIC_QE_BASEPATH "/explorer"
-ENV QE_CONFIG_PATH "/app/config.json"
-ENV QE_BACKEND_URL "http://localhost:25000"
-ENV PORT 25000
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
 RUN npm run build
@@ -22,6 +17,7 @@ RUN npm run build
 FROM node:lts-alpine as runner
 WORKDIR /app
 # If you are using a custom next.config.js file, uncomment this line.
+COPY --from=builder /app/.env.production ./
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
