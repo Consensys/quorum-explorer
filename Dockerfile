@@ -22,7 +22,7 @@ ENV QE_CONFIG_PATH "/app/config.json"
 ENV QE_BACKEND_URL "http://localhost:25000"
 ENV PORT 25000
 # If you are using a custom next.config.js file, uncomment this line.
-COPY --from=builder /my-project/next.config.js ./
+COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
