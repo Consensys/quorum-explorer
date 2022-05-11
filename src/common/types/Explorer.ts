@@ -1,4 +1,3 @@
-
 export type QuorumTxn = {
   blockHash: string;
   blockNumber: number;
@@ -8,17 +7,17 @@ export type QuorumTxn = {
   hash: string;
   input: string;
   nonce: number;
-  to?: any,
-  transactionIndex: number,
-  value: string,
-  v: string,
-  r: string,
-  s: string
-}
+  to?: any;
+  transactionIndex: number;
+  value: string;
+  v: string;
+  r: string;
+  s: string;
+};
 
 export type QuorumBlock = {
   statusText: string;
-  number: number;
+  number: string;
   hash: string;
   transactionsRoot: string;
   stateRoot: string;
@@ -32,4 +31,3 @@ export type QuorumBlock = {
   uncles: string[];
   transactions: QuorumTxn[];
 };
-

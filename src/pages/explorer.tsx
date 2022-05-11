@@ -7,7 +7,7 @@ import { QuorumBlock, QuorumTxn } from "../common/types/Explorer";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import { refresh5s } from "../common/lib/common";
-import { updateBlockArray, updateTxnArray } from "../common/lib/explorer";
+import { range } from "../common/lib/explorer";
 import { configReader } from "../common/lib/getConfig";
 
 import axios from "axios";
@@ -30,9 +30,14 @@ export default function Explorer({ config }: IProps) {
     blocks: [],
     transactions: [],
   });
+  const [lookBackBlocks, setLookBackBlocks] = useState(10);
+
+  const onSelectChange = (e: any) => {
+    e.preventDefault();
+    setLookBackBlocks(e.target.value);
+  };
 
   // use useCallBack
-  // useEffect is go to re-render and causes a memory leek issue - every time react renders Nodes its re-create the api call, you can prevent this case by using useCallBack,
   const nodeInfoHandler = useCallback(
     async (name: string) => {
       const needle: QuorumNode = getDetailsByNodeName(config, name);
@@ -49,28 +54,44 @@ export default function Explorer({ config }: IProps) {
         signal: controller.signal,
         baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
       });
-      var quorumBlock: QuorumBlock = res.data as QuorumBlock;
-      var tmpTxns: QuorumTxn[] = explorer.transactions;
-      if (res.data.transactions.length > 0) {
-        tmpTxns = updateTxnArray(
-          explorer.transactions,
-          quorumBlock.transactions,
-          4
-        );
-      }
-      var tmpBlocks: QuorumBlock[] = updateBlockArray(
-        explorer.blocks,
-        quorumBlock,
-        4
+      const quorumBlock: QuorumBlock = res.data as QuorumBlock;
+      const currentBlock = parseInt(quorumBlock.number, 16);
+      const lastXBlockArray = range(
+        currentBlock,
+        currentBlock - lookBackBlocks,
+        -1
       );
-      setExplorer({
-        selectedNode: name,
-        blocks: tmpBlocks,
-        transactions: tmpTxns,
+      const returns = lastXBlockArray.map(async (block) => {
+        const res = await axios({
+          method: "POST",
+          url: `/api/blockGetByNumber`,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: JSON.stringify({
+            rpcUrl: needle.rpcUrl,
+            blockNumber: "0x" + block.toString(16),
+          }),
+          signal: controller.signal,
+          baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        });
+        return res.data;
+      });
+      Promise.all(returns).then((values: QuorumBlock[]) => {
+        const slicedBlocks = values.slice(0, 4);
+        const slicedTxns = values
+          .filter((a) => a.transactions.length > 0)
+          .map((a) => a.transactions)
+          .flat();
+        setExplorer({
+          selectedNode: name,
+          blocks: slicedBlocks,
+          transactions: slicedTxns,
+        });
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [config]
+    [config, lookBackBlocks]
   );
 
   useEffect(() => {
@@ -82,7 +103,7 @@ export default function Explorer({ config }: IProps) {
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [explorer.selectedNode]);
+  }, [explorer.selectedNode, lookBackBlocks]);
 
   const handleSelectNode = (e: any) => {
     controller.abort();
@@ -101,6 +122,7 @@ export default function Explorer({ config }: IProps) {
         <ExplorerBlocks
           blocks={explorer.blocks}
           url={getDetailsByNodeName(config, explorer.selectedNode).rpcUrl}
+          onSelectChange={onSelectChange}
         />
         <Divider />
         <ExplorerTxns

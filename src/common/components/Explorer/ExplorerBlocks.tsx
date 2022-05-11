@@ -8,6 +8,8 @@ import {
   Flex,
   FormControl,
   useToast,
+  Select,
+  Tooltip,
 } from "@chakra-ui/react";
 import axios from "axios";
 import ExplorerBlockCard from "./ExplorerBlockCard";
@@ -19,6 +21,7 @@ const BoxMotion = motion(Box);
 interface IProps {
   blocks: QuorumBlock[];
   url: string;
+  onSelectChange: (e: any) => void;
 }
 
 export default function ExplorerBlocks(props: IProps) {
@@ -84,14 +87,23 @@ export default function ExplorerBlocks(props: IProps) {
           <Text as="b" fontSize="lg">
             Blocks
           </Text>
-          <Container maxW="20%" m={0} p={0}>
-            <FormControl as="form" onSubmit={onSubmit}>
-              <Input
-                placeholder={"Search by block number"}
-                onInput={onChange}
-                onSubmit={onSubmit}
-              />
-            </FormControl>
+          <Container maxW="40%" m={0} p={0}>
+            <Flex justifyContent="flex-end" gap="16px">
+              <Tooltip label="Select number of blocks back to display data">
+                <Select maxW="20%" onChange={props.onSelectChange}>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="30">30</option>
+                </Select>
+              </Tooltip>
+              <FormControl as="form" onSubmit={onSubmit} maxW="50%">
+                <Input
+                  placeholder={"Search by block number"}
+                  onInput={onChange}
+                  onSubmit={onSubmit}
+                />
+              </FormControl>
+            </Flex>
           </Container>
         </Flex>
         <Container maxW={{ base: "container.sm", md: "container.xl" }}>
