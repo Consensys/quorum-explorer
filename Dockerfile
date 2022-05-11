@@ -15,6 +15,7 @@ COPY --from=dependencies /app/node_modules ./node_modules
 RUN npm run build
 
 FROM node:lts-alpine as runner
+ENV NODE_ENV=production
 WORKDIR /app
 # If you are using a custom next.config.js file, uncomment this line.
 COPY --from=builder /app/.env.production ./
