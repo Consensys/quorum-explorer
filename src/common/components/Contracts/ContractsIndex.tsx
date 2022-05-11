@@ -44,18 +44,23 @@ import {
   CompiledContract,
 } from "../../types/Contracts";
 import axios from "axios";
-//@ts-ignore
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 import { Select as MultiSelect } from "chakra-react-select";
 import dynamic from "next/dynamic";
+import "@uiw/react-textarea-code-editor/dist.css";
 
-const MotionGrid = motion(SimpleGrid);
-const ChakraCode = chakra(SyntaxHighlighter);
+const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+  ssr: false,
+  loading: () => <p>Loading interaction component...</p>,
+});
 
 const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
   loading: () => <p>Loading interaction component...</p>,
 });
+
+const MotionGrid = motion(SimpleGrid);
+// const ChakraCode = chakra(SyntaxHighlighter);
+const ChakraEditor = chakra(CodeEditor);
 
 interface IProps {
   config: QuorumConfig;
@@ -92,6 +97,13 @@ export default function ContractsIndex(props: IProps) {
     Deploy: { status: false, isDisabled: true },
   });
   const [selectLoading, setSelectLoading] = useState(true);
+
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-color-mode",
+      colorMode === "light" ? "light" : "dark"
+    );
+  }, [colorMode]);
 
   // Set accountAddress if is a member
   useEffect(() => {
@@ -381,17 +393,21 @@ export default function ContractsIndex(props: IProps) {
             ))}
           </Select>
           <Box mb={10}>
-            <ChakraCode
+            <ChakraEditor
               borderRadius="lg"
               borderWidth={2}
               boxShadow="2xl"
-              language="solidity"
               maxH="550px"
-              showLineNumbers={false}
-              wrapLongLines={true}
-            >
-              {code}
-            </ChakraCode>
+              value={code}
+              language="sol"
+              placeholder="Empty code"
+              style={{
+                fontSize: 16,
+                backgroundColor: colorMode === "light" ? "#f5f5f5" : "#2D3748",
+                fontFamily:
+                  "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+              }}
+            />
           </Box>
         </Box>
 
