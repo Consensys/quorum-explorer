@@ -7,7 +7,7 @@ import { QuorumBlock, QuorumTxn } from "../common/types/Explorer";
 import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import { refresh5s } from "../common/lib/common";
-import { updateBlockArray, updateTxnArray } from "../common/lib/explorer";
+import { range } from "../common/lib/explorer";
 import { configReader } from "../common/lib/getConfig";
 
 import axios from "axios";
@@ -22,11 +22,6 @@ interface IProps {
   config: QuorumConfig;
 }
 
-const range = (start: number, stop: number, step = 1) =>
-  Array(Math.ceil((stop - start) / step))
-    .fill(start)
-    .map((x, y) => x + y * step);
-
 export default function Explorer({ config }: IProps) {
   const controller = new AbortController();
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -35,9 +30,14 @@ export default function Explorer({ config }: IProps) {
     blocks: [],
     transactions: [],
   });
+  const [lookBackBlocks, setLookBackBlocks] = useState(10);
+
+  const onSelectChange = (e: any) => {
+    e.preventDefault();
+    setLookBackBlocks(e.target.value);
+  };
 
   // use useCallBack
-  // useEffect is go to re-render and causes a memory leek issue - every time react renders Nodes its re-create the api call, you can prevent this case by using useCallBack,
   const nodeInfoHandler = useCallback(
     async (name: string) => {
       const needle: QuorumNode = getDetailsByNodeName(config, name);
@@ -56,8 +56,12 @@ export default function Explorer({ config }: IProps) {
       });
       const quorumBlock: QuorumBlock = res.data as QuorumBlock;
       const currentBlock = parseInt(quorumBlock.number, 16);
-      const last10BlockArray = range(currentBlock, currentBlock - 10, -1);
-      const returns = last10BlockArray.map(async (block) => {
+      const lastXBlockArray = range(
+        currentBlock,
+        currentBlock - lookBackBlocks,
+        -1
+      );
+      const returns = lastXBlockArray.map(async (block) => {
         const res = await axios({
           method: "POST",
           url: `/api/blockGetByNumber`,
@@ -87,7 +91,7 @@ export default function Explorer({ config }: IProps) {
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [config]
+    [config, lookBackBlocks]
   );
 
   useEffect(() => {
@@ -99,7 +103,7 @@ export default function Explorer({ config }: IProps) {
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [explorer.selectedNode]);
+  }, [explorer.selectedNode, lookBackBlocks]);
 
   const handleSelectNode = (e: any) => {
     controller.abort();
@@ -118,6 +122,7 @@ export default function Explorer({ config }: IProps) {
         <ExplorerBlocks
           blocks={explorer.blocks}
           url={getDetailsByNodeName(config, explorer.selectedNode).rpcUrl}
+          onSelectChange={onSelectChange}
         />
         <Divider />
         <ExplorerTxns

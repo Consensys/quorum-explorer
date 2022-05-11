@@ -1,5 +1,10 @@
 import { QuorumBlock, QuorumTxn } from "../types/Explorer";
 
+export const range = (start: number, stop: number, step = 1) =>
+  Array(Math.ceil((stop - start) / step))
+    .fill(start)
+    .map((x, y) => x + y * step);
+
 export function getSecsAgo(h: string) {
   const ago: Date = new Date(parseInt(h, 16)); // convert to decimal unix time
   const now: Date = new Date();
@@ -36,4 +41,3 @@ export function updateTxnArray(
   arr = Array.from(set);
   return arr.slice(0, len);
 }
-
