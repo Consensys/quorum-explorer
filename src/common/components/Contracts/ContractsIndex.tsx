@@ -46,11 +46,7 @@ import {
 import axios from "axios";
 //@ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import {
-  getDetailsByNodeName,
-  getPrivateKey,
-  getMemberList,
-} from "../../lib/quorumConfig";
+import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 import { Select as MultiSelect } from "chakra-react-select";
 import ContractsInteract from "./ContractsInteract";
 

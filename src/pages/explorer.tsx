@@ -31,6 +31,7 @@ export default function Explorer({ config }: IProps) {
     transactions: [],
   });
   const [lookBackBlocks, setLookBackBlocks] = useState(10);
+  const [timeoutReceived, setTimeoutReceived] = useState(false);
 
   const onSelectChange = (e: any) => {
     e.preventDefault();
@@ -41,7 +42,7 @@ export default function Explorer({ config }: IProps) {
   const nodeInfoHandler = useCallback(
     async (name: string) => {
       const needle: QuorumNode = getDetailsByNodeName(config, name);
-      const res = await axios({
+      axios({
         method: "POST",
         url: `/api/blockGetByNumber`,
         headers: {
@@ -52,43 +53,51 @@ export default function Explorer({ config }: IProps) {
           blockNumber: "latest",
         }),
         signal: controller.signal,
+        timeout: 1000,
         baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
-      });
-      const quorumBlock: QuorumBlock = res.data as QuorumBlock;
-      const currentBlock = parseInt(quorumBlock.number, 16);
-      const lastXBlockArray = range(
-        currentBlock,
-        currentBlock - lookBackBlocks,
-        -1
-      );
-      const returns = lastXBlockArray.map(async (block) => {
-        const res = await axios({
-          method: "POST",
-          url: `/api/blockGetByNumber`,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          data: JSON.stringify({
-            rpcUrl: needle.rpcUrl,
-            blockNumber: "0x" + block.toString(16),
-          }),
-          signal: controller.signal,
-          baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+      })
+        .then((res) => {
+          setTimeoutReceived(false);
+          const quorumBlock: QuorumBlock = res.data as QuorumBlock;
+          const currentBlock = parseInt(quorumBlock.number, 16);
+          const lastXBlockArray = range(
+            currentBlock,
+            currentBlock - lookBackBlocks,
+            -1
+          );
+          const returns = lastXBlockArray.map(async (block) => {
+            const res = await axios({
+              method: "POST",
+              url: `/api/blockGetByNumber`,
+              headers: {
+                "Content-Type": "application/json",
+              },
+              data: JSON.stringify({
+                rpcUrl: needle.rpcUrl,
+                blockNumber: "0x" + block.toString(16),
+              }),
+              signal: controller.signal,
+              baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+            });
+            return res.data;
+          });
+          Promise.all(returns).then((values: QuorumBlock[]) => {
+            const slicedBlocks = values.slice(0, 4);
+            const slicedTxns = values
+              .filter((a) => a.transactions.length > 0)
+              .map((a) => a.transactions)
+              .flat();
+            setExplorer({
+              selectedNode: name,
+              blocks: slicedBlocks,
+              transactions: slicedTxns,
+            });
+          });
+        })
+        .catch((err) => {
+          setTimeoutReceived(true);
+          console.error(err);
         });
-        return res.data;
-      });
-      Promise.all(returns).then((values: QuorumBlock[]) => {
-        const slicedBlocks = values.slice(0, 4);
-        const slicedTxns = values
-          .filter((a) => a.transactions.length > 0)
-          .map((a) => a.transactions)
-          .flat();
-        setExplorer({
-          selectedNode: name,
-          blocks: slicedBlocks,
-          transactions: slicedTxns,
-        });
-      });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [config, lookBackBlocks]
@@ -101,7 +110,9 @@ export default function Explorer({ config }: IProps) {
       console.log("explorer > called for new info...");
     }, refresh5s);
 
-    return () => clearInterval(intervalRef.current as NodeJS.Timeout);
+    return () => {
+      clearInterval(intervalRef.current as NodeJS.Timeout);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [explorer.selectedNode, lookBackBlocks]);
 
@@ -123,6 +134,7 @@ export default function Explorer({ config }: IProps) {
           blocks={explorer.blocks}
           url={getDetailsByNodeName(config, explorer.selectedNode).rpcUrl}
           onSelectChange={onSelectChange}
+          timeoutReceived={timeoutReceived}
         />
         <Divider />
         <ExplorerTxns
