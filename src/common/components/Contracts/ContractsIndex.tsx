@@ -48,10 +48,14 @@ import axios from "axios";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 import { Select as MultiSelect } from "chakra-react-select";
-import ContractsInteract from "./ContractsInteract";
+import dynamic from "next/dynamic";
 
 const MotionGrid = motion(SimpleGrid);
 const ChakraCode = chakra(SyntaxHighlighter);
+
+const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
+  loading: () => <p>Loading interaction component...</p>,
+});
 
 interface IProps {
   config: QuorumConfig;
@@ -542,7 +546,7 @@ export default function ContractsIndex(props: IProps) {
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
-                    <ContractsInteract
+                    <DynamicContractsInteract
                       config={props.config}
                       selectedNode={props.selectedNode}
                       compiledContract={compiledContract}
