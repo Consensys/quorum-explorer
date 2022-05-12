@@ -1,4 +1,4 @@
-import { Dispatch, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   FormControl,
   FormLabel,
@@ -36,7 +36,7 @@ interface IProps {
   privateFor: string[];
   privateFrom: string;
   fromPrivateKey: string;
-  tesseraKeys: { label: string; value: string }[] | undefined;
+  tesseraKeys: { label: string; value: string }[];
   selectLoading: boolean;
   closeAllToasts: () => void;
   reuseToast: any;
@@ -49,10 +49,22 @@ export default function ContractsInteract(props: IProps) {
   const [writeButtonLoading, setWriteButtonLoading] = useState(false);
   const [getSetTessera, setGetSetTessera] = useState<string[]>();
   const [readValue, setReadValue] = useState("-");
+  const selectInteractRef = useRef<any>();
 
   const handleWriteValue = (e: any) => {
     setWriteValue(e);
   };
+
+  useEffect(() => {
+    console.log(props.tesseraKeys);
+    if (
+      props.tesseraKeys.length === 0 &&
+      selectInteractRef.current !== undefined
+    ) {
+      selectInteractRef.current.clearValue();
+      console.log("values cleared");
+    }
+  }, [props.tesseraKeys]);
 
   const handleRead = async (e: any) => {
     e.preventDefault();
@@ -262,6 +274,7 @@ export default function ContractsInteract(props: IProps) {
               closeMenuOnSelect={false}
               selectedOptionStyle="check"
               hideSelectedOptions={false}
+              ref={selectInteractRef}
               // menuPortalTarget={document.body}
               // styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
             />

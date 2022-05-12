@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import {
   Tabs,
@@ -83,8 +83,9 @@ export default function ContractsIndex(props: IProps) {
   const [accountAddress, setAccountAddress] = useState("");
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
   const [logs, setLogs] = useState<string[]>([]);
-  const [tesseraKeys, setTesseraKeys] =
-    useState<{ label: string; value: string }[]>();
+  const [tesseraKeys, setTesseraKeys] = useState<
+    { label: string; value: string }[]
+  >([]);
   const [currentTesseraPublicKey, setCurrentTesseraPublicKey] = useState("");
   const [deployParams, setDeployParams] = useState<{
     privateKeyFrom: string;
@@ -100,6 +101,7 @@ export default function ContractsIndex(props: IProps) {
     Deploy: { status: false, isDisabled: true },
   });
   const [selectLoading, setSelectLoading] = useState(true);
+  const selectDeployRef = useRef<any>();
 
   useEffect(() => {
     // This is to have the code editor to be responsive to color modes
@@ -121,6 +123,10 @@ export default function ContractsIndex(props: IProps) {
       });
     } else {
       setAccountAddress("");
+      setTesseraKeys([]);
+      if (selectDeployRef.current !== undefined) {
+        selectDeployRef.current.clearValue();
+      }
       setDeployParams({ ...deployParams, privateKeyFrom: "" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -526,6 +532,7 @@ export default function ContractsIndex(props: IProps) {
                             closeMenuOnSelect={false}
                             selectedOptionStyle="check"
                             hideSelectedOptions={false}
+                            ref={selectDeployRef}
                           />
                           <FormLabel htmlFor="storage-value">
                             Initial Storage Value
