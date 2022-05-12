@@ -56,8 +56,8 @@ export default function ContractsInteract(props: IProps) {
   };
 
   useEffect(() => {
-    console.log(props.tesseraKeys);
     if (
+      selectInteractRef.current.getValue().length !== 0 &&
       props.tesseraKeys.length === 0 &&
       selectInteractRef.current !== undefined
     ) {
