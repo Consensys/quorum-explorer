@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Container } from "@chakra-ui/react";
 import PageHeader from "../common/components/Misc/PageHeader";
 import ContractsIndex from "../common/components/Contracts/ContractsIndex";

@@ -48,18 +48,20 @@ import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 import { Select as MultiSelect } from "chakra-react-select";
 import dynamic from "next/dynamic";
 import "@uiw/react-textarea-code-editor/dist.css";
+import MetaMask from "./MetaMask";
+import { connectMetaMask } from "../../lib/connectMetaMask";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
-  loading: () => <p>Loading interaction component...</p>,
+  loading: () => <p>Loading code editor component...</p>,
 });
 
 const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
   loading: () => <p>Loading interaction component...</p>,
+  ssr: false,
 });
 
 const MotionGrid = motion(SimpleGrid);
-// const ChakraCode = chakra(SyntaxHighlighter);
 const ChakraEditor = chakra(CodeEditor);
 
 interface IProps {
@@ -99,6 +101,7 @@ export default function ContractsIndex(props: IProps) {
   const [selectLoading, setSelectLoading] = useState(true);
 
   useEffect(() => {
+    // This is to have the code editor to be responsive to color modes
     document.documentElement.setAttribute(
       "data-color-mode",
       colorMode === "light" ? "light" : "dark"
@@ -445,6 +448,14 @@ export default function ContractsIndex(props: IProps) {
                         <AccordionIcon />
                       </AccordionButton>
                       <AccordionPanel pb={4}>
+                        <Button
+                          leftIcon={<MetaMask />}
+                          colorScheme="orange"
+                          variant="outline"
+                          onClick={connectMetaMask}
+                        >
+                          Connect
+                        </Button>
                         <FormControl>
                           <FormLabel htmlFor="predefined-account">
                             Account
