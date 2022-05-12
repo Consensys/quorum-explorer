@@ -535,7 +535,8 @@ export default function ContractsIndex(props: IProps) {
                                 loadingText="Compiling..."
                                 type="submit"
                                 variant="solid"
-                                backgroundColor="orange.200"
+                                // backgroundColor="orange.200"
+                                colorScheme="yellow"
                                 onClick={HandleCompile}
                                 mr={2}
                               >
@@ -552,7 +553,8 @@ export default function ContractsIndex(props: IProps) {
                                 loadingText="Deploying..."
                                 type="submit"
                                 variant="solid"
-                                backgroundColor="green.200"
+                                // backgroundColor="green.200"
+                                colorScheme="green"
                                 onClick={HandleDeploy}
                               >
                                 Deploy
