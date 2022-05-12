@@ -43,6 +43,7 @@ import {
   defaultSmartContracts,
   CompiledContract,
 } from "../../types/Contracts";
+import { getContractFunctions } from "../../lib/contracts"
 import axios from "axios";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 import { Select as MultiSelect } from "chakra-react-select";
@@ -228,6 +229,7 @@ export default function ContractsIndex(props: IProps) {
             ...buttonLoading,
             Compile: { status: false, isDisabled: false },
           });
+          getContractFunctions(response.data.abi)
         } else {
           closeAll();
           toast({
