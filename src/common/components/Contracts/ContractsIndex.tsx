@@ -43,6 +43,7 @@ import {
   defaultSmartContracts,
   CompiledContract,
 } from "../../types/Contracts";
+import { getContractFunctions } from "../../lib/contracts"
 import axios from "axios";
 //@ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -213,6 +214,7 @@ export default function ContractsIndex(props: IProps) {
             ...buttonLoading,
             Compile: { status: false, isDisabled: false },
           });
+          getContractFunctions(response.data.abi)
         } else {
           closeAll();
           toast({

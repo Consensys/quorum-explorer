@@ -1,3 +1,32 @@
+
+export type SCDFunctionArg = {
+  name: string,
+  type: string
+}
+
+export type SCDConstructor = {
+  inputs: SCDFunctionArg[]
+}
+
+export type SCDFunction = {
+  inputs: SCDFunctionArg[]
+  outputs: SCDFunctionArg[]
+  name: string
+}
+// todo check on this type - we don't really use it atm
+export type SCDEvent = {
+  inputs: SCDFunctionArg[]
+  outputs: SCDFunctionArg[]
+  name: string
+}
+
+export type SCDefinition = {
+  constructor: SCDConstructor,
+  functions: SCDFunction[],
+  events: SCDEvent[]
+}
+
+// below are type definitions for the contart we display in the dropdown
 export type SmartContract = {
   name: string;
   contract: string;
