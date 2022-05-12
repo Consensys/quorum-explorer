@@ -257,6 +257,7 @@ export default function ContractsInteract(props: IProps) {
               value={props.contractAddress}
               onChange={props.handleContractAddress}
               isDisabled
+              readOnly
             />
           </FormControl>
           <Box mt={1}>
@@ -288,6 +289,7 @@ export default function ContractsInteract(props: IProps) {
                 maxW={100}
                 value={readValue}
                 textAlign="center"
+                readOnly
               />
               <Button
                 leftIcon={<FontAwesomeIcon icon={faDatabase as IconProp} />}

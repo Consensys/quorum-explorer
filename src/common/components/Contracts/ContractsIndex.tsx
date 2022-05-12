@@ -43,7 +43,7 @@ import {
   defaultSmartContracts,
   CompiledContract,
 } from "../../types/Contracts";
-import { getContractFunctions } from "../../lib/contracts"
+import { getContractFunctions } from "../../lib/contracts";
 import axios from "axios";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 import { Select as MultiSelect } from "chakra-react-select";
@@ -102,6 +102,33 @@ export default function ContractsIndex(props: IProps) {
   });
   const [selectLoading, setSelectLoading] = useState(true);
   const selectDeployRef = useRef<any>();
+  const [metaMaskAccount, setMetaMaskAccount] = useState("");
+
+  const connectHandler = () => {
+    connectMetaMask();
+  };
+
+  useEffect(() => {
+    if (metaMaskAccount.length !== 0) {
+      console.log(`${metaMaskAccount} has been added to state...`);
+    }
+  }, [metaMaskAccount]);
+
+  useEffect(() => {
+    function handleNewAccounts(newAccounts: string) {
+      setMetaMaskAccount(newAccounts);
+    }
+    (window as any).ethereum
+      .request({ method: "eth_accounts" })
+      .then(handleNewAccounts);
+    (window as any).ethereum.on("accountsChanged", handleNewAccounts);
+    return () => {
+      (window as any).ethereum.removeListener(
+        "accountsChanged",
+        handleNewAccounts
+      );
+    };
+  }, []);
 
   useEffect(() => {
     // This is to have the code editor to be responsive to color modes
@@ -235,7 +262,7 @@ export default function ContractsIndex(props: IProps) {
             ...buttonLoading,
             Compile: { status: false, isDisabled: false },
           });
-          getContractFunctions(response.data.abi)
+          getContractFunctions(response.data.abi);
         } else {
           closeAll();
           toast({
@@ -418,6 +445,7 @@ export default function ContractsIndex(props: IProps) {
                 fontFamily:
                   "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
               }}
+              readOnly
             />
           </Box>
         </Box>
@@ -460,7 +488,7 @@ export default function ContractsIndex(props: IProps) {
                           leftIcon={<MetaMask />}
                           colorScheme="orange"
                           variant="outline"
-                          onClick={connectMetaMask}
+                          onClick={connectHandler}
                         >
                           Connect
                         </Button>
@@ -474,6 +502,7 @@ export default function ContractsIndex(props: IProps) {
                             placeholder="Node is not a Member"
                             value={accountAddress}
                             isDisabled
+                            readOnly
                           />
                           <FormLabel htmlFor="private-from">
                             PrivateKey From
@@ -484,6 +513,7 @@ export default function ContractsIndex(props: IProps) {
                             placeholder="0x"
                             value={deployParams.privateKeyFrom}
                             isDisabled
+                            readOnly
                           />
                           <FormLabel htmlFor="tessera-key">
                             Tessera Public Key
@@ -494,6 +524,7 @@ export default function ContractsIndex(props: IProps) {
                             placeholder="Node is not a Member"
                             value={currentTesseraPublicKey}
                             isDisabled
+                            readOnly
                           />
                         </FormControl>
                       </AccordionPanel>
