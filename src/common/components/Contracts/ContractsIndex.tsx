@@ -45,18 +45,25 @@ import {
 } from "../../types/Contracts";
 import { getContractFunctions } from "../../lib/contracts"
 import axios from "axios";
-//@ts-ignore
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import {
-  getDetailsByNodeName,
-  getPrivateKey,
-  getMemberList,
-} from "../../lib/quorumConfig";
+import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 import { Select as MultiSelect } from "chakra-react-select";
-import ContractsInteract from "./ContractsInteract";
+import dynamic from "next/dynamic";
+import "@uiw/react-textarea-code-editor/dist.css";
+import MetaMask from "./MetaMask";
+import { connectMetaMask } from "../../lib/connectMetaMask";
+
+const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+  ssr: false,
+  loading: () => <p>Loading code editor component...</p>,
+});
+
+const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
+  loading: () => <p>Loading interaction component...</p>,
+  ssr: false,
+});
 
 const MotionGrid = motion(SimpleGrid);
-const ChakraCode = chakra(SyntaxHighlighter);
+const ChakraEditor = chakra(CodeEditor);
 
 interface IProps {
   config: QuorumConfig;
@@ -93,6 +100,14 @@ export default function ContractsIndex(props: IProps) {
     Deploy: { status: false, isDisabled: true },
   });
   const [selectLoading, setSelectLoading] = useState(true);
+
+  useEffect(() => {
+    // This is to have the code editor to be responsive to color modes
+    document.documentElement.setAttribute(
+      "data-color-mode",
+      colorMode === "light" ? "light" : "dark"
+    );
+  }, [colorMode]);
 
   // Set accountAddress if is a member
   useEffect(() => {
@@ -383,17 +398,21 @@ export default function ContractsIndex(props: IProps) {
             ))}
           </Select>
           <Box mb={10}>
-            <ChakraCode
+            <ChakraEditor
               borderRadius="lg"
               borderWidth={2}
               boxShadow="2xl"
-              language="solidity"
               maxH="550px"
-              showLineNumbers={false}
-              wrapLongLines={true}
-            >
-              {code}
-            </ChakraCode>
+              value={code}
+              language="sol"
+              placeholder="Empty code"
+              style={{
+                fontSize: 16,
+                backgroundColor: colorMode === "light" ? "#f5f5f5" : "#2D3748",
+                fontFamily:
+                  "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+              }}
+            />
           </Box>
         </Box>
 
@@ -431,6 +450,14 @@ export default function ContractsIndex(props: IProps) {
                         <AccordionIcon />
                       </AccordionButton>
                       <AccordionPanel pb={4}>
+                        <Button
+                          leftIcon={<MetaMask />}
+                          colorScheme="orange"
+                          variant="outline"
+                          onClick={connectMetaMask}
+                        >
+                          Connect
+                        </Button>
                         <FormControl>
                           <FormLabel htmlFor="predefined-account">
                             Account
@@ -521,7 +548,8 @@ export default function ContractsIndex(props: IProps) {
                                 loadingText="Compiling..."
                                 type="submit"
                                 variant="solid"
-                                backgroundColor="orange.200"
+                                // backgroundColor="orange.200"
+                                colorScheme="yellow"
                                 onClick={HandleCompile}
                                 mr={2}
                               >
@@ -538,7 +566,8 @@ export default function ContractsIndex(props: IProps) {
                                 loadingText="Deploying..."
                                 type="submit"
                                 variant="solid"
-                                backgroundColor="green.200"
+                                // backgroundColor="green.200"
+                                colorScheme="green"
                                 onClick={HandleDeploy}
                               >
                                 Deploy
@@ -548,7 +577,7 @@ export default function ContractsIndex(props: IProps) {
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
-                    <ContractsInteract
+                    <DynamicContractsInteract
                       config={props.config}
                       selectedNode={props.selectedNode}
                       compiledContract={compiledContract}

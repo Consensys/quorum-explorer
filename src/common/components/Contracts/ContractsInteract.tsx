@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, useState } from "react";
 import {
   FormControl,
   FormLabel,
@@ -20,7 +20,6 @@ import {
 } from "@chakra-ui/react";
 import { Select as MultiSelect } from "chakra-react-select";
 import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
-//@ts-ignore
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract } from "../../types/Contracts";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
@@ -280,7 +279,8 @@ export default function ContractsInteract(props: IProps) {
               <Button
                 leftIcon={<FontAwesomeIcon icon={faDatabase as IconProp} />}
                 type="submit"
-                backgroundColor="orange.200"
+                // backgroundColor="orange.200"
+                colorScheme="yellow"
                 isLoading={readButtonLoading}
                 onClick={handleRead}
                 loadingText=""
@@ -291,7 +291,6 @@ export default function ContractsInteract(props: IProps) {
               </Button>
             </HStack>
           </Flex>
-          {/* <FormLabel htmlFor="private-for-deploy">Recipient</FormLabel> */}
           <Flex justifyContent="space-between" alignItems="center" m={1}>
             <FormLabel htmlFor="set" fontWeight="semibold" m={0} mr={5}>
               set
@@ -315,7 +314,8 @@ export default function ContractsInteract(props: IProps) {
                 leftIcon={<FontAwesomeIcon icon={faPencilAlt as IconProp} />}
                 minW={125}
                 type="submit"
-                backgroundColor="green.200"
+                // backgroundColor="green.200"
+                colorScheme="green"
                 isLoading={writeButtonLoading}
                 onClick={handleWrite}
                 loadingText=""

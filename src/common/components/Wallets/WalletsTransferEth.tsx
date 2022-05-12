@@ -133,7 +133,8 @@ export default function WalletsTransferEth(props: IProps) {
             />
             <Button
               type="submit"
-              backgroundColor="green.200"
+              // backgroundColor="green.200"
+              colorScheme="green"
               isLoading={buttonLoading}
               loadingText="Submitting"
               variant="solid"

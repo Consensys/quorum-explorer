@@ -88,7 +88,8 @@ export default function ValidatorsPropose(props: IProps) {
           <FormLabel htmlFor="address">Address</FormLabel>
           <Input mb={3} id="address" type="text" onChange={handleInput} />
           <Button
-            bgColor="green.400"
+            // bgColor="green.400"
+            colorScheme="green"
             isLoading={buttonLoading}
             loadingText="Proposing..."
             // onClick={handleClick}

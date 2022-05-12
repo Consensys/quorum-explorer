@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
+const removeImports = require("next-remove-imports")();
+module.exports = removeImports({
+  experimental: { esmExternals: true },
   basePath: process.env.NEXT_PUBLIC_QE_BASEPATH,
   reactStrictMode: true,
   async redirects() {
@@ -35,4 +37,4 @@ module.exports = {
       ];
     }
   },
-};
+});
