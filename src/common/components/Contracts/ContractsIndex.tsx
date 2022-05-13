@@ -110,7 +110,6 @@ export default function ContractsIndex(props: IProps) {
     Deploy: { status: false, isDisabled: true },
   });
   const [selectLoading, setSelectLoading] = useState(true);
-  const selectDeployRef = useRef<any>();
 
   useEffect(() => {
     // This is to have the code editor to be responsive to color modes
@@ -133,13 +132,6 @@ export default function ContractsIndex(props: IProps) {
     } else {
       setAccountAddress("");
       setTesseraKeys([]);
-      if (selectDeployRef.current !== undefined) {
-        try {
-          selectDeployRef.current.clearValue();
-        } catch (err) {
-          console.error(err);
-        }
-      }
       setDeployParams({ ...deployParams, privateKeyFrom: "" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -542,7 +534,6 @@ export default function ContractsIndex(props: IProps) {
                             closeMenuOnSelect={false}
                             selectedOptionStyle="check"
                             hideSelectedOptions={false}
-                            ref={selectDeployRef}
                             // menuPortalTarget={document.body}
                             // styles={{
                             //   menuPortal: (base: any) => ({

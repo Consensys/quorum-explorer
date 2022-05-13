@@ -60,26 +60,10 @@ export default function ContractsInteract(props: IProps) {
   const [writeButtonLoading, setWriteButtonLoading] = useState(false);
   const [getSetTessera, setGetSetTessera] = useState<string[]>();
   const [readValue, setReadValue] = useState("-");
-  const selectInteractRef = useRef<any>();
 
   const handleWriteValue = (e: any) => {
     setWriteValue(e);
   };
-
-  useEffect(() => {
-    try {
-      if (
-        selectInteractRef.current.getValue().length !== 0 &&
-        props.tesseraKeys.length === 0 &&
-        selectInteractRef.current !== undefined
-      ) {
-        selectInteractRef.current.clearValue();
-        console.log("values cleared");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [props.tesseraKeys]);
 
   const handleRead = async (e: any) => {
     e.preventDefault();
@@ -291,7 +275,6 @@ export default function ContractsInteract(props: IProps) {
               closeMenuOnSelect={false}
               selectedOptionStyle="check"
               hideSelectedOptions={false}
-              ref={selectInteractRef}
               // menuPortalTarget={document.body}
               // styles={{
               //   menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
