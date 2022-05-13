@@ -8,6 +8,10 @@ export type SCDConstructor = {
   inputs: SCDFunctionArg[]
 }
 
+export const VoidSCDConstructor : SCDConstructor = {
+  inputs: []
+}
+
 export type SCDFunction = {
   inputs: SCDFunctionArg[]
   outputs: SCDFunctionArg[]
@@ -24,6 +28,12 @@ export type SCDefinition = {
   constructor: SCDConstructor,
   functions: SCDFunction[],
   events: SCDEvent[]
+}
+
+export const VoidSCDefinition: SCDefinition = {
+    constructor: VoidSCDConstructor,
+    functions: [],
+    events: []
 }
 
 // below are type definitions for the contart we display in the dropdown

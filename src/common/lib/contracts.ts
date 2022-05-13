@@ -1,10 +1,13 @@
-import { SCDefinition, SCDConstructor, SCDFunctionArg, SCDFunction } from "../types/Contracts";
+import { SCDefinition, SCDConstructor, SCDFunctionArg, SCDFunction, VoidSCDefinition, VoidSCDConstructor } from "../types/Contracts";
 
 
 // {internalType: 'uint256', name: 'initVal', type: 'uint256'}
 function getConstructor(obj: any){
-  const c : SCDConstructor = {
-    inputs: obj.inputs.map((_: any) => _ as SCDFunctionArg)
+  var c : SCDConstructor = VoidSCDConstructor;
+  if((typeof obj != "undefined") && (obj != [])) {
+    c = {
+      inputs: obj.inputs.map((_: any) => _ as SCDFunctionArg)
+    }
   }
   return c
 }
@@ -37,15 +40,14 @@ function getEvents(obj: any){
   return obj.map((_: any) => createEvent(_))
 }
 
-export function getContractFunctions(
-  abi: any[], 
-) {
-  console.log("************");
-  var contract : SCDefinition = {
-    constructor: getConstructor(abi.filter(_ => _.type == "constructor")[0]),
-    functions: getFunctions(abi.filter(_ => _.type == "function")),
-    events: getEvents(abi.filter(_ => _.type == "event"))
+export function getContractFunctions(abi: any[]) {
+  var contract : SCDefinition = VoidSCDefinition;
+  if((typeof abi != "undefined") && (abi != [])) {
+    contract = {
+      constructor: getConstructor(abi.filter(_ => _.type == "constructor")[0]),
+      functions: getFunctions(abi.filter(_ => _.type == "function")),
+      events: getEvents(abi.filter(_ => _.type == "event"))
+    }
   }
-  console.log(contract);
-  console.log("************");
+  return contract;
 }

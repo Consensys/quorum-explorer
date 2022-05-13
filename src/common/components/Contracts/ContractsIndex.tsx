@@ -43,26 +43,23 @@ import {
   defaultSmartContracts,
   CompiledContract,
 } from "../../types/Contracts";
-import { getContractFunctions } from "../../lib/contracts"
 import axios from "axios";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-import { Select as MultiSelect } from "chakra-react-select";
+import ContractsDeploy from "./ContractsDeploy";
 import dynamic from "next/dynamic";
 import "@uiw/react-textarea-code-editor/dist.css";
-import MetaMask from "./MetaMask";
-import { connectMetaMask } from "../../lib/connectMetaMask";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
-  loading: () => <p>Loading code editor component...</p>,
+  loading: () => <p>Loading interaction component...</p>,
 });
 
 const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
   loading: () => <p>Loading interaction component...</p>,
-  ssr: false,
 });
 
 const MotionGrid = motion(SimpleGrid);
+// const ChakraCode = chakra(SyntaxHighlighter);
 const ChakraEditor = chakra(CodeEditor);
 
 interface IProps {
@@ -102,7 +99,6 @@ export default function ContractsIndex(props: IProps) {
   const [selectLoading, setSelectLoading] = useState(true);
 
   useEffect(() => {
-    // This is to have the code editor to be responsive to color modes
     document.documentElement.setAttribute(
       "data-color-mode",
       colorMode === "light" ? "light" : "dark"
@@ -229,7 +225,6 @@ export default function ContractsIndex(props: IProps) {
             ...buttonLoading,
             Compile: { status: false, isDisabled: false },
           });
-          getContractFunctions(response.data.abi)
         } else {
           closeAll();
           toast({
@@ -414,6 +409,25 @@ export default function ContractsIndex(props: IProps) {
               }}
             />
           </Box>
+
+          <Button
+            leftIcon={
+              <FontAwesomeIcon
+                icon={faHammer as IconProp}
+              />
+            }
+            isLoading={buttonLoading.Compile.status}
+            isDisabled={buttonLoading.Compile.isDisabled}
+            loadingText="Compiling..."
+            type="submit"
+            variant="solid"
+            // backgroundColor="orange.200"
+            colorScheme="yellow"
+            onClick={HandleCompile}
+            mr={2}
+          >
+            Compile
+          </Button>
         </Box>
 
         {/* tabs  */}
@@ -450,14 +464,6 @@ export default function ContractsIndex(props: IProps) {
                         <AccordionIcon />
                       </AccordionButton>
                       <AccordionPanel pb={4}>
-                        <Button
-                          leftIcon={<MetaMask />}
-                          colorScheme="orange"
-                          variant="outline"
-                          onClick={connectMetaMask}
-                        >
-                          Connect
-                        </Button>
                         <FormControl>
                           <FormLabel htmlFor="predefined-account">
                             Account
@@ -492,91 +498,23 @@ export default function ContractsIndex(props: IProps) {
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
-                    <AccordionItem>
-                      <AccordionButton>
-                        <Box
-                          color="red.400"
-                          fontWeight="bold"
-                          flex="1"
-                          textAlign="left"
-                        >
-                          2. Deploy
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                      <AccordionPanel pb={4}>
-                        <FormControl>
-                          <FormLabel htmlFor="private-for">
-                            Private For
-                          </FormLabel>
-                          <MultiSelect
-                            isLoading={selectLoading}
-                            instanceId="private-for"
-                            isMulti
-                            options={tesseraKeys}
-                            onChange={(e) => {
-                              const myList: string[] = [];
-                              e.map((k) => myList.push(k.value));
-                              setDeployParams({
-                                ...deployParams,
-                                privateFor: myList,
-                              });
-                            }}
-                            placeholder="Select Tessera node..."
-                            closeMenuOnSelect={false}
-                            selectedOptionStyle="check"
-                            hideSelectedOptions={false}
-                          />
-                          <FormLabel htmlFor="storage-value">
-                            Initial Storage Value
-                          </FormLabel>
-                          <Input
-                            id="storage-value"
-                            placeholder={simpleStorageValue.toString()}
-                            onChange={setStorageValue}
-                          />
-                          <Center>
-                            <HStack mt={5}>
-                              <Button
-                                leftIcon={
-                                  <FontAwesomeIcon
-                                    icon={faHammer as IconProp}
-                                  />
-                                }
-                                isLoading={buttonLoading.Compile.status}
-                                isDisabled={buttonLoading.Compile.isDisabled}
-                                loadingText="Compiling..."
-                                type="submit"
-                                variant="solid"
-                                // backgroundColor="orange.200"
-                                colorScheme="yellow"
-                                onClick={HandleCompile}
-                                mr={2}
-                              >
-                                Compile
-                              </Button>
-                              <Button
-                                leftIcon={
-                                  <FontAwesomeIcon
-                                    icon={faRocket as IconProp}
-                                  />
-                                }
-                                isLoading={buttonLoading.Deploy.status}
-                                isDisabled={buttonLoading.Deploy.isDisabled}
-                                loadingText="Deploying..."
-                                type="submit"
-                                variant="solid"
-                                // backgroundColor="green.200"
-                                colorScheme="green"
-                                onClick={HandleDeploy}
-                              >
-                                Deploy
-                              </Button>
-                            </HStack>
-                          </Center>
-                        </FormControl>
-                      </AccordionPanel>
-                    </AccordionItem>
+
+                    <ContractsDeploy 
+                      config={props.config}
+                      selectedNode={props.selectedNode}
+                      compiledContract={compiledContract}
+                      account={accountAddress}
+                      privateFor={deployParams.privateFor}
+                      privateFrom={currentTesseraPublicKey}
+                      fromPrivateKey={deployParams.privateKeyFrom}
+                      tesseraKeys={tesseraKeys}
+                      selectLoading={selectLoading}
+                      setDeployedAddress={setDeployedAddress}
+                      closeAllToasts={closeAll}
+                      reuseToast={toast}
+                      logs={logs}
+                      setLogs={setLogs}
+                    />
                     <DynamicContractsInteract
                       config={props.config}
                       selectedNode={props.selectedNode}
