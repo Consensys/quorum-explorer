@@ -7,15 +7,21 @@ import {
   Box,
   FormControl,
   FormLabel,
-  useToast,
   Input,
   Button,
+  useToast,
+  Tag,
+  HStack,
+  Text,
+  Center,
 } from "@chakra-ui/react";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { connectMetaMask, detectMetaMask } from "../../lib/connectMetaMask";
 import MetaMask from "../Misc/MetaMask";
+import { BigNumber, ethers } from "ethers";
+import BN from "bn.js";
 
 const MotionBox = motion(Box);
 
@@ -31,6 +37,7 @@ export default function WalletsTransferEth(props: IProps) {
   const [amount, setAmount] = useState("0x");
   const toast = useToast();
   const [metaMaskAccount, setMetaMaskAccount] = useState("");
+  const [accountBalance, setAccountBalance] = useState(0);
 
   const connectHandler = () => {
     connectMetaMask();
@@ -39,6 +46,15 @@ export default function WalletsTransferEth(props: IProps) {
   useEffect(() => {
     if (metaMaskAccount.length !== 0) {
       console.log(`${metaMaskAccount} has been added to state...`);
+      const provider = new ethers.providers.Web3Provider(
+        (window as any).ethereum
+      );
+      const signer = provider.getSigner();
+      signer.getBalance().then((res) => {
+        const a = BigNumber.from(res);
+        const b = BigNumber.from("1000000000000000000");
+        setAccountBalance(a.div(b).toNumber());
+      });
     }
   }, [metaMaskAccount]);
 
@@ -132,23 +148,45 @@ export default function WalletsTransferEth(props: IProps) {
       console.error("No account connected with MetaMask!");
       return;
     }
-    await (window as any).ethereum
-      .request({
-        method: "eth_sendTransaction",
-        params: [
-          {
-            from: metaMaskAccount[0],
-            to: accountTo,
-            value:
-              "0x" +
-              (parseInt(amount.trim()) * 1000000000000000000).toString(16),
-          },
-        ],
-      })
-      .then((txHash: string) => {
-        console.log(txHash);
-      })
-      .catch((error: any) => console.error(error));
+    // A Web3Provider wraps a standard Web3 provider, which is
+    // what MetaMask injects as window.ethereum into each page
+    const provider = new ethers.providers.Web3Provider(
+      (window as any).ethereum
+    );
+
+    // MetaMask requires requesting permission to connect users accounts
+    await provider.send("eth_requestAccounts", []);
+
+    // The MetaMask plugin also allows signing transactions to
+    // send ether and pay to change state within the blockchain.
+    // For this, you need the account signer...
+    const signer = provider.getSigner();
+    const params = {
+      from: await signer.getAddress(),
+      to: accountTo,
+      value: ethers.utils.parseUnits(amount.trim(), "ether").toHexString(),
+    };
+    const sendTx = await signer.sendTransaction(params);
+    toast({
+      title: "Transaction Hash",
+      description: `${JSON.stringify(sendTx.hash)}`,
+      status: "info",
+      duration: 5000,
+      isClosable: true,
+    });
+    const finished = await sendTx.wait();
+    toast({
+      title: "Successful transaction",
+      description: `BlockHash: ${JSON.stringify(finished.blockHash)}`,
+      status: "success",
+      duration: 10000,
+      isClosable: true,
+    });
+    signer.getBalance().then((res) => {
+      const a = BigNumber.from(res);
+      const b = BigNumber.from("1000000000000000000");
+      setAccountBalance(a.div(b).toNumber());
+    });
     setButtonLoading(false);
   };
 
@@ -205,7 +243,14 @@ export default function WalletsTransferEth(props: IProps) {
           </Heading>
           <Divider />
           <br />
-
+          <Center>
+            <HStack>
+              <Text>Balance (ETH): </Text>
+              <Tag size="lg" variant="solid" colorScheme="teal">
+                {accountBalance}
+              </Tag>
+            </HStack>
+          </Center>
           <FormControl as="form" onSubmit={metamaskTransfer} isRequired>
             {/* <FormLabel htmlFor="privateKeyFrom">PrivateKey From</FormLabel>
             <Input

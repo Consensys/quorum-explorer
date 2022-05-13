@@ -20,6 +20,7 @@
     "@uiw/react-textarea-code-editor": "^2.0.2",
     "axios": "^0.26.1",
     "chakra-react-select": "^3.1.2",
+    "ethers": "^5.6.5",
     "framer-motion": "^6.2.8",
     "fs": "^0.0.1-security",
     "net": "^1.0.2",
