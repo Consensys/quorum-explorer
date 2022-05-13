@@ -66,16 +66,20 @@ export default function ContractsInteract(props: IProps) {
     setWriteValue(e);
   };
 
-  // useEffect(() => {
-  //   if (
-  // selectInteractRef.current.getValue().length !== 0 &&
-  //     props.tesseraKeys.length === 0 &&
-  //     selectInteractRef.current !== undefined
-  //   ) {
-  //     selectInteractRef.current.clearValue();
-  //     console.log("values cleared");
-  //   }
-  // }, [props.tesseraKeys]);
+  useEffect(() => {
+    try {
+      if (
+        selectInteractRef.current.getValue().length !== 0 &&
+        props.tesseraKeys.length === 0 &&
+        selectInteractRef.current !== undefined
+      ) {
+        selectInteractRef.current.clearValue();
+        console.log("values cleared");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [props.tesseraKeys]);
 
   const handleRead = async (e: any) => {
     e.preventDefault();

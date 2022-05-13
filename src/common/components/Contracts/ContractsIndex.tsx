@@ -133,9 +133,13 @@ export default function ContractsIndex(props: IProps) {
     } else {
       setAccountAddress("");
       setTesseraKeys([]);
-      // if (selectDeployRef.current !== undefined) {
-      //   selectDeployRef.current.clearValue();
-      // }
+      if (selectDeployRef.current !== undefined) {
+        try {
+          selectDeployRef.current.clearValue();
+        } catch (err) {
+          console.error(err);
+        }
+      }
       setDeployParams({ ...deployParams, privateKeyFrom: "" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -520,7 +524,6 @@ export default function ContractsIndex(props: IProps) {
                           <FormLabel htmlFor="private-for">
                             Private For
                           </FormLabel>
-
                           <DynamicSelect
                             //@ts-ignore
                             isLoading={selectLoading}

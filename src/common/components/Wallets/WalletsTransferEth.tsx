@@ -139,11 +139,15 @@ export default function WalletsTransferEth(props: IProps) {
           {
             from: metaMaskAccount[0],
             to: accountTo,
-            value: "0x" + parseInt(amount.trim()).toString(16),
+            value:
+              "0x" +
+              (parseInt(amount.trim()) * 1000000000000000000).toString(16),
           },
         ],
       })
-      .then((txHash: string) => console.log(txHash))
+      .then((txHash: string) => {
+        console.log(txHash);
+      })
       .catch((error: any) => console.error(error));
     setButtonLoading(false);
   };
@@ -219,14 +223,12 @@ export default function WalletsTransferEth(props: IProps) {
               placeholder="0x..."
               onChange={handleAccountTo}
             />
-            <FormLabel htmlFor="amount">
-              Amount in wei (1 Ether = 1000000000000000000 wei)
-            </FormLabel>
+            <FormLabel htmlFor="amount">Amount in ETH</FormLabel>
             <Input
               mb={3}
               id="amount"
               type="text"
-              placeholder="0x..."
+              placeholder="1"
               onChange={handleAmount}
             />
             {metaMaskAccount.length === 0 && (
@@ -245,8 +247,8 @@ export default function WalletsTransferEth(props: IProps) {
               loadingText="Switching..."
               variant="solid"
               onClick={switchChain}
-              isLoading={buttonLoading}
               mr={3}
+              isDisabled
             >
               Switch Chain
             </Button>
@@ -258,7 +260,7 @@ export default function WalletsTransferEth(props: IProps) {
               onSubmit={metamaskTransfer}
               isLoading={buttonLoading}
             >
-              MetaMask Transfer
+              Transfer
             </Button>
           </FormControl>
         </Box>

@@ -24,7 +24,7 @@ export default function Wallets({ config }: IProps) {
 
   return (
     <>
-      <Container maxW={{ base: "container.sm", md: "container.xl" }}>
+      <Container maxW={{ base: "container.sm", md: "container.sm" }}>
         <PageHeader
           title="Wallets"
           config={config}
