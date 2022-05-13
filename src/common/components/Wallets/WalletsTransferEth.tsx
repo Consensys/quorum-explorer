@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QuorumWallet } from "../../types/Wallets";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
 import {
@@ -14,6 +14,9 @@ import {
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { connectMetaMask, detectMetaMask } from "../../lib/connectMetaMask";
+import MetaMask from "../Misc/MetaMask";
+
 const MotionBox = motion(Box);
 
 interface IProps {
@@ -27,6 +30,42 @@ export default function WalletsTransferEth(props: IProps) {
   const [accountTo, setAccountTo] = useState("0x");
   const [amount, setAmount] = useState("0x");
   const toast = useToast();
+  const [metaMaskAccount, setMetaMaskAccount] = useState("");
+
+  const connectHandler = () => {
+    connectMetaMask();
+  };
+
+  useEffect(() => {
+    if (metaMaskAccount.length !== 0) {
+      console.log(`${metaMaskAccount} has been added to state...`);
+    }
+  }, [metaMaskAccount]);
+
+  useEffect(() => {
+    function handleNewAccounts(newAccounts: string) {
+      setMetaMaskAccount(newAccounts);
+    }
+    try {
+      (window as any).ethereum
+        .request({ method: "eth_accounts" })
+        .then(handleNewAccounts);
+      (window as any).ethereum.on("accountsChanged", handleNewAccounts);
+    } catch (err) {
+      console.error(err);
+    }
+    return () => {
+      detectMetaMask().then((res) => {
+        if (res) {
+          console.log("Clean up listener");
+          (window as any).ethereum.removeListener(
+            "accountsChanged",
+            handleNewAccounts
+          );
+        }
+      });
+    };
+  }, []);
 
   const needle: QuorumNode = getDetailsByNodeName(
     props.config,
@@ -86,6 +125,64 @@ export default function WalletsTransferEth(props: IProps) {
     setButtonLoading(false);
   };
 
+  const metamaskTransfer = async (e: any) => {
+    e.preventDefault();
+    setButtonLoading(true);
+    if (metaMaskAccount.length === 0) {
+      console.error("No account connected with MetaMask!");
+      return;
+    }
+    await (window as any).ethereum
+      .request({
+        method: "eth_sendTransaction",
+        params: [
+          {
+            from: metaMaskAccount[0],
+            to: accountTo,
+            value: "0x" + parseInt(amount.trim()).toString(16),
+          },
+        ],
+      })
+      .then((txHash: string) => console.log(txHash))
+      .catch((error: any) => console.error(error));
+    setButtonLoading(false);
+  };
+
+  const switchChain = async () => {
+    try {
+      await (window as any).ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x539" }],
+      });
+    } catch (switchError: any) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        console.error("Network does not exist in MetaMask!");
+        try {
+          await (window as any).ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0x539",
+                chainName: "Localhost",
+                rpcUrls: ["http://localhost:8545"],
+                nativeCurrency: {
+                  name: "ETH",
+                  symbol: "ETH",
+                  decimals: 18,
+                },
+              },
+            ],
+          });
+        } catch (addError) {
+          // handle "add" error
+          console.error(addError);
+        }
+      }
+      // handle other "switch" errors
+    }
+  };
+
   return (
     <>
       <MotionBox
@@ -104,15 +201,16 @@ export default function WalletsTransferEth(props: IProps) {
           </Heading>
           <Divider />
           <br />
-          <FormControl as="form" onSubmit={handleTransfer} isRequired>
-            <FormLabel htmlFor="privateKeyFrom">PrivateKey From</FormLabel>
+
+          <FormControl as="form" onSubmit={metamaskTransfer} isRequired>
+            {/* <FormLabel htmlFor="privateKeyFrom">PrivateKey From</FormLabel>
             <Input
               mb={3}
               id="privateKeyFrom"
               type="text"
               placeholder="0x..."
               onChange={handlePrivateKeyFrom}
-            />
+            /> */}
             <FormLabel htmlFor="accountTo">Account To</FormLabel>
             <Input
               mb={3}
@@ -131,15 +229,36 @@ export default function WalletsTransferEth(props: IProps) {
               placeholder="0x..."
               onChange={handleAmount}
             />
+            {metaMaskAccount.length === 0 && (
+              <Button
+                leftIcon={<MetaMask />}
+                colorScheme="orange"
+                variant="outline"
+                onClick={connectHandler}
+                mr={3}
+              >
+                Connect
+              </Button>
+            )}
+            <Button
+              colorScheme="blue"
+              loadingText="Switching..."
+              variant="solid"
+              onClick={switchChain}
+              isLoading={buttonLoading}
+              mr={3}
+            >
+              Switch Chain
+            </Button>
             <Button
               type="submit"
-              // backgroundColor="green.200"
-              colorScheme="green"
-              isLoading={buttonLoading}
+              colorScheme="orange"
               loadingText="Submitting"
               variant="solid"
+              onSubmit={metamaskTransfer}
+              isLoading={buttonLoading}
             >
-              Transfer
+              MetaMask Transfer
             </Button>
           </FormControl>
         </Box>

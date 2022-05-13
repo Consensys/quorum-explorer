@@ -18,7 +18,8 @@ import {
   NumberDecrementStepper,
   HStack,
 } from "@chakra-ui/react";
-import { Select as MultiSelect } from "chakra-react-select";
+//@ts-ignore
+// import { Select as MultiSelect } from "chakra-react-select";
 import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract } from "../../types/Contracts";
@@ -26,6 +27,16 @@ import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import dynamic from "next/dynamic";
+
+const DynamicSelect = dynamic(
+  // @ts-ignore
+  () => import("chakra-react-select").then((mod) => mod.Select),
+  {
+    loading: () => <p>Loading Select component...</p>,
+    ssr: false,
+  }
+);
 
 interface IProps {
   config: QuorumConfig;
@@ -55,16 +66,16 @@ export default function ContractsInteract(props: IProps) {
     setWriteValue(e);
   };
 
-  useEffect(() => {
-    if (
-      selectInteractRef.current.getValue().length !== 0 &&
-      props.tesseraKeys.length === 0 &&
-      selectInteractRef.current !== undefined
-    ) {
-      selectInteractRef.current.clearValue();
-      console.log("values cleared");
-    }
-  }, [props.tesseraKeys]);
+  // useEffect(() => {
+  //   if (
+  // selectInteractRef.current.getValue().length !== 0 &&
+  //     props.tesseraKeys.length === 0 &&
+  //     selectInteractRef.current !== undefined
+  //   ) {
+  //     selectInteractRef.current.clearValue();
+  //     console.log("values cleared");
+  //   }
+  // }, [props.tesseraKeys]);
 
   const handleRead = async (e: any) => {
     e.preventDefault();
@@ -261,26 +272,28 @@ export default function ContractsInteract(props: IProps) {
             />
           </FormControl>
           <Box mt={1}>
-            <MultiSelect
+            <DynamicSelect
+              //@ts-ignore
               isLoading={props.selectLoading}
               instanceId="private-for-deploy"
               isMulti
               options={props.tesseraKeys}
-              onChange={(e) => {
+              onChange={(e: any) => {
                 const myList: string[] = [];
-                e.map((k) => myList.push(k.value));
+                e.map((k: any) => myList.push(k.value));
                 setGetSetTessera(myList);
               }}
-              placeholder="Select Tessera node recipients to use the functions below..."
+              placeholder="Select Tessera recipients to use the functions below..."
               closeMenuOnSelect={false}
               selectedOptionStyle="check"
               hideSelectedOptions={false}
               ref={selectInteractRef}
               // menuPortalTarget={document.body}
-              // styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+              // styles={{
+              //   menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+              // }}
             />
           </Box>
-
           <Flex justifyContent="space-between" alignItems="center" m={1}>
             <Text fontWeight="semibold">get</Text>
             <HStack spacing={5}>

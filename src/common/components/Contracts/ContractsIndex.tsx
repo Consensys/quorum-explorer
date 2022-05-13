@@ -26,6 +26,7 @@ import {
   useColorMode,
   HStack,
   Center,
+  Portal,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -46,11 +47,10 @@ import {
 import { getContractFunctions } from "../../lib/contracts";
 import axios from "axios";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-import { Select as MultiSelect } from "chakra-react-select";
+// @ts-ignore
+// import { Select as MultiSelect } from "chakra-react-select";
 import dynamic from "next/dynamic";
 import "@uiw/react-textarea-code-editor/dist.css";
-import MetaMask from "./MetaMask";
-import { connectMetaMask } from "../../lib/connectMetaMask";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
@@ -61,6 +61,15 @@ const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
   loading: () => <p>Loading interaction component...</p>,
   ssr: false,
 });
+
+const DynamicSelect = dynamic(
+  // @ts-ignore
+  () => import("chakra-react-select").then((mod) => mod.Select),
+  {
+    loading: () => <p>Loading Select component...</p>,
+    ssr: false,
+  }
+);
 
 const MotionGrid = motion(SimpleGrid);
 const ChakraEditor = chakra(CodeEditor);
@@ -102,33 +111,6 @@ export default function ContractsIndex(props: IProps) {
   });
   const [selectLoading, setSelectLoading] = useState(true);
   const selectDeployRef = useRef<any>();
-  const [metaMaskAccount, setMetaMaskAccount] = useState("");
-
-  const connectHandler = () => {
-    connectMetaMask();
-  };
-
-  useEffect(() => {
-    if (metaMaskAccount.length !== 0) {
-      console.log(`${metaMaskAccount} has been added to state...`);
-    }
-  }, [metaMaskAccount]);
-
-  useEffect(() => {
-    function handleNewAccounts(newAccounts: string) {
-      setMetaMaskAccount(newAccounts);
-    }
-    (window as any).ethereum
-      .request({ method: "eth_accounts" })
-      .then(handleNewAccounts);
-    (window as any).ethereum.on("accountsChanged", handleNewAccounts);
-    return () => {
-      (window as any).ethereum.removeListener(
-        "accountsChanged",
-        handleNewAccounts
-      );
-    };
-  }, []);
 
   useEffect(() => {
     // This is to have the code editor to be responsive to color modes
@@ -151,9 +133,9 @@ export default function ContractsIndex(props: IProps) {
     } else {
       setAccountAddress("");
       setTesseraKeys([]);
-      if (selectDeployRef.current !== undefined) {
-        selectDeployRef.current.clearValue();
-      }
+      // if (selectDeployRef.current !== undefined) {
+      //   selectDeployRef.current.clearValue();
+      // }
       setDeployParams({ ...deployParams, privateKeyFrom: "" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -484,14 +466,6 @@ export default function ContractsIndex(props: IProps) {
                         <AccordionIcon />
                       </AccordionButton>
                       <AccordionPanel pb={4}>
-                        <Button
-                          leftIcon={<MetaMask />}
-                          colorScheme="orange"
-                          variant="outline"
-                          onClick={connectHandler}
-                        >
-                          Connect
-                        </Button>
                         <FormControl>
                           <FormLabel htmlFor="predefined-account">
                             Account
@@ -546,14 +520,16 @@ export default function ContractsIndex(props: IProps) {
                           <FormLabel htmlFor="private-for">
                             Private For
                           </FormLabel>
-                          <MultiSelect
+
+                          <DynamicSelect
+                            //@ts-ignore
                             isLoading={selectLoading}
                             instanceId="private-for"
                             isMulti
                             options={tesseraKeys}
-                            onChange={(e) => {
+                            onChange={(e: any) => {
                               const myList: string[] = [];
-                              e.map((k) => myList.push(k.value));
+                              e.map((k: any) => myList.push(k.value));
                               setDeployParams({
                                 ...deployParams,
                                 privateFor: myList,
@@ -564,7 +540,15 @@ export default function ContractsIndex(props: IProps) {
                             selectedOptionStyle="check"
                             hideSelectedOptions={false}
                             ref={selectDeployRef}
+                            // menuPortalTarget={document.body}
+                            // styles={{
+                            //   menuPortal: (base: any) => ({
+                            //     ...base,
+                            //     zIndex: 9999,
+                            //   }),
+                            // }}
                           />
+
                           <FormLabel htmlFor="storage-value">
                             Initial Storage Value
                           </FormLabel>
@@ -633,7 +617,6 @@ export default function ContractsIndex(props: IProps) {
                   </Accordion>
                 </SimpleGrid>
               </TabPanel>
-
               {/* compiler output */}
               <TabPanel overflow="scroll" h="550px">
                 <VStack
