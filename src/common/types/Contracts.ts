@@ -1,7 +1,8 @@
 
 export type SCDFunctionArg = {
   name: string,
-  type: string
+  type: string,
+  value: string | number
 }
 
 export type SCDConstructor = {
@@ -53,10 +54,12 @@ export const defaultSmartContracts: SmartContract[] = [
     contract: `pragma solidity ^0.7.6;
     contract SimpleStorage {
       uint public storedData;
+      uint public bob;
       event stored(address _to, uint _amount);
         
-      constructor(uint initVal) public {
+      constructor(uint initVal, uint ibob) public {
         emit stored(msg.sender, initVal);
+        bob = ibob;
         storedData = initVal;
       }
         
@@ -68,6 +71,11 @@ export const defaultSmartContracts: SmartContract[] = [
       function get() view public returns (uint retVal) {
         return storedData;
       }
+
+      function getBob() view public returns (uint retVal) {
+        return bob;
+      }
+
     }`,
   },
 ];

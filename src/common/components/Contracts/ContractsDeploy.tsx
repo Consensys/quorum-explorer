@@ -22,7 +22,7 @@ import { Select as MultiSelect } from "chakra-react-select";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract, SCDefinition } from "../../types/Contracts";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-import { getContractFunctions } from "../../lib/contracts"
+import { getContractFunctions, setFunctionArgValue } from "../../lib/contracts"
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -59,19 +59,19 @@ export default function ContractsDeploy(props: IProps) {
   }, []);
 
   const handleConstructorArgs = (e: any) => {
-    console.log("!!!! Constructor INIT !!!!")
+    console.log("!!!! HandleDeploy INIT !!!!")
+    console.log(e.target.id);
     console.log(e.target.value);
-    console.log("!!!! Constructor INIT !!!!")
-    // setSimpleStorageValue(e.target.value);
+    setFunctionArgValue(scDefinition.constructor.inputs, e.target.id, e.target.value)
+    console.log(scDefinition.constructor)
+    console.log("!!!! HandleDeploy INIT !!!!")
   };
   
   // const handleDeploy = (e: any) => {
-  //   console.log("!!!! HandleDeploy INIT !!!!")
   //   console.log(e.target.value);
   //   console.log("!!!! HandleDeploy INIT !!!!")
   // };
   
-
   const handleDeploy = async (e: any) => {
     e.preventDefault();
     if (props.account.length < 1) {
@@ -201,8 +201,8 @@ export default function ContractsDeploy(props: IProps) {
 
             {scDefinition.constructor.inputs.map((input) => (
               <>
-                <FormLabel htmlFor={input.name}>{input.name}</FormLabel>
-                <Input id={input.name} onChange={handleConstructorArgs} />
+                <FormLabel key="label-{input.name}" htmlFor={input.name}>{input.name}</FormLabel>
+                <Input key="input-{input.name}" id={input.name} onChange={handleConstructorArgs} />
               </>
             ))}
 

@@ -26,6 +26,11 @@ function getFunctions(obj: any){
   return obj.map((_: any) => createFunction(_))
 }
 
+export function setFunctionArgValue(fa: SCDFunctionArg[], k: string, v: string|number){
+  const input = fa.filter(a => a.name === k)
+  input[0].value = v;
+}
+
 // {anonymous: false, inputs: Array(2), name: 'stored', type: 'event'}
 function createEvent(obj: any){
   const c : SCDFunction = {
