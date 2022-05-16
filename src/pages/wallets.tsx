@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { GetServerSideProps } from "next";
+import type { Session } from "next-auth";
+import { useSession, getSession } from "next-auth/react";
+import AccessDenied from "../common/components/Misc/AccessDenied";
 import { Container, SimpleGrid } from "@chakra-ui/react";
 import PageHeader from "../common/components/Misc/PageHeader";
 import WalletsTransferEth from "../common/components/Wallets/WalletsTransferEth";
@@ -14,6 +18,9 @@ interface IProps {
 }
 
 export default function Wallets({ config }: IProps) {
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
+
   const [wallet, setWallet] = useState<IState>({
     selectedNode: config.nodes[0].name,
   });
@@ -21,7 +28,10 @@ export default function Wallets({ config }: IProps) {
   const handleSelectNode = (e: any) => {
     setWallet({ ...wallet, selectedNode: e.target.value });
   };
-
+  if (typeof window !== "undefined" && loading) return null;
+  if (!session) {
+    return <AccessDenied />;
+  }
   return (
     <>
       <Container maxW={{ base: "container.sm", md: "container.sm" }}>
@@ -41,8 +51,15 @@ export default function Wallets({ config }: IProps) {
   );
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps<{
+  session: Session | null;
+}> = async (context) => {
   const res = await configReader();
   const config: QuorumConfig = JSON.parse(res);
-  return { props: { config } };
-}
+  return {
+    props: {
+      config,
+      session: await getSession(context),
+    },
+  };
+};

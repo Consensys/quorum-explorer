@@ -1,4 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { GetServerSideProps } from "next";
+import type { Session } from "next-auth";
+import { useSession, getSession } from "next-auth/react";
+import AccessDenied from "../common/components/Misc/AccessDenied";
 import { Container } from "@chakra-ui/react";
 import PageHeader from "../common/components/Misc/PageHeader";
 import NodeOverview from "../common/components/Nodes/NodeOverview";
@@ -39,6 +43,9 @@ interface IProps {
 }
 
 export default function Nodes({ config }: IProps) {
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
+
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [node, setNode] = useState<IState>({
     selectedNode: config.nodes[0].name,
@@ -143,13 +150,17 @@ export default function Nodes({ config }: IProps) {
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [node.selectedNode]);
+  }, [node.selectedNode, session]);
 
   const handleSelectNode = (e: any) => {
     clearInterval(intervalRef.current as NodeJS.Timeout);
     setNode({ ...node, selectedNode: e.target.value });
   };
 
+  if (typeof window !== "undefined" && loading) return null;
+  if (!session) {
+    return <AccessDenied />;
+  }
   return (
     <>
       <Container maxW={{ base: "container.sm", md: "container.xl" }}>
@@ -173,8 +184,15 @@ export default function Nodes({ config }: IProps) {
   );
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps<{
+  session: Session | null;
+}> = async (context) => {
   const res = await configReader();
   const config: QuorumConfig = JSON.parse(res);
-  return { props: { config } };
-}
+  return {
+    props: {
+      config,
+      session: await getSession(context),
+    },
+  };
+};

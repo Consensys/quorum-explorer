@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='-r next-logger' next dev -p 25000",
+    "dev": "next dev -p 25000",
     "build": "next build",
     "start": "NODE_OPTIONS='-r next-logger' next start -p 25000",
     "lint": "next lint"
@@ -25,6 +25,7 @@
     "fs": "^0.0.1-security",
     "net": "^1.0.2",
     "next": "12.1.0",
+    "next-auth": "^4.3.4",
     "next-logger": "^3.0.0",
     "next-remove-imports": "^1.0.6",
     "react": "17.0.2",
