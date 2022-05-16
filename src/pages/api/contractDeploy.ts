@@ -3,7 +3,7 @@ import Web3 from "web3";
 //@ts-ignore
 import Web3Quorum from "web3js-quorum";
 import axios from "axios";
-import { CompiledContract } from "../../common/types/Contracts";
+import { CompiledContract, SCDFunctionArg } from "../../common/types/Contracts";
 
 export default async function handler(
   req: NextApiRequest,
@@ -23,9 +23,10 @@ export default async function handler(
   });
 }
 
-function paddingHex(paddingNo = 64, toPad: string) {
-  const toHex = parseInt(toPad).toString(16);
-  return "0".repeat(paddingNo - toHex.length) + toHex;
+function constructorInitValues(web3: Web3, deployArgs: SCDFunctionArg[]) {
+  const stypes = deployArgs.map(_=> _.type);
+  const values = deployArgs.map(_=> _.value);
+  return web3.eth.abi.encodeParameters(stypes, values).slice(2);
 }
 
 export async function deployContract(
@@ -55,13 +56,14 @@ export async function deployContract(
       headers: { "Content-Type": "application/json" },
     })
     .then((res) => res.data.keys[0].key);
+  const constructorValues: string =   constructorInitValues(web3, deployArgs);
   const txOptions = {
     chainId,
     nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
     gasLimit: 0x24a22, //max number of gas units the tx is allowed to use
     value: 0,
-    data: "0x" + bytecode + paddingHex(64, deployArgs),
+    data: "0x" + bytecode + constructorValues,
     from: account,
     isPrivate: true,
     privateKey: accountPrivateKey.slice(2),

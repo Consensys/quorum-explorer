@@ -1,3 +1,4 @@
+import { endianness } from "os";
 import { SCDefinition, SCDConstructor, SCDFunctionArg, SCDFunction, VoidSCDefinition, VoidSCDConstructor } from "../types/Contracts";
 
 
@@ -26,9 +27,15 @@ function getFunctions(obj: any){
   return obj.map((_: any) => createFunction(_))
 }
 
-export function setFunctionArgValue(fa: SCDFunctionArg[], k: string, v: string|number){
+export function setFunctionArgValue(fa: SCDFunctionArg[], k: string, v: any){
   const input = fa.filter(a => a.name === k)
-  input[0].value = v;
+  if (input != []){
+    input[0].value = v;
+  }
+}
+
+export function setFunctionInputsArgValue(f: SCDFunction[], k: string, v: any){
+  f.map(_ => setFunctionArgValue(_.inputs, k, v))
 }
 
 // {anonymous: false, inputs: Array(2), name: 'stored', type: 'event'}
