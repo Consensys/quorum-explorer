@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getSession } from "next-auth/react";
 import { ethApiCall } from "../../common/lib/ethApiCall";
 import { ConsensusAlgorithms, Clients } from "../../common/types/Validator";
 
@@ -6,8 +7,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body)
-  const client = req.body.client; 
+  console.log(req.body);
+  const client = req.body.client;
   const algorithm = req.body.algorithm;
   const rpcUrl = req.body.rpcUrl;
   const address = req.body.address;
@@ -23,21 +24,31 @@ export default async function handler(
       clique: "clique_discard",
     },
   };
+
+  const session = await getSession({ req });
+  if (!session) {
+    /// Not Signed in
+    res.status(401).end();
+    return;
+  }
+
   try {
-    const res = await ethApiCall(
+    const result = await ethApiCall(
       rpcUrl,
       methodDict[client as keyof Clients][
         algorithm as keyof ConsensusAlgorithms
       ]!,
       [address]
     );
-    console.log(res);
+    console.log(result);
+    res.status(200);
   } catch (e) {
     console.error(e);
-    console.error("Node is unreachable. Ensure ports are open and client is running!" );
+    console.error(
+      "Node is unreachable. Ensure ports are open and client is running!"
+    );
     res.status(500).json({});
   } finally {
-    res.status(200).json({});
+    res.end();
   }
 }
-

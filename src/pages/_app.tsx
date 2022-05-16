@@ -8,7 +8,6 @@ import "../../styles/globals.css";
 import Layout from "../common/components/Misc/Layout";
 
 function MyApp({ Component, pageProps, router }: AppProps) {
-  const [isFirstMount, setIsFirstMount] = useState(true);
   const breakpoints = createBreakpoints({
     sm: "320px",
     md: "850px",
@@ -25,6 +24,7 @@ function MyApp({ Component, pageProps, router }: AppProps) {
       // Provider options are not required but can be useful in situations where
       // you have a short session maxAge time. Shown here with default values.
       session={pageProps.session}
+      refetchInterval={60}
     >
       <ChakraProvider theme={theme}>
         <title>Quorum Explorer</title>

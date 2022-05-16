@@ -37,7 +37,7 @@ export default function ValidatorsPending(props: IProps) {
     const rpcUrl: string = needle.rpcUrl;
     const client: string = needle.client;
 
-    const discardStatus = await axios({
+    await axios({
       method: "POST",
       url: `/api/validatorsDiscardProposal`,
       headers: {
@@ -50,11 +50,19 @@ export default function ValidatorsPending(props: IProps) {
         address: e[0],
       }),
       baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
-    });
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("Address discarded: " + e);
+        }
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          console.error(`${err.status} Unauthorized`);
+        }
+      });
     // console.log(discardStatus);
-    if (discardStatus.status === 200) {
-      console.log("Address discarded: " + e);
-    }
+
     setButtonLoading({ [index]: false });
   };
   return (

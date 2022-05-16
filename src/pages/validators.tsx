@@ -71,14 +71,26 @@ export default function Validators({ config }: IProps) {
         }),
         baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
       }),
-    ]).then(([currentVal, pendingVal]) => {
-      setValidators({
-        selectedNode: node,
-        rpcUrl: needle.rpcUrl,
-        minersList: currentVal.data.validators,
-        pendingList: pendingVal.data.validators,
+    ])
+      .then(([currentVal, pendingVal]) => {
+        setValidators({
+          selectedNode: node,
+          rpcUrl: needle.rpcUrl,
+          minersList: currentVal.data.validators,
+          pendingList: pendingVal.data.validators,
+        });
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          console.error(`${err.status} Unauthorized`);
+        }
+        setValidators({
+          selectedNode: node,
+          rpcUrl: needle.rpcUrl,
+          minersList: [],
+          pendingList: [],
+        });
       });
-    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
