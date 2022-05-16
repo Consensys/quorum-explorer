@@ -249,8 +249,14 @@ export default function WalletsTransferEth(props: IProps) {
             <VStack>
               <HStack>
                 <Text>Address: </Text>
-                <Tag size="md" variant="solid" colorScheme="green">
-                  {metaMaskAccount}
+                <Tag
+                  size="md"
+                  variant="solid"
+                  colorScheme={metaMaskAccount.length !== 0 ? "green" : "red"}
+                >
+                  {metaMaskAccount.length !== 0
+                    ? metaMaskAccount
+                    : "No Account Connected"}
                 </Tag>
               </HStack>
               <HStack>
@@ -297,7 +303,7 @@ export default function WalletsTransferEth(props: IProps) {
                 Connect
               </Button>
             )}
-            <Button
+            {/* <Button
               colorScheme="blue"
               loadingText="Switching..."
               variant="solid"
@@ -306,7 +312,7 @@ export default function WalletsTransferEth(props: IProps) {
               isDisabled
             >
               Switch Chain
-            </Button>
+            </Button> */}
             <Button
               type="submit"
               colorScheme="orange"
