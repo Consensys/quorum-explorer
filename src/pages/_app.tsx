@@ -24,7 +24,8 @@ function MyApp({ Component, pageProps, router }: AppProps) {
       // Provider options are not required but can be useful in situations where
       // you have a short session maxAge time. Shown here with default values.
       session={pageProps.session}
-      refetchInterval={60}
+      refetchInterval={10}
+      refetchOnWindowFocus={true}
     >
       <ChakraProvider theme={theme}>
         <title>Quorum Explorer</title>
