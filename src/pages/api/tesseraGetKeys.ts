@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import { QuorumNode, QuorumConfig } from "../../common/types/QuorumConfig";
 import { getMemberList } from "../../common/lib/quorumConfig";
+import { getSession } from "next-auth/react";
 
 type KeysList = {
   keys: SingleKey[];
@@ -17,6 +18,7 @@ async function getTesseraKeys(config: QuorumConfig) {
   // either remove self key from output or give indicator that it is current selection
   const memberList = getMemberList(config);
   const final: { label: string; options: any[] }[] = [];
+
   for (let x of memberList) {
     const selfKey = x.privateTxUrl + "/keys";
     const getAllKeys = x.privateTxUrl + "/partyinfo/keys";
@@ -46,6 +48,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = await getSession({ req });
+  if (!session) {
+    /// Not Signed in
+    res.status(401).end();
+    return;
+  }
+
   const result = await getTesseraKeys(req.body.config);
   res.status(200).json(result);
+  res.end();
 }

@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getSession } from "next-auth/react";
 import Web3 from "web3";
 //@ts-ignore
 import Web3Quorum from "web3js-quorum";
@@ -8,6 +9,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = await getSession({ req });
+  if (!session) {
+    /// Not Signed in
+    res.status(401).end();
+    return;
+  }
   if (req.body.client === "besu") {
     await besuSetValue(
       req.body.rpcUrl,

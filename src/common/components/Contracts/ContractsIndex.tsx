@@ -164,7 +164,11 @@ export default function ContractsIndex(props: IProps) {
           setTesseraKeys(res.data);
           setSelectLoading(false);
         })
-        .catch(console.error);
+        .catch((err) => {
+          if (err.status === 401) {
+            console.error(`${err.status} Unauthorized`);
+          }
+        });
       return returnRes;
     };
     fetchData();

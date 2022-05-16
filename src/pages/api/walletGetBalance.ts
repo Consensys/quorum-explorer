@@ -1,23 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getSession } from "next-auth/react";
 import { ethApiCall } from "../../common/lib/ethApiCall";
-import { QuorumWallet } from '../../common/types/Wallets';
+import { QuorumWallet } from "../../common/types/Wallets";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body)
-  const account = req.body.account; 
+  console.log(req.body);
+  const session = await getSession({ req });
+  if (!session) {
+    /// Not Signed in
+    res.status(401).end();
+    return;
+  }
+  const account = req.body.account;
   const rpcUrl = req.body.rpcUrl;
-  let status : QuorumWallet = {"account": account, "balance": -1}
+  let status: QuorumWallet = { account: account, balance: -1 };
   try {
-    const res = await ethApiCall(rpcUrl, 'eth_getBalance', [account, 'latest'])
-    status = {"account": account, "balance": res.data.result}
+    const res = await ethApiCall(rpcUrl, "eth_getBalance", [account, "latest"]);
+    status = { account: account, balance: res.data.result };
   } catch (e) {
     console.error(e);
-    console.error("Node is unreachable. Ensure ports are open and client is running!" );
+    console.error(
+      "Node is unreachable. Ensure ports are open and client is running!"
+    );
   } finally {
     res.status(200).json(status);
   }
 }
-

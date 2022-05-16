@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getSession } from "next-auth/react";
 import { ethApiCall } from "../../common/lib/ethApiCall";
 import { QuorumBlock } from "../../common/types/Explorer";
 
@@ -25,6 +26,14 @@ export default async function handler(
     uncles: [],
     transactions: [],
   };
+
+  const session = await getSession({ req });
+  if (!session) {
+    /// Not Signed in
+    res.status(401).end();
+    return;
+  }
+
   try {
     const ethBlockByNumber = await ethApiCall(rpcUrl, "eth_getBlockByNumber", [
       blockNumber,
@@ -50,7 +59,9 @@ export default async function handler(
     console.error(
       "Node is unreachable. Ensure ports are open and client is running!"
     );
+    res.status(500);
   } finally {
     res.status(200).json(quorumBlock);
+    res.end();
   }
 }

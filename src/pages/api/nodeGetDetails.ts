@@ -29,7 +29,6 @@ export default async function handler(
   }
 
   try {
-    console.log("Session", JSON.stringify(session, null, 2));
     const adminNodeInfo = await ethApiCall(rpcUrl, "admin_nodeInfo");
     const ethBlockNumber = await ethApiCall(rpcUrl, "eth_blockNumber");
     const netPeerCount = await ethApiCall(rpcUrl, "net_peerCount");

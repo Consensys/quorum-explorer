@@ -139,6 +139,20 @@ export default function Nodes({ config }: IProps) {
         })
         .catch((err) => {
           if ((err.status = 401)) console.error(`${err.status} Unauthorized`);
+          setNode({
+            selectedNode: name,
+            client: needle.client,
+            nodeId: "",
+            nodeName: "",
+            enode: "",
+            ip: "",
+            statusText: "error",
+            rpcUrl: needle.rpcUrl,
+            blocks: 0,
+            peers: 0,
+            pendingTxns: 0,
+            queuedTxns: 0,
+          });
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

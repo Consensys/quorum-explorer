@@ -4,12 +4,19 @@ import Web3 from "web3";
 import Web3Quorum from "web3js-quorum";
 import axios from "axios";
 import { CompiledContract } from "../../common/types/Contracts";
+import { getSession } from "next-auth/react";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   console.log(req.body);
+  const session = await getSession({ req });
+  if (!session) {
+    /// Not Signed in
+    res.status(401).end();
+    return;
+  }
   await deployContract(
     req.body.client,
     req.body.rpcUrl,
