@@ -14,6 +14,7 @@ import {
   HStack,
   Text,
   Center,
+  VStack,
 } from "@chakra-ui/react";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import axios from "axios";
@@ -146,6 +147,7 @@ export default function WalletsTransferEth(props: IProps) {
     setButtonLoading(true);
     if (metaMaskAccount.length === 0) {
       console.error("No account connected with MetaMask!");
+      setButtonLoading(false);
       return;
     }
     // A Web3Provider wraps a standard Web3 provider, which is
@@ -169,7 +171,7 @@ export default function WalletsTransferEth(props: IProps) {
     const sendTx = await signer.sendTransaction(params);
     toast({
       title: "Transaction Hash",
-      description: `${JSON.stringify(sendTx.hash)}`,
+      description: `${sendTx.hash.toString()}`,
       status: "info",
       duration: 5000,
       isClosable: true,
@@ -177,7 +179,7 @@ export default function WalletsTransferEth(props: IProps) {
     const finished = await sendTx.wait();
     toast({
       title: "Successful transaction",
-      description: `BlockHash: ${JSON.stringify(finished.blockHash)}`,
+      description: `BlockHash: ${finished.blockHash.toString()}`,
       status: "success",
       duration: 10000,
       isClosable: true,
@@ -244,12 +246,20 @@ export default function WalletsTransferEth(props: IProps) {
           <Divider />
           <br />
           <Center>
-            <HStack>
-              <Text>Balance (ETH): </Text>
-              <Tag size="lg" variant="solid" colorScheme="teal">
-                {accountBalance}
-              </Tag>
-            </HStack>
+            <VStack>
+              <HStack>
+                <Text>Address: </Text>
+                <Tag size="md" variant="solid" colorScheme="green">
+                  {metaMaskAccount}
+                </Tag>
+              </HStack>
+              <HStack>
+                <Text>Balance (ETH): </Text>
+                <Tag size="lg" variant="solid" colorScheme="teal">
+                  {accountBalance}
+                </Tag>
+              </HStack>
+            </VStack>
           </Center>
           <FormControl as="form" onSubmit={metamaskTransfer} isRequired>
             {/* <FormLabel htmlFor="privateKeyFrom">PrivateKey From</FormLabel>
