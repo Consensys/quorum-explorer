@@ -86,7 +86,8 @@ export default function ValidatorsActive(props: IProps) {
                   <Text>{miner}</Text>
                   <Spacer key={i} />
                   <Button
-                    bgColor="red.400"
+                    // bgColor="red.400"
+                    colorScheme="red"
                     isLoading={buttonLoading[i] ? true : false}
                     loadingText="Removing..."
                     onClick={() => handleClick(miner, i)}

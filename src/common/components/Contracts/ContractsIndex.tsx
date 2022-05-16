@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import {
   Tabs,
@@ -26,6 +26,7 @@ import {
   useColorMode,
   HStack,
   Center,
+  Portal,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -43,23 +44,34 @@ import {
   defaultSmartContracts,
   CompiledContract,
 } from "../../types/Contracts";
+import { getContractFunctions } from "../../lib/contracts";
 import axios from "axios";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-import { Select as MultiSelect } from "chakra-react-select";
+// @ts-ignore
+// import { Select as MultiSelect } from "chakra-react-select";
 import dynamic from "next/dynamic";
 import "@uiw/react-textarea-code-editor/dist.css";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
-  loading: () => <p>Loading interaction component...</p>,
+  loading: () => <p>Loading code editor component...</p>,
 });
 
 const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
   loading: () => <p>Loading interaction component...</p>,
+  ssr: false,
 });
 
+const DynamicSelect = dynamic(
+  // @ts-ignore
+  () => import("chakra-react-select").then((mod) => mod.Select),
+  {
+    loading: () => <p>Loading Select component...</p>,
+    ssr: false,
+  }
+);
+
 const MotionGrid = motion(SimpleGrid);
-// const ChakraCode = chakra(SyntaxHighlighter);
 const ChakraEditor = chakra(CodeEditor);
 
 interface IProps {
@@ -80,8 +92,9 @@ export default function ContractsIndex(props: IProps) {
   const [accountAddress, setAccountAddress] = useState("");
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
   const [logs, setLogs] = useState<string[]>([]);
-  const [tesseraKeys, setTesseraKeys] =
-    useState<{ label: string; value: string }[]>();
+  const [tesseraKeys, setTesseraKeys] = useState<
+    { label: string; value: string }[]
+  >([]);
   const [currentTesseraPublicKey, setCurrentTesseraPublicKey] = useState("");
   const [deployParams, setDeployParams] = useState<{
     privateKeyFrom: string;
@@ -99,6 +112,7 @@ export default function ContractsIndex(props: IProps) {
   const [selectLoading, setSelectLoading] = useState(true);
 
   useEffect(() => {
+    // This is to have the code editor to be responsive to color modes
     document.documentElement.setAttribute(
       "data-color-mode",
       colorMode === "light" ? "light" : "dark"
@@ -117,6 +131,7 @@ export default function ContractsIndex(props: IProps) {
       });
     } else {
       setAccountAddress("");
+      setTesseraKeys([]);
       setDeployParams({ ...deployParams, privateKeyFrom: "" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -225,6 +240,7 @@ export default function ContractsIndex(props: IProps) {
             ...buttonLoading,
             Compile: { status: false, isDisabled: false },
           });
+          getContractFunctions(response.data.abi);
         } else {
           closeAll();
           toast({
@@ -407,6 +423,7 @@ export default function ContractsIndex(props: IProps) {
                 fontFamily:
                   "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
               }}
+              readOnly
             />
           </Box>
         </Box>
@@ -455,6 +472,7 @@ export default function ContractsIndex(props: IProps) {
                             placeholder="Node is not a Member"
                             value={accountAddress}
                             isDisabled
+                            readOnly
                           />
                           <FormLabel htmlFor="private-from">
                             PrivateKey From
@@ -465,6 +483,7 @@ export default function ContractsIndex(props: IProps) {
                             placeholder="0x"
                             value={deployParams.privateKeyFrom}
                             isDisabled
+                            readOnly
                           />
                           <FormLabel htmlFor="tessera-key">
                             Tessera Public Key
@@ -475,6 +494,7 @@ export default function ContractsIndex(props: IProps) {
                             placeholder="Node is not a Member"
                             value={currentTesseraPublicKey}
                             isDisabled
+                            readOnly
                           />
                         </FormControl>
                       </AccordionPanel>
@@ -496,14 +516,15 @@ export default function ContractsIndex(props: IProps) {
                           <FormLabel htmlFor="private-for">
                             Private For
                           </FormLabel>
-                          <MultiSelect
+                          <DynamicSelect
+                            //@ts-ignore
                             isLoading={selectLoading}
                             instanceId="private-for"
                             isMulti
                             options={tesseraKeys}
-                            onChange={(e) => {
+                            onChange={(e: any) => {
                               const myList: string[] = [];
-                              e.map((k) => myList.push(k.value));
+                              e.map((k: any) => myList.push(k.value));
                               setDeployParams({
                                 ...deployParams,
                                 privateFor: myList,
@@ -513,7 +534,15 @@ export default function ContractsIndex(props: IProps) {
                             closeMenuOnSelect={false}
                             selectedOptionStyle="check"
                             hideSelectedOptions={false}
+                            // menuPortalTarget={document.body}
+                            // styles={{
+                            //   menuPortal: (base: any) => ({
+                            //     ...base,
+                            //     zIndex: 9999,
+                            //   }),
+                            // }}
                           />
+
                           <FormLabel htmlFor="storage-value">
                             Initial Storage Value
                           </FormLabel>
@@ -535,7 +564,8 @@ export default function ContractsIndex(props: IProps) {
                                 loadingText="Compiling..."
                                 type="submit"
                                 variant="solid"
-                                backgroundColor="orange.200"
+                                // backgroundColor="orange.200"
+                                colorScheme="yellow"
                                 onClick={HandleCompile}
                                 mr={2}
                               >
@@ -552,7 +582,8 @@ export default function ContractsIndex(props: IProps) {
                                 loadingText="Deploying..."
                                 type="submit"
                                 variant="solid"
-                                backgroundColor="green.200"
+                                // backgroundColor="green.200"
+                                colorScheme="green"
                                 onClick={HandleDeploy}
                               >
                                 Deploy
@@ -580,7 +611,6 @@ export default function ContractsIndex(props: IProps) {
                   </Accordion>
                 </SimpleGrid>
               </TabPanel>
-
               {/* compiler output */}
               <TabPanel overflow="scroll" h="550px">
                 <VStack

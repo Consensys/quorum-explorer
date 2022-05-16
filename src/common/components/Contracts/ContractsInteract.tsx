@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   FormControl,
   FormLabel,
@@ -18,15 +18,25 @@ import {
   NumberDecrementStepper,
   HStack,
 } from "@chakra-ui/react";
-import { Select as MultiSelect } from "chakra-react-select";
-import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 //@ts-ignore
+// import { Select as MultiSelect } from "chakra-react-select";
+import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract } from "../../types/Contracts";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import dynamic from "next/dynamic";
+
+const DynamicSelect = dynamic(
+  // @ts-ignore
+  () => import("chakra-react-select").then((mod) => mod.Select),
+  {
+    loading: () => <p>Loading Select component...</p>,
+    ssr: false,
+  }
+);
 
 interface IProps {
   config: QuorumConfig;
@@ -37,7 +47,7 @@ interface IProps {
   privateFor: string[];
   privateFrom: string;
   fromPrivateKey: string;
-  tesseraKeys: { label: string; value: string }[] | undefined;
+  tesseraKeys: { label: string; value: string }[];
   selectLoading: boolean;
   closeAllToasts: () => void;
   reuseToast: any;
@@ -246,28 +256,31 @@ export default function ContractsInteract(props: IProps) {
               value={props.contractAddress}
               onChange={props.handleContractAddress}
               isDisabled
+              readOnly
             />
           </FormControl>
           <Box mt={1}>
-            <MultiSelect
+            <DynamicSelect
+              //@ts-ignore
               isLoading={props.selectLoading}
               instanceId="private-for-deploy"
               isMulti
               options={props.tesseraKeys}
-              onChange={(e) => {
+              onChange={(e: any) => {
                 const myList: string[] = [];
-                e.map((k) => myList.push(k.value));
+                e.map((k: any) => myList.push(k.value));
                 setGetSetTessera(myList);
               }}
-              placeholder="Select Tessera node recipients to use the functions below..."
+              placeholder="Select Tessera recipients to use the functions below..."
               closeMenuOnSelect={false}
               selectedOptionStyle="check"
               hideSelectedOptions={false}
               // menuPortalTarget={document.body}
-              // styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+              // styles={{
+              //   menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+              // }}
             />
           </Box>
-
           <Flex justifyContent="space-between" alignItems="center" m={1}>
             <Text fontWeight="semibold">get</Text>
             <HStack spacing={5}>
@@ -276,11 +289,13 @@ export default function ContractsInteract(props: IProps) {
                 maxW={100}
                 value={readValue}
                 textAlign="center"
+                readOnly
               />
               <Button
                 leftIcon={<FontAwesomeIcon icon={faDatabase as IconProp} />}
                 type="submit"
-                backgroundColor="orange.200"
+                // backgroundColor="orange.200"
+                colorScheme="yellow"
                 isLoading={readButtonLoading}
                 onClick={handleRead}
                 loadingText=""
@@ -291,7 +306,6 @@ export default function ContractsInteract(props: IProps) {
               </Button>
             </HStack>
           </Flex>
-          {/* <FormLabel htmlFor="private-for-deploy">Recipient</FormLabel> */}
           <Flex justifyContent="space-between" alignItems="center" m={1}>
             <FormLabel htmlFor="set" fontWeight="semibold" m={0} mr={5}>
               set
@@ -315,7 +329,8 @@ export default function ContractsInteract(props: IProps) {
                 leftIcon={<FontAwesomeIcon icon={faPencilAlt as IconProp} />}
                 minW={125}
                 type="submit"
-                backgroundColor="green.200"
+                // backgroundColor="green.200"
+                colorScheme="green"
                 isLoading={writeButtonLoading}
                 onClick={handleWrite}
                 loadingText=""

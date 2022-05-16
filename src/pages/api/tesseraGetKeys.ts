@@ -34,6 +34,9 @@ async function getTesseraKeys(config: QuorumConfig) {
             { value: res.data.keys[0].key, label: res.data.keys[0].key },
           ],
         });
+      })
+      .catch((err) => {
+        console.error(err);
       });
   }
   return final;
