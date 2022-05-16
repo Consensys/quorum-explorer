@@ -109,7 +109,7 @@ export default function Nodes({ config }: IProps) {
   const nodeInfoHandler = useCallback(
     async (name: string) => {
       const needle: QuorumNode = getDetailsByNodeName(config, name);
-      const res = await axios({
+      await axios({
         method: "POST",
         url: `/api/nodeGetDetails`,
         headers: {
@@ -120,22 +120,26 @@ export default function Nodes({ config }: IProps) {
           rpcUrl: needle.rpcUrl,
         }),
         baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
-      }).then((res) => {
-        setNode({
-          selectedNode: name,
-          client: needle.client,
-          nodeId: res.data.nodeId,
-          nodeName: res.data.nodeName,
-          enode: res.data.enode,
-          ip: res.data.ip,
-          statusText: res.data.statusText,
-          rpcUrl: needle.rpcUrl,
-          blocks: res.data.blocks,
-          peers: res.data.peers,
-          pendingTxns: res.data.pendingTxns,
-          queuedTxns: res.data.queuedTxns,
+      })
+        .then((res) => {
+          setNode({
+            selectedNode: name,
+            client: needle.client,
+            nodeId: res.data.nodeId,
+            nodeName: res.data.nodeName,
+            enode: res.data.enode,
+            ip: res.data.ip,
+            statusText: res.data.statusText,
+            rpcUrl: needle.rpcUrl,
+            blocks: res.data.blocks,
+            peers: res.data.peers,
+            pendingTxns: res.data.pendingTxns,
+            queuedTxns: res.data.queuedTxns,
+          });
+        })
+        .catch((err) => {
+          if ((err.status = 401)) console.error(`${err.status} Unauthorized`);
         });
-      });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [config]

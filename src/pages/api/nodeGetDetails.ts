@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { NodeDetails } from "../../common/types/api/responses";
 import { ethApiCall } from "../../common/lib/ethApiCall";
+import { getSession } from "next-auth/react";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,8 +21,15 @@ export default async function handler(
     queuedTxns: -1,
     pendingTxns: -1,
   };
+  const session = await getSession({ req });
+  if (!session) {
+    /// Not Signed in
+    res.status(401).end();
+    return;
+  }
 
   try {
+    console.log("Session", JSON.stringify(session, null, 2));
     const adminNodeInfo = await ethApiCall(rpcUrl, "admin_nodeInfo");
     const ethBlockNumber = await ethApiCall(rpcUrl, "eth_blockNumber");
     const netPeerCount = await ethApiCall(rpcUrl, "net_peerCount");
@@ -59,5 +67,6 @@ export default async function handler(
     nodeDetails["statusText"] = "error";
   } finally {
     res.status(200).json(nodeDetails);
+    res.end();
   }
 }
