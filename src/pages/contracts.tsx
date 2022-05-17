@@ -8,6 +8,8 @@ import PageHeader from "../common/components/Misc/PageHeader";
 import ContractsIndex from "../common/components/Contracts/ContractsIndex";
 import { QuorumConfig } from "../common/types/QuorumConfig";
 import { configReader } from "../common/lib/getConfig";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 interface IState {
   selectedNode: string;
@@ -31,7 +33,7 @@ export default function Contracts({ config }: IProps) {
     setContracts({ ...contracts, selectedNode: e.target.value });
   };
   if (typeof window !== "undefined" && loading) return null;
-  if (!session) {
+  if (!session && publicRuntimeConfig.DISABLE_AUTH === "false") {
     return <AccessDenied />;
   }
   return (

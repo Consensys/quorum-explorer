@@ -22,6 +22,8 @@ import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import { refresh5s } from "../common/lib/common";
 import axios from "axios";
 import { configReader } from "../common/lib/getConfig";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 interface IState {
   selectedNode: string;
@@ -119,7 +121,7 @@ export default function Nodes({ config }: IProps) {
           client: needle.client,
           rpcUrl: needle.rpcUrl,
         }),
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((res) => {
           setNode({
@@ -174,9 +176,8 @@ export default function Nodes({ config }: IProps) {
     clearInterval(intervalRef.current as NodeJS.Timeout);
     setNode({ ...node, selectedNode: e.target.value });
   };
-
   if (typeof window !== "undefined" && loading) return null;
-  if (!session) {
+  if (!session && publicRuntimeConfig.DISABLE_AUTH === "false") {
     return <AccessDenied />;
   }
   return (

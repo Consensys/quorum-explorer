@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
+import apiAuth from "../../common/lib/authentication";
 import { ethApiCall } from "../../common/lib/ethApiCall";
 import { ConsensusAlgorithms, Clients } from "../../common/types/Validator";
 
@@ -25,10 +26,9 @@ export default async function handler(
       qbft: "qbft_proposeValidatorVote",
     },
   };
-  const session = await getSession({ req });
-  if (!session) {
-    /// Not Signed in
-    res.status(401).end();
+
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
     return;
   }
 

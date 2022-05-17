@@ -28,7 +28,7 @@ It has not been designed for production use yet!
 (if you would like to change these values, otherwise basepath will default to / and local app will refer to ./src/config/config.json for the config)
 
 ```bash
-NEXT_PUBLIC_QE_BASEPATH="/explorer"
+QE_BASEPATH="/explorer"
 QE_CONFIG_PATH="path/to/config.json"
 ENV NODE_ENV=development
 ```

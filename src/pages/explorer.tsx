@@ -13,6 +13,8 @@ import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import { refresh5s } from "../common/lib/common";
 import { range } from "../common/lib/explorer";
 import { configReader } from "../common/lib/getConfig";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 import axios from "axios";
 
@@ -60,7 +62,7 @@ export default function Explorer({ config }: IProps) {
         }),
         signal: controller.signal,
         timeout: 1000,
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((res) => {
           setTimeoutReceived(false);
@@ -83,7 +85,7 @@ export default function Explorer({ config }: IProps) {
                 blockNumber: "0x" + block.toString(16),
               }),
               signal: controller.signal,
-              baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+              baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
             });
             return res.data;
           });
@@ -128,7 +130,7 @@ export default function Explorer({ config }: IProps) {
     setExplorer({ ...explorer, selectedNode: e.target.value });
   };
   if (typeof window !== "undefined" && loading) return null;
-  if (!session) {
+  if (!session && publicRuntimeConfig.DISABLE_AUTH === "false") {
     return <AccessDenied />;
   }
   return (

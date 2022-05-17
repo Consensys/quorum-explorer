@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { NodeDetails } from "../../common/types/api/responses";
 import { ethApiCall } from "../../common/lib/ethApiCall";
-import { getSession } from "next-auth/react";
+import apiAuth from "../../common/lib/authentication";
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,10 +21,9 @@ export default async function handler(
     queuedTxns: -1,
     pendingTxns: -1,
   };
-  const session = await getSession({ req });
-  if (!session) {
-    /// Not Signed in
-    res.status(401).end();
+
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
     return;
   }
 

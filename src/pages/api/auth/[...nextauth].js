@@ -9,6 +9,53 @@ import CredentialsProvider from "next-auth/providers/credentials";
 export default NextAuth({
   // https://next-auth.js.org/configuration/providers/oauth
   providers: [
+    process.env.SLACK_CLIENT_ID && process.env.SLACK_CLIENT_SECRET
+      ? SlackProvider({
+          clientId: process.env.SLACK_CLIENT_ID,
+          clientSecret: process.env.SLACK_CLIENT_SECRET,
+        })
+      : [],
+    process.env.OKTA_CLIENT_ID &&
+    process.env.OKTA_CLIENT_SECRET &&
+    process.env.OKTA_ISSUER
+      ? OktaProvider({
+          clientId: process.env.OKTA_CLIENT_ID,
+          clientSecret: process.env.OKTA_CLIENT_SECRET,
+          issuer: process.env.OKTA_ISSUER,
+        })
+      : [],
+    process.env.COGNITO_CLIENT_ID &&
+    process.env.COGNITO_CLIENT_SECRET &&
+    process.env.COGNITO_ISSUER
+      ? CognitoProvider({
+          clientId: process.env.COGNITO_CLIENT_ID,
+          clientSecret: process.env.COGNITO_CLIENT_SECRET,
+          issuer: process.env.COGNITO_ISSUER,
+        })
+      : [],
+    process.env.ATLASSIAN_CLIENT_ID && process.env.ATLASSIAN_CLIENT_SECRET
+      ? AtlassianProvider({
+          clientId: process.env.ATLASSIAN_CLIENT_ID,
+          clientSecret: process.env.ATLASSIAN_CLIENT_SECRET,
+          scope:
+            "write:jira-work read:jira-work read:jira-user offline_access read:me",
+        })
+      : [],
+    process.env.AZURE_AD_CLIENT_ID &&
+    process.env.AZURE_AD_CLIENT_SECRET &&
+    process.env.AZURE_AD_TENANT_ID
+      ? AzureADProvider({
+          clientId: process.env.AZURE_AD_CLIENT_ID,
+          clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+          tenantId: process.env.AZURE_AD_TENANT_ID,
+        })
+      : [],
+    process.env.GITLAB_CLIENT_ID && process.env.GITLAB_CLIENT_SECRET
+      ? GitlabProvider({
+          clientId: process.env.GITLAB_CLIENT_ID,
+          clientSecret: process.env.GITLAB_CLIENT_SECRET,
+        })
+      : [],
     process.env.GITHUB_ID && process.env.GITHUB_SECRET
       ? GithubProvider({
           clientId: process.env.GITHUB_ID,
@@ -75,6 +122,7 @@ export default NextAuth({
   ],
   theme: {
     colorScheme: "light",
+    logo: "https://cdn.consensys.net/uploads/Quorum_Logo_Blue_New.svg",
   },
   callbacks: {
     async jwt({ token }) {

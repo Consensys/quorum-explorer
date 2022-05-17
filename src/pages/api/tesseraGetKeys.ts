@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
-import { QuorumNode, QuorumConfig } from "../../common/types/QuorumConfig";
+import { QuorumConfig } from "../../common/types/QuorumConfig";
 import { getMemberList } from "../../common/lib/quorumConfig";
-import { getSession } from "next-auth/react";
+import apiAuth from "../../common/lib/authentication";
 
 type KeysList = {
   keys: SingleKey[];
@@ -48,10 +48,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getSession({ req });
-  if (!session) {
-    /// Not Signed in
-    res.status(401).end();
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
     return;
   }
 

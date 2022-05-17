@@ -14,6 +14,8 @@ import ValidatorsAbout from "../common/components/Validators/ValidatorAbout";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import { refresh3s } from "../common/lib/common";
 import { configReader } from "../common/lib/getConfig";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 interface IState {
   selectedNode: string;
@@ -55,7 +57,7 @@ export default function Validators({ config }: IProps) {
           algorithm: config.algorithm,
         }),
         signal: controller.signal,
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       }),
 
       axios({
@@ -69,7 +71,7 @@ export default function Validators({ config }: IProps) {
           client: needle.client,
           algorithm: config.algorithm,
         }),
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       }),
     ])
       .then(([currentVal, pendingVal]) => {
@@ -113,7 +115,7 @@ export default function Validators({ config }: IProps) {
     setValidators({ ...validators, selectedNode: e.target.value });
   };
   if (typeof window !== "undefined" && loading) return null;
-  if (!session) {
+  if (!session && publicRuntimeConfig.DISABLE_AUTH === "false") {
     return <AccessDenied />;
   }
   return (

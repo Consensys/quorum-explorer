@@ -1,19 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ethApiCall } from "../../common/lib/ethApiCall";
-import { QuorumWallet } from "../../common/types/Wallets";
 import Web3 from "web3";
 import { SignedTransaction, TransactionConfig } from "web3-core";
-import { getSession } from "next-auth/react";
+import apiAuth from "../../common/lib/authentication";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   console.log(req.body);
-  const session = await getSession({ req });
-  if (!session) {
-    /// Not Signed in
-    res.status(401).end();
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
     return;
   }
   const amount = req.body.amount;

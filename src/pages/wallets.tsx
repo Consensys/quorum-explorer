@@ -8,6 +8,8 @@ import PageHeader from "../common/components/Misc/PageHeader";
 import WalletsTransferEth from "../common/components/Wallets/WalletsTransferEth";
 import { QuorumConfig } from "../common/types/QuorumConfig";
 import { configReader } from "../common/lib/getConfig";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 interface IState {
   selectedNode: string;
@@ -29,7 +31,7 @@ export default function Wallets({ config }: IProps) {
     setWallet({ ...wallet, selectedNode: e.target.value });
   };
   if (typeof window !== "undefined" && loading) return null;
-  if (!session) {
+  if (!session && publicRuntimeConfig.DISABLE_AUTH === "false") {
     return <AccessDenied />;
   }
   return (

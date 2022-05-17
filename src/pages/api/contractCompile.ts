@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 //@ts-ignore
 import solc from "solc";
+import apiAuth from "../../common/lib/authentication";
 import { CompiledContract } from "../../common/types/Contracts";
 
 export default async function handler(
@@ -9,10 +9,8 @@ export default async function handler(
   res: NextApiResponse<CompiledContract>
 ) {
   console.log(req.body.name, req.body.content);
-  const session = await getSession({ req });
-  if (!session) {
-    /// Not Signed in
-    res.status(401).end();
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
     return;
   }
   let output = compile(req.body.content, req.body.name);

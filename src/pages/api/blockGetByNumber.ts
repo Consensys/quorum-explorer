@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import { ethApiCall } from "../../common/lib/ethApiCall";
 import { QuorumBlock } from "../../common/types/Explorer";
+import apiAuth from "../../common/lib/authentication";
 
 export default async function handler(
   req: NextApiRequest,
@@ -27,10 +28,8 @@ export default async function handler(
     transactions: [],
   };
 
-  const session = await getSession({ req });
-  if (!session) {
-    /// Not Signed in
-    res.status(401).end();
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
     return;
   }
 

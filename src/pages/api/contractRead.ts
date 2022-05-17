@@ -1,18 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import Web3 from "web3";
 //@ts-ignore
 import Web3Quorum from "web3js-quorum";
+import apiAuth from "../../common/lib/authentication";
 import { CompiledContract } from "../../common/types/Contracts";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getSession({ req });
-  if (!session) {
-    /// Not Signed in
-    res.status(401).end();
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
     return;
   }
   if (req.body.client === "besu") {

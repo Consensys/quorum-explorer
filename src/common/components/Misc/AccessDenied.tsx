@@ -13,14 +13,14 @@ export default function AccessDenied() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        <Container>
+        <Container mt={10}>
           <Center>
-            <VStack>
+            <VStack gap={3}>
               <Heading as="h1" size="4xl" noOfLines={1}>
                 Access Denied
               </Heading>
               <Link href="/api/auth/signin">
-                You must be signed in to view this page
+                You must be signed in to view this page.
               </Link>
               <Button
                 colorScheme="blue"

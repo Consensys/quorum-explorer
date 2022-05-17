@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
+import apiAuth from "../../common/lib/authentication";
 import { ethApiCall } from "../../common/lib/ethApiCall";
 import { QuorumWallet } from "../../common/types/Wallets";
 
@@ -8,12 +9,12 @@ export default async function handler(
   res: NextApiResponse
 ) {
   console.log(req.body);
-  const session = await getSession({ req });
-  if (!session) {
-    /// Not Signed in
-    res.status(401).end();
+
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
     return;
   }
+
   const account = req.body.account;
   const rpcUrl = req.body.rpcUrl;
   let status: QuorumWallet = { account: account, balance: -1 };
