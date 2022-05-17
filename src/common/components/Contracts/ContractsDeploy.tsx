@@ -9,13 +9,6 @@ import {
   AccordionIcon,
   Box,
   Input,
-  Flex,
-  Text,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   HStack,
 } from "@chakra-ui/react";
 import { Select as MultiSelect } from "chakra-react-select";
@@ -50,13 +43,7 @@ interface IProps {
 export default function ContractsDeploy(props: IProps) {
   const [getSetTessera, setGetSetTessera] = useState<string[]>();
   const [deployButtonLoading, setDeployButtonLoading] = useState(false);
-
   const scDefinition : SCDefinition = getContractFunctions(props.compiledContract.abi)
-  useEffect(() => {
-    console.log("&&&&&&&&&")
-    console.log(props)
-    console.log("&&&&&&&&&")
-  }, []);
 
   const handleConstructorArgs = (e: any) => {
     console.log(e.target.id);
@@ -71,8 +58,7 @@ export default function ContractsDeploy(props: IProps) {
     setFunctionInputsArgValue(scDefinition.functions, e.target.id, e.target.value)
     console.log(scDefinition.constructor)
   };
-  
-  
+    
   const handleDeploy = async (e: any) => {
     e.preventDefault();
     if (props.account.length < 1) {
