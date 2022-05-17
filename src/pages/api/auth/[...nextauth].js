@@ -124,10 +124,10 @@ export default NextAuth({
     colorScheme: "light",
     logo: "https://cdn.consensys.net/uploads/Quorum_Logo_Blue_New.svg",
   },
-  callbacks: {
-    async jwt({ token }) {
-      token.userRole = "admin";
-      return token;
-    },
-  },
+  // callbacks: {
+  //   async jwt({ token }) {
+  //     token.userRole = "admin";
+  //     return token;
+  //   },
+  // },
 });
