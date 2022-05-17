@@ -14,6 +14,9 @@ import ExplorerTxnCard from "./ExplorerTxnCard";
 import ExplorerTxnToast from "./ExplorerTxnToast";
 import { QuorumTxn } from "../../types/Explorer";
 import { motion } from "framer-motion";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
 const BoxMotion = motion(Box);
 
 interface IProps {

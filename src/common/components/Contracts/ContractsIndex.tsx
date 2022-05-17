@@ -51,6 +51,8 @@ import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 // import { Select as MultiSelect } from "chakra-react-select";
 import dynamic from "next/dynamic";
 import "@uiw/react-textarea-code-editor/dist.css";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,

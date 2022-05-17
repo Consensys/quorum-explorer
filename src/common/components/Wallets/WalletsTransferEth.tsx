@@ -22,7 +22,8 @@ import { motion } from "framer-motion";
 import { connectMetaMask, detectMetaMask } from "../../lib/connectMetaMask";
 import MetaMask from "../Misc/MetaMask";
 import { BigNumber, ethers } from "ethers";
-import BN from "bn.js";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 const MotionBox = motion(Box);
 

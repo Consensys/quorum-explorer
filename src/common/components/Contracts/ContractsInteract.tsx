@@ -28,6 +28,8 @@ import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import dynamic from "next/dynamic";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 const DynamicSelect = dynamic(
   // @ts-ignore

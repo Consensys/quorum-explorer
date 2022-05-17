@@ -19,6 +19,9 @@ import ExplorerBlockCard from "./ExplorerBlockCard";
 import ExplorerBlockToast from "./ExplorerBlockToast";
 import { QuorumBlock } from "../../types/Explorer";
 import { motion } from "framer-motion";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
 const BoxMotion = motion(Box);
 
 interface IProps {

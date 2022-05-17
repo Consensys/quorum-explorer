@@ -15,6 +15,9 @@ import { buttonState } from "../../types/Validator";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import { motion } from "framer-motion";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
 

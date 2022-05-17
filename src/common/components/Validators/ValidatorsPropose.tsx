@@ -12,6 +12,9 @@ import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
 import axios from "axios";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import { motion } from "framer-motion";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
 const MotionBox = motion(Box);
 
 interface IProps {

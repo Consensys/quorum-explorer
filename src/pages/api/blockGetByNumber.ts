@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import { ethApiCall } from "../../common/lib/ethApiCall";
 import { QuorumBlock } from "../../common/types/Explorer";
 import apiAuth from "../../common/lib/authentication";
