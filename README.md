@@ -76,7 +76,11 @@ npm run dev
 
 If you would like to use this application in a production environment, it is highly recommended that you enable authentication.
 
-Take a look at the `.env.production` file for values that you can change:
+You **must** generate a secret for `NEXTAUTH_SECRET` in `.env.production`. This is necessary for NextAuth to function in a production environment. You can generate NEXTAUTH_SECRET by either running `openssl rand -hex 32` or go to https://generate-secret.now.sh/32.
+
+If you set **DISABLE_AUTH** to `false`, to enable authentication, then you must provide at least one authentication entry in `.env.production`. For a 'testing' production environment, you can use `local_username` and `local_password` if you do not want to use OAuth just yet.
+
+Take a look at the `.env.production` file for values that you can change.
 
 ### Options
 
