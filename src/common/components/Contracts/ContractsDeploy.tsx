@@ -48,7 +48,7 @@ export default function ContractsDeploy(props: IProps) {
 
   const handleConstructorArgs = (e: any) => {
     setFunctionArgValue(scDefinition.constructor.inputs, e.target.id, e.target.value)
-    console.log(scDefinition);
+    // console.log(scDefinition);
   };
   
   const handleDeploy = async (e: any) => {
