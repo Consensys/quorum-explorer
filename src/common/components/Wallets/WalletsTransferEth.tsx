@@ -15,6 +15,15 @@ import {
   Text,
   Center,
   VStack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Code,
 } from "@chakra-ui/react";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import axios from "axios";
@@ -40,10 +49,49 @@ export default function WalletsTransferEth(props: IProps) {
   const toast = useToast();
   const [metaMaskAccount, setMetaMaskAccount] = useState("");
   const [accountBalance, setAccountBalance] = useState(0);
+  const [myChain, setMyChain] = useState({ chainId: "", chainName: "" });
+  const [metaChain, setMetaChain] = useState({ chainId: "", chainName: "" });
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [sentTx, setSentTx] = useState({
+    blockHash: "",
+    blockNumber: 0,
+    confirmations: 0,
+    transactionHash: "",
+  });
+
+  const needle: QuorumNode = getDetailsByNodeName(
+    props.config,
+    props.selectedNode
+  );
 
   const connectHandler = () => {
     connectMetaMask();
   };
+
+  useEffect(() => {
+    // get the chainId through the selected node
+    try {
+      const rpcUrl = needle.rpcUrl;
+      const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+      provider.getNetwork().then((res) => {
+        setMyChain({
+          chainId: "0x" + res.chainId.toString(16),
+          chainName: res.name,
+        });
+      });
+      const provider2 = new ethers.providers.Web3Provider(
+        (window as any).ethereum
+      );
+      provider2.getNetwork().then((res) => {
+        setMetaChain({
+          chainId: "0x" + res.chainId.toString(16),
+          chainName: res.name,
+        });
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }, [needle]);
 
   useEffect(() => {
     if (metaMaskAccount.length !== 0) {
@@ -69,6 +117,12 @@ export default function WalletsTransferEth(props: IProps) {
         .request({ method: "eth_accounts" })
         .then(handleNewAccounts);
       (window as any).ethereum.on("accountsChanged", handleNewAccounts);
+      (window as any).ethereum.on("chainChanged", (chainId: string) => {
+        // Handle the new chain.
+        // Correctly handling chain changes can be complicated.
+        // We recommend reloading the page unless you have good reason not to.
+        window.location.reload();
+      });
     } catch (err) {
       console.error(err);
     }
@@ -80,15 +134,14 @@ export default function WalletsTransferEth(props: IProps) {
             "accountsChanged",
             handleNewAccounts
           );
+          (window as any).ethereum.removeListener(
+            "chainChanged",
+            handleNewAccounts
+          );
         }
       });
     };
   }, []);
-
-  const needle: QuorumNode = getDetailsByNodeName(
-    props.config,
-    props.selectedNode
-  );
 
   const handlePrivateKeyFrom = (e: any) => {
     setPrivateKeyFrom(e.target.value);
@@ -148,6 +201,25 @@ export default function WalletsTransferEth(props: IProps) {
     setButtonLoading(true);
     if (metaMaskAccount.length === 0) {
       console.error("No account connected with MetaMask!");
+      toast({
+        title: "No Account Connected",
+        description: `Please connect your MetaMask account by clicking the button to the left`,
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      setButtonLoading(false);
+      return;
+    }
+    if (metaChain.chainId !== myChain.chainId) {
+      console.error("You are on the wrong chain!");
+      toast({
+        title: "Wrong Chain",
+        description: `Please select/add the network to MetaMask!`,
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
       setButtonLoading(false);
       return;
     }
@@ -169,35 +241,43 @@ export default function WalletsTransferEth(props: IProps) {
       to: accountTo,
       value: ethers.utils.parseUnits(amount.trim(), "ether").toHexString(),
     };
-    const sendTx = await signer.sendTransaction(params);
-    toast({
-      title: "Transaction Hash",
-      description: `${sendTx.hash.toString()}`,
-      status: "info",
-      duration: 5000,
-      isClosable: true,
-    });
-    const finished = await sendTx.wait();
-    toast({
-      title: "Successful transaction",
-      description: `BlockHash: ${finished.blockHash.toString()}`,
-      status: "success",
-      duration: 10000,
-      isClosable: true,
-    });
-    signer.getBalance().then((res) => {
-      const a = BigNumber.from(res);
-      const b = BigNumber.from("1000000000000000000");
-      setAccountBalance(a.div(b).toNumber());
-    });
-    setButtonLoading(false);
+    try {
+      const sendTx = await signer.sendTransaction(params);
+      toast({
+        title: `Transaction Hash: ${sendTx.hash.toString()}`,
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+      });
+      const finished = await sendTx.wait();
+      console.log(finished);
+      setSentTx(finished);
+      onOpen();
+      signer.getBalance().then((res) => {
+        const a = BigNumber.from(res);
+        const b = BigNumber.from("1000000000000000000");
+        setAccountBalance(a.div(b).toNumber());
+      });
+      setButtonLoading(false);
+    } catch (err: any) {
+      console.error(err);
+      if (err.code === 4001) {
+        toast({
+          title: `User declined transaction`,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+      setButtonLoading(false);
+    }
   };
 
   const switchChain = async () => {
     try {
       await (window as any).ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x539" }],
+        params: [{ chainId: myChain.chainId }],
       });
     } catch (switchError: any) {
       // This error code indicates that the chain has not been added to MetaMask.
@@ -208,9 +288,9 @@ export default function WalletsTransferEth(props: IProps) {
             method: "wallet_addEthereumChain",
             params: [
               {
-                chainId: "0x539",
-                chainName: "Localhost",
-                rpcUrls: ["http://localhost:8545"],
+                chainId: myChain.chainId,
+                chainName: myChain.chainName,
+                rpcUrls: [needle.rpcUrl],
                 nativeCurrency: {
                   name: "ETH",
                   symbol: "ETH",
@@ -249,11 +329,41 @@ export default function WalletsTransferEth(props: IProps) {
           <Center>
             <VStack>
               <HStack>
+                <Text>Network Chain: </Text>
+                <Tag
+                  size="md"
+                  variant="solid"
+                  colorScheme={
+                    metaChain.chainId === myChain.chainId ? "green" : "red"
+                  }
+                >
+                  {myChain.chainId.length !== 0
+                    ? parseInt(myChain.chainId, 16)
+                    : "No Chain Connected"}
+                </Tag>
+                <Divider orientation="vertical" h="25px" />
+
+                <Text>MetaMask Chain: </Text>
+                <Tag
+                  size="md"
+                  variant="solid"
+                  colorScheme={
+                    metaChain.chainId === myChain.chainId ? "green" : "red"
+                  }
+                >
+                  {metaChain.chainId.length !== 0
+                    ? parseInt(metaChain.chainId, 16)
+                    : "No Chain Connected"}
+                </Tag>
+              </HStack>
+              <HStack>
                 <Text>Address: </Text>
                 <Tag
                   size="md"
                   variant="solid"
-                  colorScheme={metaMaskAccount.length !== 0 ? "green" : "red"}
+                  colorScheme={
+                    metaMaskAccount.length !== 0 ? "green" : "yellow"
+                  }
                 >
                   {metaMaskAccount.length !== 0
                     ? metaMaskAccount
@@ -263,7 +373,7 @@ export default function WalletsTransferEth(props: IProps) {
               <HStack>
                 <Text>Balance (ETH): </Text>
                 <Tag size="lg" variant="solid" colorScheme="teal">
-                  {accountBalance}
+                  {metaMaskAccount.length === 0 ? "0" : accountBalance}
                 </Tag>
               </HStack>
             </VStack>
@@ -293,6 +403,16 @@ export default function WalletsTransferEth(props: IProps) {
               placeholder="1"
               onChange={handleAmount}
             />
+            {/* <Button
+              colorScheme="blue"
+              loadingText="Switching..."
+              variant="solid"
+              onClick={switchChain}
+              mr={3}
+              isDisabled={myChain.chainId !== metaChain.chainId ? false : true}
+            >
+              Switch Chain
+            </Button> */}
             {metaMaskAccount.length === 0 && (
               <Button
                 leftIcon={<MetaMask />}
@@ -304,16 +424,6 @@ export default function WalletsTransferEth(props: IProps) {
                 Connect
               </Button>
             )}
-            {/* <Button
-              colorScheme="blue"
-              loadingText="Switching..."
-              variant="solid"
-              onClick={switchChain}
-              mr={3}
-              isDisabled
-            >
-              Switch Chain
-            </Button> */}
             <Button
               type="submit"
               colorScheme="orange"
@@ -327,6 +437,30 @@ export default function WalletsTransferEth(props: IProps) {
           </FormControl>
         </Box>
       </MotionBox>
+      <Modal isOpen={isOpen} onClose={onClose} size="3xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirmed Transaction</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Block Number: <Code colorScheme="blue">{sentTx.blockNumber}</Code>
+            <br />
+            TX Hash: <Code colorScheme="purple">{sentTx.transactionHash}</Code>
+            <br />
+            Confirmations:{" "}
+            <Code colorScheme="green">{sentTx.confirmations}</Code> <br />
+            Current Balance: <Code colorScheme="yellow">
+              {accountBalance}
+            </Code>{" "}
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }
