@@ -30,7 +30,7 @@ export async function detectMetaMask() {
   const provider = await detectEthereumProvider();
 
   if (provider) {
-    console.log("MetaMask successfully detected!");
+    // console.log("MetaMask successfully detected!");
     return true;
   } else {
     return false;
