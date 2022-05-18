@@ -80,3 +80,7 @@ To workaround this issue:
 ### 2. Solc doesn't compile on the frontend and requires a backend
 
 Use a backend as well, either via express or something like NextJS(which is what we've done)
+
+
+### TODO:
+- multi contracts - types for list, bytes, I think addresses work?
