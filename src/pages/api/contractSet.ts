@@ -9,57 +9,60 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.body.client === "besu") {
-    await besuSetValue(
+    await besuTransactAtAddress(
       req.body.rpcUrl,
       req.body.privateUrl,
-      req.body.value,
       req.body.contractAddress,
       req.body.compiledContract,
       req.body.fromPrivateKey,
       req.body.sender,
-      req.body.privateFor
+      req.body.privateFor,
+      req.body.functionToCall,
+      req.body.functionArgs
     ).then((value) => {
       res.status(200).json(value);
     });
   } else if (req.body.client === "goquorum") {
-    await setValueAtAddress(
+    await transactAtAddress(
       req.body.rpcUrl,
       req.body.privateUrl,
       req.body.contractAddress,
       req.body.compiledContract,
-      req.body.value,
       req.body.sender,
       req.body.fromPrivateKey,
-      req.body.privateFor
+      req.body.privateFor,
+      req.body.functionToCall,
+      req.body.functionArgs
     ).then((value) => {
       res.status(200).json(value);
     });
   }
 }
 
-async function setValueAtAddress(
+async function transactAtAddress(
   rpcUrl: string,
   privateUrl: string,
   contractAddress: string,
   compiledContract: CompiledContract,
-  value: number,
   fromPublicKey: string,
   fromPrivateKey: string,
-  privateFor: string[]
+  privateFor: string[],
+  functionToCall: string,
+  functionInputParams: any
 ) {
   const abi = compiledContract.abi;
   const web3 = new Web3(rpcUrl);
   const chainId = await web3.eth.getChainId();
   const web3quorum = new Web3Quorum(web3, { privateUrl: privateUrl }, true);
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
-
   // eslint-disable-next-line no-underscore-dangle
   const functionAbi = contractInstance._jsonInterface.find((e: any) => {
-    return e.name === "set";
+    return e.name === functionToCall;
   });
 
+  const functionCallParams = functionInputParams.map((_:any)=>_.value)
   const functionArgs = web3quorum.eth.abi
-    .encodeParameters(functionAbi.inputs, [value])
+    .encodeParameters(functionAbi.inputs, functionCallParams )
     .slice(2);
 
   const from = web3.eth.accounts.privateKeyToAccount(fromPrivateKey);
@@ -90,15 +93,16 @@ async function setValueAtAddress(
   return result;
 }
 
-async function besuSetValue(
+async function besuTransactAtAddress(
   rpcUrl: string,
   privateUrl: string,
-  value: number,
   contractAddress: string,
   compiledContract: CompiledContract,
   fromPrivateKey: string,
   fromPublicKey: string,
-  toPublicKey: string[]
+  toPublicKey: string[],
+  functionToCall: string,
+  functionInputParams: any
 ) {
   const abi = compiledContract.abi;
   const web3 = new Web3(rpcUrl);
@@ -106,10 +110,11 @@ async function besuSetValue(
 
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
   const functionAbi = contractInstance._jsonInterface.find((e: any) => {
-    return e.name === "set";
+    return e.name === functionToCall;
   });
+  const functionCallParams = functionInputParams.map((_:any)=>_.value)
   const functionArgs = web3quorum.eth.abi
-    .encodeParameters(functionAbi.inputs, [value])
+    .encodeParameters(functionAbi.inputs, functionCallParams)
     .slice(2);
   const functionParams = {
     to: contractAddress,

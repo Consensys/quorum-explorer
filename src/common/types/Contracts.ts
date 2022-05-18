@@ -2,7 +2,7 @@
 export type SCDFunctionArg = {
   name: string,
   type: string,
-  value: string|number
+  value: any
 }
 
 export type SCDConstructor = {

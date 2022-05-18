@@ -8,6 +8,7 @@ import {
   AccordionPanel,
   AccordionIcon,
   Box,
+  Text,
   Input,
   HStack,
 } from "@chakra-ui/react";
@@ -15,7 +16,7 @@ import { Select as MultiSelect } from "chakra-react-select";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract, SCDefinition } from "../../types/Contracts";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-import { getContractFunctions, setFunctionArgValue, setFunctionInputsArgValue } from "../../lib/contracts"
+import { getContractFunctions, setFunctionArgValue, getDefaultValue } from "../../lib/contracts"
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -46,21 +47,13 @@ export default function ContractsDeploy(props: IProps) {
   const scDefinition : SCDefinition = getContractFunctions(props.compiledContract.abi)
 
   const handleConstructorArgs = (e: any) => {
-    console.log(e.target.id);
-    console.log(e.target.value);
     setFunctionArgValue(scDefinition.constructor.inputs, e.target.id, e.target.value)
-    console.log(scDefinition.constructor)
+    console.log(scDefinition);
   };
   
-  const handleFunctionArgs = (e: any) => {
-    console.log(e.target.id);
-    console.log(e.target.value);
-    setFunctionInputsArgValue(scDefinition.functions, e.target.id, e.target.value)
-    console.log(scDefinition.constructor)
-  };
-    
   const handleDeploy = async (e: any) => {
     e.preventDefault();
+    
     if (props.account.length < 1) {
       props.closeAllToasts();
       props.reuseToast({
@@ -150,7 +143,6 @@ export default function ContractsDeploy(props: IProps) {
         });
     }
   };
-
   return (
     <>
       <AccordionItem>
@@ -188,8 +180,8 @@ export default function ContractsDeploy(props: IProps) {
 
             {scDefinition.constructor.inputs.map((input) => (
               <>
-                <FormLabel key="label-{input.name}" htmlFor={input.name}>{input.name} ({input.type} )</FormLabel>
-                <Input key="input-{input.name}" id={input.name} onChange={handleConstructorArgs} />
+                <Text fontSize='sm' as='i' >{`${input.name} (${input.type})`}</Text>
+                <Input key="input-{input.name}" id={input.name} placeholder={input.value} onChange={handleConstructorArgs} />
               </>
             ))}
 

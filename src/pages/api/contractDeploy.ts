@@ -24,9 +24,9 @@ export default async function handler(
 }
 
 function constructorInitValues(web3: Web3, deployArgs: SCDFunctionArg[]) {
-  const stypes = deployArgs.map(_=> _.type);
-  const values = deployArgs.map(_=> _.value);
-  return web3.eth.abi.encodeParameters(stypes, values).slice(2);
+    const stypes = deployArgs.map(_=> _.type);
+    const values = deployArgs.map(_=> _.value);
+    return web3.eth.abi.encodeParameters(stypes, values).slice(2);
 }
 
 export async function deployContract(
@@ -56,7 +56,7 @@ export async function deployContract(
       headers: { "Content-Type": "application/json" },
     })
     .then((res) => res.data.keys[0].key);
-  const constructorValues: string =   constructorInitValues(web3, deployArgs);
+  const constructorValues: string = constructorInitValues(web3, deployArgs);
   const txOptions = {
     chainId,
     nonce: txCount,

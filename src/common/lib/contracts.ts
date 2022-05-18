@@ -1,7 +1,24 @@
-import { endianness } from "os";
+import { endianness, type } from "os";
 import { SCDefinition, SCDConstructor, SCDFunctionArg, SCDFunction, VoidSCDefinition, VoidSCDConstructor } from "../types/Contracts";
 
-
+export function getDefaultValue(t: string){
+  if (typeof(t) == "string"){
+    if ((t.startsWith("int"))||(t.startsWith("uint"))){
+      return 0 as number;
+    } else if (t.startsWith("bool")){
+      return false as Boolean;
+    } else if (t=="address"){
+      return "0x0000000000000000000000000000000000000000";
+    // } else if (t=="bytes"){
+    //   return [];
+    // } else if (t.includes("[")){
+    //   TODO get the type here and return something    
+    //   return [];
+    } else {
+      return ""
+    }
+  }
+}
 // {internalType: 'uint256', name: 'initVal', type: 'uint256'}
 function getConstructor(obj: any){
   var c : SCDConstructor = VoidSCDConstructor;
@@ -9,6 +26,7 @@ function getConstructor(obj: any){
     c = {
       inputs: obj.inputs.map((_: any) => _ as SCDFunctionArg)
     }
+    c.inputs.map(_ => _.value=getDefaultValue(_.type as string) )
   }
   return c
 }
@@ -20,6 +38,8 @@ function createFunction(obj: any){
     outputs: obj.outputs.map((_: any) => _ as SCDFunctionArg),
     name: obj.name
   }
+  c.inputs.map(_=> _.value = getDefaultValue(_.type))
+  c.outputs.map(_=> _.value = getDefaultValue(_.type))
   return c;
 }
 
@@ -29,13 +49,17 @@ function getFunctions(obj: any){
 
 export function setFunctionArgValue(fa: SCDFunctionArg[], k: string, v: any){
   const input = fa.filter(a => a.name === k)
-  if (input != []){
+  if (input.length > 0){
     input[0].value = v;
   }
 }
 
-export function setFunctionInputsArgValue(f: SCDFunction[], k: string, v: any){
-  f.map(_ => setFunctionArgValue(_.inputs, k, v))
+export function setFunctionInputsArgValue(f: SCDFunction[], funcName: string, paramName: string, v: any){
+  f.map(_ => {
+    if (_.name == funcName){
+      setFunctionArgValue(_.inputs, paramName, v)
+    }
+  })
 }
 
 // {anonymous: false, inputs: Array(2), name: 'stored', type: 'event'}
