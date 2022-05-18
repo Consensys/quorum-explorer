@@ -22,7 +22,8 @@ import { motion } from "framer-motion";
 import { connectMetaMask, detectMetaMask } from "../../lib/connectMetaMask";
 import MetaMask from "../Misc/MetaMask";
 import { BigNumber, ethers } from "ethers";
-import BN from "bn.js";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 const MotionBox = motion(Box);
 
@@ -116,7 +117,7 @@ export default function WalletsTransferEth(props: IProps) {
         accountTo: accountTo,
         amount: amount,
       }),
-      baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
     });
     const walletRes = await axios({
       method: "POST",
@@ -128,7 +129,7 @@ export default function WalletsTransferEth(props: IProps) {
         rpcUrl: needle.rpcUrl,
         account: accountTo,
       }),
-      baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
     });
     var wallet: QuorumWallet = walletRes.data as QuorumWallet;
     toast({

@@ -1,13 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import apiAuth from "../../common/lib/authentication";
 import { ethApiCall } from "../../common/lib/ethApiCall";
-import { QuorumTxn } from "../../common/types/Explorer"
+import { QuorumTxn } from "../../common/types/Explorer";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body)
-  const txnHash = req.body.txnHash; 
+  console.log(req.body);
+  const txnHash = req.body.txnHash;
   const rpcUrl = req.body.rpcUrl;
   let quorumTxn: QuorumTxn = {
     blockHash: "error",
@@ -25,9 +26,15 @@ export default async function handler(
     s: "",
     v: "",
   };
+
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
+    return;
+  }
+
   try {
     const ethTxnByHash = await ethApiCall(rpcUrl, "eth_getTransactionByHash", [
-      txnHash
+      txnHash,
     ]);
     quorumTxn["blockHash"] = ethTxnByHash.data.result.blockHash;
     quorumTxn["blockNumber"] = ethTxnByHash.data.result.blockNumber;
@@ -45,9 +52,12 @@ export default async function handler(
     quorumTxn["v"] = ethTxnByHash.data.result.v;
   } catch (e) {
     console.error(e);
-    console.error("Node is unreachable. Ensure ports are open and client is running!" );
+    console.error(
+      "Node is unreachable. Ensure ports are open and client is running!"
+    );
+    res.status(500);
   } finally {
     res.status(200).json(quorumTxn);
+    res.end();
   }
 }
-

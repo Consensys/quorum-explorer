@@ -14,6 +14,9 @@ import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import { buttonState } from "../../types/Validator";
 import { motion } from "framer-motion";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
 interface IProps {
@@ -35,7 +38,7 @@ export default function ValidatorsActive(props: IProps) {
     const rpcUrl: string = needle.rpcUrl;
     const client: string = needle.client;
 
-    const removeValidator = await axios({
+    await axios({
       method: "POST",
       url: `/api/validatorsPropose`,
       headers: {
@@ -48,11 +51,19 @@ export default function ValidatorsActive(props: IProps) {
         address: e,
         vote: false,
       }),
-      baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
-    });
-    if (removeValidator.status === 200) {
-      console.log("Proposal to remove initiated: " + e);
-    }
+      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("Proposal to remove initiated: " + e);
+        }
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          console.error(`${err.status} Unauthorized`);
+        }
+      });
+
     setButtonLoading({ [index]: false });
   };
 

@@ -1,4 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { GetServerSideProps } from "next";
+import type { Session } from "next-auth";
+import { useSession, getSession } from "next-auth/react";
+import AccessDenied from "../common/components/Misc/AccessDenied";
 import { Container, Divider } from "@chakra-ui/react";
 import ExplorerBlocks from "../common/components/Explorer/ExplorerBlocks";
 import ExplorerTxns from "../common/components/Explorer/ExplorerTxns";
@@ -9,6 +13,8 @@ import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import { refresh5s } from "../common/lib/common";
 import { range } from "../common/lib/explorer";
 import { configReader } from "../common/lib/getConfig";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 import axios from "axios";
 
@@ -23,6 +29,8 @@ interface IProps {
 }
 
 export default function Explorer({ config }: IProps) {
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
   const controller = new AbortController();
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [explorer, setExplorer] = useState<IState>({
@@ -54,7 +62,7 @@ export default function Explorer({ config }: IProps) {
         }),
         signal: controller.signal,
         timeout: 1000,
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((res) => {
           setTimeoutReceived(false);
@@ -77,7 +85,7 @@ export default function Explorer({ config }: IProps) {
                 blockNumber: "0x" + block.toString(16),
               }),
               signal: controller.signal,
-              baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+              baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
             });
             return res.data;
           });
@@ -121,7 +129,10 @@ export default function Explorer({ config }: IProps) {
     clearInterval(intervalRef.current as NodeJS.Timeout);
     setExplorer({ ...explorer, selectedNode: e.target.value });
   };
-
+  if (typeof window !== "undefined" && loading) return null;
+  if (!session && publicRuntimeConfig.DISABLE_AUTH === "false") {
+    return <AccessDenied />;
+  }
   return (
     <>
       <Container maxW={{ base: "container.sm", md: "container.xl" }} p={0}>
@@ -146,8 +157,15 @@ export default function Explorer({ config }: IProps) {
   );
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps<{
+  session: Session | null;
+}> = async (context) => {
   const res = await configReader();
   const config: QuorumConfig = JSON.parse(res);
-  return { props: { config } };
-}
+  return {
+    props: {
+      config,
+      session: await getSession(context),
+    },
+  };
+};

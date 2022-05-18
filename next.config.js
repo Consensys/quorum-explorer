@@ -1,8 +1,12 @@
 /** @type {import('next').NextConfig} */
 const removeImports = require("next-remove-imports")();
 module.exports = removeImports({
+  publicRuntimeConfig: {
+    DISABLE_AUTH: process.env.DISABLE_AUTH,
+    QE_BASEPATH: process.env.QE_BASEPATH,
+  },
   experimental: { esmExternals: true },
-  basePath: process.env.NEXT_PUBLIC_QE_BASEPATH,
+  basePath: process.env.QE_BASEPATH,
   reactStrictMode: true,
   async redirects() {
     if (this.basePath === "") {

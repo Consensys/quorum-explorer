@@ -51,6 +51,8 @@ import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 // import { Select as MultiSelect } from "chakra-react-select";
 import dynamic from "next/dynamic";
 import "@uiw/react-textarea-code-editor/dist.css";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
@@ -153,7 +155,7 @@ export default function ContractsIndex(props: IProps) {
         },
         data: JSON.stringify({ config: props.config }),
         signal: controller.signal,
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((res) => {
           setCurrentTesseraPublicKey(
@@ -164,7 +166,11 @@ export default function ContractsIndex(props: IProps) {
           setTesseraKeys(res.data);
           setSelectLoading(false);
         })
-        .catch(console.error);
+        .catch((err) => {
+          if (err.status === 401) {
+            console.error(`${err.status} Unauthorized`);
+          }
+        });
       return returnRes;
     };
     fetchData();
@@ -216,7 +222,7 @@ export default function ContractsIndex(props: IProps) {
         "Content-Type": "application/json",
       },
       data: JSON.stringify({ name: selectedContract, content: code }),
-      baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
     })
       .then((response) => {
         if (response.status === 200) {
@@ -337,7 +343,7 @@ export default function ContractsIndex(props: IProps) {
           compiledContract: compiledContract,
           deployArgs: simpleStorageValue,
         }),
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((result) => {
           closeAll();
