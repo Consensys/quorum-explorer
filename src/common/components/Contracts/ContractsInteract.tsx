@@ -56,6 +56,9 @@ export default function ContractsInteract(props: IProps) {
   
   const handleRead = async (e: any) => {
     e.preventDefault();
+    console.log(">> READ >> " + e.target.id);
+    console.log(scDefinition);
+
     setReadButtonLoading(true);
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
     if (props.contractAddress.length < 1) {
@@ -156,6 +159,8 @@ export default function ContractsInteract(props: IProps) {
     
   const handleTransact = async (e: any) => {
     e.preventDefault();
+    console.log(">> TRANSACT >> " + e.target.id);
+    console.log(scDefinition);
     const functionToCall = e.target.id;
     const params = transactFunctions.filter(_ => _.name===functionToCall)
     setWriteButtonLoading(true);
@@ -312,7 +317,7 @@ export default function ContractsInteract(props: IProps) {
             >
             <>
             {transactFunctions.map((f) => (
-              <HStack spacing={20} p={2} align='stretch'>
+              <VStack spacing={20} p={2} align='stretch'>
               <Text fontSize='md'>{f.name}</Text> 
               <Button
                 id={f.name}
@@ -333,7 +338,7 @@ export default function ContractsInteract(props: IProps) {
                 </>
               ))}
 
-              </HStack>
+              </VStack>
             ))} 
             </>
             </VStack>

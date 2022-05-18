@@ -74,7 +74,7 @@ async function besuGetValue(
   const contract = new web3quorum.eth.Contract(compiledContract.abi);
   // eslint-disable-next-line no-underscore-dangle
   const functionAbi = contract._jsonInterface.find((e: any) => {
-    return e.name === "get";
+    return e.name === functionToCall;
   });
   const functionParams = {
     to: contractAddress,
