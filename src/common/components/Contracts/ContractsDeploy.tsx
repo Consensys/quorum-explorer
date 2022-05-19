@@ -198,6 +198,7 @@ export default function ContractsDeploy(props: IProps) {
                 // backgroundColor="green.200"
                 colorScheme="green"
                 onClick={handleDeploy}
+                isLoading={deployButtonLoading}
               >
                 Deploy
               </Button>

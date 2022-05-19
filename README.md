@@ -83,5 +83,5 @@ Use a backend as well, either via express or something like NextJS(which is what
 
 
 ### TODO:
-- multi contracts - types for list, bytes, I think addresses work?
+- multi contracts - types for bytes?
 - test multi params for the constructor

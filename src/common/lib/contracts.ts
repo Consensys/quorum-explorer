@@ -10,10 +10,9 @@ export function getDefaultValue(t: string){
     } else if (t=="address"){
       return "0x0000000000000000000000000000000000000000";
     // } else if (t=="bytes"){
-    //   return [];
-    // } else if (t.includes("[")){
-    //   TODO get the type here and return something    
-    //   return [];
+    //   return "";
+    } else if (t.includes("[")){
+       return "[]";
     } else {
       return ""
     }

@@ -8,8 +8,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log(req.body);
   if (req.body.client === "besu") {
-    await besuGetValue(
+    await besuReadValueAtAddress(
       // still needs to be updated with proper values
       req.body.rpcUrl,
       req.body.contractAddress,
@@ -46,11 +47,7 @@ async function readValueAtAddress(
   console.log("calling contract function: " + functionToCall);
   const abi = compiledContract.abi;
   const web3 = new Web3(rpcUrl);
-  const web3quorum = new Web3Quorum(
-    web3,
-    { privateUrl: privateUrl }
-    // client === "goquorum"
-  );
+  const web3quorum = Web3Quorum(web3, { privateUrl: privateUrl }, true);
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
   // contractInstance.defaultCommon.customChain = {name: 'GoQuorum', chainId: 1337};
   const res = await contractInstance.methods[functionToCall]().call().catch(console.error);
@@ -58,7 +55,7 @@ async function readValueAtAddress(
   return res;
 }
 
-async function besuGetValue(
+async function besuReadValueAtAddress(
   rpcUrl: string,
   contractAddress: string,
   compiledContract: CompiledContract,
@@ -76,7 +73,9 @@ async function besuGetValue(
   const functionAbi = contract._jsonInterface.find((e: any) => {
     return e.name === functionToCall;
   });
-  const functionParams = {
+  console.log("Function ABI: " + JSON.stringify(functionAbi))
+  const funcOutputType = functionAbi.outputs[0].type;
+    const functionParams = {
     to: contractAddress,
     data: functionAbi.signature,
     privateKey: fromPrivateKey.slice(2),
@@ -91,7 +90,10 @@ async function besuGetValue(
   const result = await web3quorum.priv.waitForTransactionReceipt(
     transactionHash
   );
-  const convertToDec = parseInt(result.output, 16);
-  console.log("Value from deployed contract is: " + convertToDec);
-  return convertToDec;
+  const outputSimplified = web3.eth.abi.decodeParameters([funcOutputType],result.output)
+  console.log("Raw value from deployed contract is: " + result.output );
+  console.log("Type to decode is: " + funcOutputType );
+  console.log("Value from deployed contract is: " );
+  console.log(outputSimplified)
+  return outputSimplified[0];
 }

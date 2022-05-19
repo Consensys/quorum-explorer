@@ -50,33 +50,43 @@ export type CompiledContract = {
 
 export const defaultSmartContracts: SmartContract[] = [
   {
-    name: "SimpleStorage",
-    contract: `pragma solidity ^0.7.6;
-    contract SimpleStorage {
-      uint public storedData;
-      uint public two;
-      event stored(address _to, uint _amount);
-        
-      constructor(uint initVal) public {
-        emit stored(msg.sender, initVal);
-        storedData = initVal;
-        two = initVal;
-      }
-        
-      function set(uint x, uint y) public {
-        emit stored(msg.sender, x);
-        storedData = x;
-        two = y;
-      }
-        
-      function get() view public returns (uint retVal) {
-        return storedData;
-      }
+    name: "Array",
+    contract: `
+    pragma solidity ^0.8.13;
 
-      function getTwo() view public returns (uint retVal) {
-        return two;
-      }
-
-    }`,
+    contract Array {
+        uint[] public arr;
+    
+        function get(uint i) public view returns (uint) {
+            return arr[i];
+        }
+    
+        function getArr() public view returns (uint[] memory) {
+            return arr;
+        }
+    
+        function push(uint i) public {
+            arr.push(i);
+        }
+    
+        function pop() public {
+            arr.pop();
+        }
+    
+        function getLength() public view returns (uint) {
+            return arr.length;
+        }
+    
+        function remove(uint index) public {
+            delete arr[index];
+        }
+    
+        function examples() external {
+            uint[] memory a = new uint[](5);
+        }
+    }
+    
+    
+    `,
   },
 ];
