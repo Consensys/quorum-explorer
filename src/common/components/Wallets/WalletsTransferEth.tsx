@@ -68,6 +68,16 @@ export default function WalletsTransferEth(props: IProps) {
     connectMetaMask();
   };
 
+  const disconnectHandler = async () => {
+    await (window as any).ethereum.request({
+      method: "wallet_requestPermissions",
+      params: [
+        {
+          eth_accounts: {},
+        },
+      ],
+    });
+  };
   useEffect(() => {
     // get the chainId through the selected node
     try {
@@ -424,6 +434,16 @@ export default function WalletsTransferEth(props: IProps) {
                 Connect
               </Button>
             )}
+            {metaMaskAccount.length > 0 && (
+              <Button
+                colorScheme="red"
+                variant="outline"
+                onClick={disconnectHandler}
+                mr={3}
+              >
+                Switch Account
+              </Button>
+            )}
             <Button
               type="submit"
               colorScheme="orange"
@@ -431,6 +451,7 @@ export default function WalletsTransferEth(props: IProps) {
               variant="solid"
               onSubmit={metamaskTransfer}
               isLoading={buttonLoading}
+              isDisabled={metaMaskAccount.length === 0 ? true : false}
             >
               Transfer
             </Button>
