@@ -16,6 +16,7 @@ import {
   HStack,
   VStack,
   Divider,
+  Center,
 } from "@chakra-ui/react";
 import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../../types/QuorumConfig";
@@ -315,61 +316,78 @@ export default function ContractsInteract(props: IProps) {
             spacing={2}
             align="stretch"
             divider={<StackDivider borderColor="gray.200" />}
+            mt={1}
           >
             {readFunctions.map((f, i) => (
-              <HStack key={i} p={2} align="stretch">
-                <Text fontSize="md">{f.name}</Text>
-                <Spacer />
-                <Button
-                  id={f.name}
-                  leftIcon={<FontAwesomeIcon icon={faDatabase as IconProp} />}
-                  type="submit"
-                  colorScheme="blue"
-                  onClick={handleRead}
-                  variant="solid"
-                  minW={125}
-                >
-                  Read
-                </Button>
-              </HStack>
+              <Box
+                key={i}
+                borderRadius="lg"
+                borderWidth={2}
+                boxShadow="md"
+                p={5}
+              >
+                <HStack align="stretch">
+                  <Center>
+                    <Text fontSize="md">{f.name}</Text>
+                  </Center>
+                  <Spacer />
+                  <Button
+                    id={f.name}
+                    leftIcon={<FontAwesomeIcon icon={faDatabase as IconProp} />}
+                    type="submit"
+                    colorScheme="blue"
+                    onClick={handleRead}
+                    variant="solid"
+                    minW={125}
+                  >
+                    Read
+                  </Button>
+                </HStack>
+              </Box>
             ))}
           </VStack>
           <VStack
             spacing={2}
             align="stretch"
             divider={<StackDivider borderColor="gray.200" />}
+            mt={1}
           >
             {transactFunctions.map((f, i) => (
-              <VStack key={i} p={2} align="stretch">
-                <HStack>
-                  <Text fontSize="md">{f.name}</Text>
-                  <Spacer />
-                  <Button
-                    id={f.name}
-                    leftIcon={
-                      <FontAwesomeIcon icon={faPencilAlt as IconProp} />
-                    }
-                    type="submit"
-                    colorScheme="purple"
-                    onClick={handleTransact}
-                    variant="solid"
-                    minW={125}
-                  >
-                    Transact
-                  </Button>
-                </HStack>
+              <VStack key={i} align="stretch">
+                <Box borderRadius="lg" borderWidth={2} boxShadow="md" p={5}>
+                  <HStack>
+                    <Text fontSize="md">{f.name}</Text>
+                    <Spacer />
+                    <Button
+                      id={f.name}
+                      leftIcon={
+                        <FontAwesomeIcon icon={faPencilAlt as IconProp} />
+                      }
+                      type="submit"
+                      colorScheme="purple"
+                      onClick={handleTransact}
+                      variant="solid"
+                      minW={125}
+                    >
+                      Transact
+                    </Button>
+                  </HStack>
 
-                {f.inputs.map((i) => (
-                  <>
-                    <Text fontSize="sm" as="i">{`${i.name} (${i.type})`}</Text>
-                    <Input
-                      key={`${f.name}-${i.name}`}
-                      id={`${f.name}-${i.name}`}
-                      placeholder={i.value}
-                      onChange={handleTransactArgs}
-                    />
-                  </>
-                ))}
+                  {f.inputs.map((i) => (
+                    <>
+                      <Text
+                        fontSize="sm"
+                        as="i"
+                      >{`${i.name} (${i.type})`}</Text>
+                      <Input
+                        key={`${f.name}-${i.name}`}
+                        id={`${f.name}-${i.name}`}
+                        placeholder={i.value}
+                        onChange={handleTransactArgs}
+                      />
+                    </>
+                  ))}
+                </Box>
               </VStack>
             ))}
           </VStack>
