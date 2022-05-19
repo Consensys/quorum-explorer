@@ -12,17 +12,29 @@ import {
   Input,
   HStack,
 } from "@chakra-ui/react";
-import { Select as MultiSelect } from "chakra-react-select";
+// import { Select as MultiSelect } from "chakra-react-select";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract, SCDefinition } from "../../types/Contracts";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-import { getContractFunctions, setFunctionArgValue, getDefaultValue } from "../../lib/contracts"
+import {
+  getContractFunctions,
+  setFunctionArgValue,
+  getDefaultValue,
+} from "../../lib/contracts";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import {
-  faRocket
-} from "@fortawesome/free-solid-svg-icons";
+import { faRocket } from "@fortawesome/free-solid-svg-icons";
+import dynamic from "next/dynamic";
+
+const DynamicSelect = dynamic(
+  // @ts-ignore
+  () => import("chakra-react-select").then((mod) => mod.Select),
+  {
+    loading: () => <p>Loading Select component...</p>,
+    ssr: false,
+  }
+);
 
 interface IProps {
   config: QuorumConfig;
@@ -34,7 +46,7 @@ interface IProps {
   privateFrom: string;
   fromPrivateKey: string;
   selectLoading: boolean;
-  setDeployedAddress: (e: string) => void; 
+  setDeployedAddress: (e: string) => void;
   closeAllToasts: () => void;
   reuseToast: any;
   logs: string[];
@@ -44,16 +56,22 @@ interface IProps {
 export default function ContractsDeploy(props: IProps) {
   const [getSetTessera, setGetSetTessera] = useState<string[]>();
   const [deployButtonLoading, setDeployButtonLoading] = useState(false);
-  const scDefinition : SCDefinition = getContractFunctions(props.compiledContract.abi)
+  const scDefinition: SCDefinition = getContractFunctions(
+    props.compiledContract.abi
+  );
 
   const handleConstructorArgs = (e: any) => {
-    setFunctionArgValue(scDefinition.constructor.inputs, e.target.id, e.target.value)
+    setFunctionArgValue(
+      scDefinition.constructor.inputs,
+      e.target.id,
+      e.target.value
+    );
     // console.log(scDefinition);
   };
-  
+
   const handleDeploy = async (e: any) => {
     e.preventDefault();
-    
+
     if (props.account.length < 1) {
       props.closeAllToasts();
       props.reuseToast({
@@ -119,8 +137,7 @@ export default function ContractsDeploy(props: IProps) {
           });
           props.setDeployedAddress(result.data.contractAddress);
           const joined = props.logs.concat(
-            "Contract Address: " +
-              result.data.contractAddress
+            "Contract Address: " + result.data.contractAddress
           );
           props.setLogs(joined);
           setDeployButtonLoading(false);
@@ -135,9 +152,7 @@ export default function ContractsDeploy(props: IProps) {
             position: "bottom",
             isClosable: true,
           });
-          const joined = props.logs.concat(
-            "Error in deploying contract"
-          );
+          const joined = props.logs.concat("Error in deploying contract");
           props.setLogs(joined);
           setDeployButtonLoading(false);
         });
@@ -147,51 +162,49 @@ export default function ContractsDeploy(props: IProps) {
     <>
       <AccordionItem>
         <AccordionButton>
-          <Box
-            color="red.400"
-            fontWeight="bold"
-            flex="1"
-            textAlign="left"
-          >
+          <Box color="red.400" fontWeight="bold" flex="1" textAlign="left">
             2. Deploy
           </Box>
           <AccordionIcon />
         </AccordionButton>
         <AccordionPanel pb={4}>
-        <FormControl>
-          <FormLabel htmlFor="private-for">
-            Private For
-          </FormLabel>
-          <MultiSelect
+          <FormControl>
+            <FormLabel htmlFor="private-for">Private For</FormLabel>
+            <DynamicSelect
+              //@ts-ignore
               isLoading={props.selectLoading}
               instanceId="private-for-deploy"
               isMulti
               options={props.tesseraKeys}
-              onChange={(e) => {
+              onChange={(e: any) => {
                 const myList: string[] = [];
-                e.map((k) => myList.push(k.value));
+                e.map((k: any) => myList.push(k.value));
                 setGetSetTessera(myList);
               }}
-              placeholder="Select Tessera node recipients to use the functions below..."
+              placeholder="Select Tessera node recipients..."
               closeMenuOnSelect={false}
               selectedOptionStyle="check"
               hideSelectedOptions={false}
-          />
+            />
 
             {scDefinition.constructor.inputs.map((input) => (
               <>
-                <Text fontSize='sm' as='i' >{`${input.name} (${input.type})`}</Text>
-                <Input key="input-{input.name}" id={input.name} placeholder={input.value} onChange={handleConstructorArgs} />
+                <Text
+                  fontSize="sm"
+                  as="i"
+                >{`${input.name} (${input.type})`}</Text>
+                <Input
+                  key="input-{input.name}"
+                  id={input.name}
+                  placeholder={input.value}
+                  onChange={handleConstructorArgs}
+                />
               </>
             ))}
 
             <HStack mt={5}>
               <Button
-                leftIcon={
-                  <FontAwesomeIcon
-                    icon={faRocket as IconProp}
-                  />
-                }
+                leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
                 loadingText="Deploying..."
                 type="submit"
                 variant="solid"
@@ -203,8 +216,8 @@ export default function ContractsDeploy(props: IProps) {
                 Deploy
               </Button>
             </HStack>
-        </FormControl>
-      </AccordionPanel>
+          </FormControl>
+        </AccordionPanel>
       </AccordionItem>
     </>
   );

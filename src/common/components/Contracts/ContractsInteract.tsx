@@ -13,20 +13,23 @@ import {
   Flex,
   Text,
   Spacer,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  HStack,VStack, Divider
+  HStack,
+  VStack,
+  Divider,
 } from "@chakra-ui/react";
-//@ts-ignore
-// import { Select as MultiSelect } from "chakra-react-select";
 import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../../types/QuorumConfig";
-import { CompiledContract, SCDefinition, SCDFunction } from "../../types/Contracts";
+import {
+  CompiledContract,
+  SCDefinition,
+  SCDFunction,
+} from "../../types/Contracts";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
-import { getContractFunctions, setFunctionArgValue, setFunctionInputsArgValue } from "../../lib/contracts"
+import {
+  getContractFunctions,
+  setFunctionArgValue,
+  setFunctionInputsArgValue,
+} from "../../lib/contracts";
 import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -63,10 +66,16 @@ export default function ContractsInteract(props: IProps) {
   const [readButtonLoading, setReadButtonLoading] = useState(false);
   const [writeButtonLoading, setWriteButtonLoading] = useState(false);
   const [getSetTessera, setGetSetTessera] = useState<string[]>();
-  const scDefinition : SCDefinition = getContractFunctions(props.compiledContract.abi);
-  const readFunctions: SCDFunction[] = scDefinition.functions.filter(_ => _.inputs.length === 0);
-  const transactFunctions: SCDFunction[] = scDefinition.functions.filter(_ => _.inputs.length > 0);
-  
+  const scDefinition: SCDefinition = getContractFunctions(
+    props.compiledContract.abi
+  );
+  const readFunctions: SCDFunction[] = scDefinition.functions.filter(
+    (_) => _.inputs.length === 0
+  );
+  const transactFunctions: SCDFunction[] = scDefinition.functions.filter(
+    (_) => _.inputs.length > 0
+  );
+
   const handleRead = async (e: any) => {
     e.preventDefault();
     console.log(">> READ >> " + e.target.id);
@@ -116,7 +125,7 @@ export default function ContractsInteract(props: IProps) {
           privateFrom: props.privateFrom,
           privateFor: getSetTessera,
           fromPrivateKey: props.fromPrivateKey,
-          functionToCall: e.target.id
+          functionToCall: e.target.id,
         }),
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
@@ -164,18 +173,23 @@ export default function ContractsInteract(props: IProps) {
   };
 
   const handleTransactArgs = (e: any) => {
-    const funcName = e.target.id.split('-')[0]
-    const paramName = e.target.id.split('-')[1]
-    setFunctionInputsArgValue(scDefinition.functions, funcName, paramName, e.target.value)
-    console.log(scDefinition.functions)
+    const funcName = e.target.id.split("-")[0];
+    const paramName = e.target.id.split("-")[1];
+    setFunctionInputsArgValue(
+      scDefinition.functions,
+      funcName,
+      paramName,
+      e.target.value
+    );
+    console.log(scDefinition.functions);
   };
-    
+
   const handleTransact = async (e: any) => {
     e.preventDefault();
     console.log(">> TRANSACT >> " + e.target.id);
     console.log(scDefinition);
     const functionToCall = e.target.id;
-    const params = transactFunctions.filter(_ => _.name===functionToCall)
+    const params = transactFunctions.filter((_) => _.name === functionToCall);
     setWriteButtonLoading(true);
     if (props.contractAddress.length < 1) {
       props.closeAllToasts();
@@ -221,7 +235,7 @@ export default function ContractsInteract(props: IProps) {
           sender: props.privateFrom,
           privateFor: getSetTessera,
           functionToCall: functionToCall,
-          functionArgs: params[0].inputs
+          functionArgs: params[0].inputs,
         }),
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
@@ -287,7 +301,7 @@ export default function ContractsInteract(props: IProps) {
                 e.map((k: any) => myList.push(k.value));
                 setGetSetTessera(myList);
               }}
-              placeholder="Select Tessera recipients to use the functions below..."
+              placeholder="Select Tessera node recipients..."
               closeMenuOnSelect={false}
               selectedOptionStyle="check"
               hideSelectedOptions={false}
@@ -298,65 +312,75 @@ export default function ContractsInteract(props: IProps) {
             />
           </Box>
           <Flex justifyContent="space-between" alignItems="center" m={1}>
-            <VStack 
-            spacing={5} 
-            align='stretch'
-            divider={<StackDivider borderColor='gray.200' />}
+            <VStack
+              spacing={5}
+              align="stretch"
+              divider={<StackDivider borderColor="gray.200" />}
             >
-            <>
-            {readFunctions.map((f) => (
-              <HStack spacing={20} p={2} align='stretch'>
-              <Text fontSize='md'>{f.name}</Text>
-              <Spacer />
-              <Button
-                id={f.name}
-                leftIcon={<FontAwesomeIcon icon={faDatabase as IconProp} />}
-                type="submit"
-                colorScheme="yellow"
-                onClick={handleRead}
-                variant="solid"
-                minW={125}
-              >
-                Read
-              </Button>
-              </HStack>
-
-            ))} 
-            </>
+              <>
+                {readFunctions.map((f, i) => (
+                  <HStack key={i} spacing={20} p={2} align="stretch">
+                    <Text fontSize="md">{f.name}</Text>
+                    <Spacer />
+                    <Button
+                      id={f.name}
+                      leftIcon={
+                        <FontAwesomeIcon icon={faDatabase as IconProp} />
+                      }
+                      type="submit"
+                      colorScheme="yellow"
+                      onClick={handleRead}
+                      variant="solid"
+                      minW={125}
+                    >
+                      Read
+                    </Button>
+                  </HStack>
+                ))}
+              </>
             </VStack>
           </Flex>
           <Flex justifyContent="space-between" alignItems="center" m={1}>
-          <VStack 
-            spacing={5} 
-            align='stretch'
-            divider={<StackDivider borderColor='gray.200' />}
+            <VStack
+              spacing={5}
+              align="stretch"
+              divider={<StackDivider borderColor="gray.200" />}
             >
-            <>
-            {transactFunctions.map((f) => (
-              <VStack spacing={20} p={2} align='stretch'>
-              <Text fontSize='md'>{f.name}</Text> 
-              <Button
-                id={f.name}
-                leftIcon={<FontAwesomeIcon icon={faDatabase as IconProp} />}
-                type="submit"
-                colorScheme="yellow"
-                onClick={handleTransact}
-                variant="solid"
-                minW={125}
-              >
-                Transact
-              </Button>
+              <>
+                {transactFunctions.map((f, i) => (
+                  <VStack key={i} spacing={20} p={2} align="stretch">
+                    <Text fontSize="md">{f.name}</Text>
+                    <Button
+                      id={f.name}
+                      leftIcon={
+                        <FontAwesomeIcon icon={faDatabase as IconProp} />
+                      }
+                      type="submit"
+                      colorScheme="yellow"
+                      onClick={handleTransact}
+                      variant="solid"
+                      minW={125}
+                    >
+                      Transact
+                    </Button>
 
-              {f.inputs.map((i) => (
-                <>
-                <Text fontSize='sm' as='i' >{`${i.name} (${i.type})`}</Text>
-                <Input key={`${f.name}-${i.name}`}  id={`${f.name}-${i.name}`} placeholder={i.value} onChange={handleTransactArgs} />
-                </>
-              ))}
-
-              </VStack>
-            ))} 
-            </>
+                    {f.inputs.map((i) => (
+                      <>
+                        <Text
+                          fontSize="sm"
+                          as="i"
+                        >{`${i.name} (${i.type})`}</Text>
+                        <Input
+                          key={`${f.name}-${i.name}`}
+                          id={`${f.name}-${i.name}`}
+                          placeholder={i.value}
+                          onChange={handleTransactArgs}
+                        />
+                      </>
+                    ))}
+                  </VStack>
+                ))}
+              </>
             </VStack>
           </Flex>
         </AccordionPanel>

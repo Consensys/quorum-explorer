@@ -24,14 +24,10 @@ import {
   Divider,
   Select,
   useColorMode,
-  HStack,
-  Center,
-  Portal,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import {
-  faRocket,
   faCode,
   faStream,
   faPaperPlane,
@@ -44,23 +40,14 @@ import {
   defaultSmartContracts,
   CompiledContract,
 } from "../../types/Contracts";
-<<<<<<< HEAD
-import axios from "axios";
-import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-import ContractsDeploy from "./ContractsDeploy";
-import dynamic from "next/dynamic";
-import "@uiw/react-textarea-code-editor/dist.css";
-=======
 import { getContractFunctions } from "../../lib/contracts";
 import axios from "axios";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-// @ts-ignore
-// import { Select as MultiSelect } from "chakra-react-select";
 import dynamic from "next/dynamic";
 import "@uiw/react-textarea-code-editor/dist.css";
 import getConfig from "next/config";
+import ContractsDeploy from "./ContractsDeploy";
 const { publicRuntimeConfig } = getConfig();
->>>>>>> master
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
@@ -70,15 +57,6 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
   loading: () => <p>Loading interaction component...</p>,
 });
-
-const DynamicSelect = dynamic(
-  // @ts-ignore
-  () => import("chakra-react-select").then((mod) => mod.Select),
-  {
-    loading: () => <p>Loading Select component...</p>,
-    ssr: false,
-  }
-);
 
 const MotionGrid = motion(SimpleGrid);
 // const ChakraCode = chakra(SyntaxHighlighter);
@@ -253,10 +231,6 @@ export default function ContractsIndex(props: IProps) {
             ...buttonLoading,
             Compile: { status: false, isDisabled: false },
           });
-<<<<<<< HEAD
-=======
-          getContractFunctions(response.data.abi);
->>>>>>> master
         } else {
           closeAll();
           toast({
@@ -446,11 +420,7 @@ export default function ContractsIndex(props: IProps) {
           </Box>
 
           <Button
-            leftIcon={
-              <FontAwesomeIcon
-                icon={faHammer as IconProp}
-              />
-            }
+            leftIcon={<FontAwesomeIcon icon={faHammer as IconProp} />}
             isLoading={buttonLoading.Compile.status}
             isDisabled={buttonLoading.Compile.isDisabled}
             loadingText="Compiling..."
@@ -537,7 +507,7 @@ export default function ContractsIndex(props: IProps) {
                       </AccordionPanel>
                     </AccordionItem>
 
-                    <ContractsDeploy 
+                    <ContractsDeploy
                       config={props.config}
                       selectedNode={props.selectedNode}
                       compiledContract={compiledContract}
