@@ -419,7 +419,7 @@ export default function ContractsIndex(props: IProps) {
               borderRadius="lg"
               borderWidth={2}
               boxShadow="2xl"
-              maxH="550px"
+              autoFocus
               value={code}
               language="sol"
               placeholder="Empty code"
@@ -428,6 +428,8 @@ export default function ContractsIndex(props: IProps) {
                 backgroundColor: colorMode === "light" ? "#f5f5f5" : "#2D3748",
                 fontFamily:
                   "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                overflow: "auto",
+                height: "550px",
               }}
               readOnly
             />

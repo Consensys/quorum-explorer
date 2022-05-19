@@ -7,7 +7,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body);
+  // console.log(req.body);
   const txnHash = req.body.txnHash;
   const rpcUrl = req.body.rpcUrl;
   let quorumTxn: QuorumTxn = {

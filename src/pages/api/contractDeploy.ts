@@ -10,7 +10,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body);
+  // console.log(req.body);
   const checkSession = await apiAuth(req, res);
   if (!checkSession) {
     return;

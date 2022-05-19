@@ -8,7 +8,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body);
+  // console.log(req.body);
   const client = req.body.client;
   const algorithm = req.body.algorithm;
   const rpcUrl = req.body.rpcUrl;
