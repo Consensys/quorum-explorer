@@ -86,6 +86,7 @@ export default function ValidatorsPropose(props: IProps) {
         transition={{ delay: 0.2 }}
         borderRadius="lg"
         borderWidth={2}
+        boxShadow="lg"
         p={5}
         mx={2}
         my={3}

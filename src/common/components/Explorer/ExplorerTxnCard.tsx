@@ -22,6 +22,7 @@ export default function ExplorerTxnCard({ txn }: IProps) {
           justifyContent="space-between"
           borderRadius="md"
           borderWidth={1}
+          boxShadow="md"
         >
           {/* contract deployment */}
           <Flex
@@ -29,6 +30,7 @@ export default function ExplorerTxnCard({ txn }: IProps) {
             justifyContent="center"
             borderRadius="md"
             borderWidth={1}
+            boxShadow="md"
             bg={txn.to === null ? "orange.300" : "green.400"}
             minW="15%"
           >
