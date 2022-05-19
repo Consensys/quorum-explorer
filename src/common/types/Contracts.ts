@@ -1,35 +1,40 @@
-
 export type SCDFunctionArg = {
+<<<<<<< HEAD
   name: string,
   type: string,
   value: any
 }
+=======
+  name: string;
+  type: string;
+};
+>>>>>>> master
 
 export type SCDConstructor = {
-  inputs: SCDFunctionArg[]
-}
+  inputs: SCDFunctionArg[];
+};
 
 export const VoidSCDConstructor : SCDConstructor = {
   inputs: []
 }
 
 export type SCDFunction = {
-  inputs: SCDFunctionArg[]
-  outputs: SCDFunctionArg[]
-  name: string
-}
+  inputs: SCDFunctionArg[];
+  outputs: SCDFunctionArg[];
+  name: string;
+};
 // todo check on this type - we don't really use it atm
 export type SCDEvent = {
-  inputs: SCDFunctionArg[]
-  outputs: SCDFunctionArg[]
-  name: string
-}
+  inputs: SCDFunctionArg[];
+  outputs: SCDFunctionArg[];
+  name: string;
+};
 
 export type SCDefinition = {
-  constructor: SCDConstructor,
-  functions: SCDFunction[],
-  events: SCDEvent[]
-}
+  constructor: SCDConstructor;
+  functions: SCDFunction[];
+  events: SCDEvent[];
+};
 
 export const VoidSCDefinition: SCDefinition = {
     constructor: VoidSCDConstructor,

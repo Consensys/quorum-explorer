@@ -19,6 +19,9 @@ import ExplorerBlockCard from "./ExplorerBlockCard";
 import ExplorerBlockToast from "./ExplorerBlockToast";
 import { QuorumBlock } from "../../types/Explorer";
 import { motion } from "framer-motion";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
 const BoxMotion = motion(Box);
 
 interface IProps {
@@ -55,7 +58,7 @@ export default function ExplorerBlocks(props: IProps) {
         rpcUrl: props.url,
         blockNumber: blockSearch,
       }),
-      baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
     });
     var block: QuorumBlock = res.data as QuorumBlock;
     toastIdRef.current = toast({

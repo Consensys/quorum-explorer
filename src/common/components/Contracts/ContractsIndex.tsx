@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import {
   Tabs,
@@ -26,6 +26,7 @@ import {
   useColorMode,
   HStack,
   Center,
+  Portal,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -43,11 +44,23 @@ import {
   defaultSmartContracts,
   CompiledContract,
 } from "../../types/Contracts";
+<<<<<<< HEAD
 import axios from "axios";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 import ContractsDeploy from "./ContractsDeploy";
 import dynamic from "next/dynamic";
 import "@uiw/react-textarea-code-editor/dist.css";
+=======
+import { getContractFunctions } from "../../lib/contracts";
+import axios from "axios";
+import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
+// @ts-ignore
+// import { Select as MultiSelect } from "chakra-react-select";
+import dynamic from "next/dynamic";
+import "@uiw/react-textarea-code-editor/dist.css";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+>>>>>>> master
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
@@ -57,6 +70,15 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
   loading: () => <p>Loading interaction component...</p>,
 });
+
+const DynamicSelect = dynamic(
+  // @ts-ignore
+  () => import("chakra-react-select").then((mod) => mod.Select),
+  {
+    loading: () => <p>Loading Select component...</p>,
+    ssr: false,
+  }
+);
 
 const MotionGrid = motion(SimpleGrid);
 // const ChakraCode = chakra(SyntaxHighlighter);
@@ -80,8 +102,9 @@ export default function ContractsIndex(props: IProps) {
   const [accountAddress, setAccountAddress] = useState("");
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
   const [logs, setLogs] = useState<string[]>([]);
-  const [tesseraKeys, setTesseraKeys] =
-    useState<{ label: string; value: string }[]>();
+  const [tesseraKeys, setTesseraKeys] = useState<
+    { label: string; value: string }[]
+  >([]);
   const [currentTesseraPublicKey, setCurrentTesseraPublicKey] = useState("");
   const [deployParams, setDeployParams] = useState<{
     privateKeyFrom: string;
@@ -117,6 +140,7 @@ export default function ContractsIndex(props: IProps) {
       });
     } else {
       setAccountAddress("");
+      setTesseraKeys([]);
       setDeployParams({ ...deployParams, privateKeyFrom: "" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,7 +162,7 @@ export default function ContractsIndex(props: IProps) {
         },
         data: JSON.stringify({ config: props.config }),
         signal: controller.signal,
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((res) => {
           setCurrentTesseraPublicKey(
@@ -149,7 +173,11 @@ export default function ContractsIndex(props: IProps) {
           setTesseraKeys(res.data);
           setSelectLoading(false);
         })
-        .catch(console.error);
+        .catch((err) => {
+          if (err.status === 401) {
+            console.error(`${err.status} Unauthorized`);
+          }
+        });
       return returnRes;
     };
     fetchData();
@@ -201,7 +229,7 @@ export default function ContractsIndex(props: IProps) {
         "Content-Type": "application/json",
       },
       data: JSON.stringify({ name: selectedContract, content: code }),
-      baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
     })
       .then((response) => {
         if (response.status === 200) {
@@ -225,6 +253,10 @@ export default function ContractsIndex(props: IProps) {
             ...buttonLoading,
             Compile: { status: false, isDisabled: false },
           });
+<<<<<<< HEAD
+=======
+          getContractFunctions(response.data.abi);
+>>>>>>> master
         } else {
           closeAll();
           toast({
@@ -321,7 +353,7 @@ export default function ContractsIndex(props: IProps) {
           compiledContract: compiledContract,
           deployArgs: simpleStorageValue,
         }),
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((result) => {
           closeAll();
@@ -397,7 +429,7 @@ export default function ContractsIndex(props: IProps) {
               borderRadius="lg"
               borderWidth={2}
               boxShadow="2xl"
-              maxH="550px"
+              autoFocus
               value={code}
               language="sol"
               placeholder="Empty code"
@@ -406,7 +438,10 @@ export default function ContractsIndex(props: IProps) {
                 backgroundColor: colorMode === "light" ? "#f5f5f5" : "#2D3748",
                 fontFamily:
                   "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                overflow: "auto",
+                height: "550px",
               }}
+              readOnly
             />
           </Box>
 
@@ -474,6 +509,7 @@ export default function ContractsIndex(props: IProps) {
                             placeholder="Node is not a Member"
                             value={accountAddress}
                             isDisabled
+                            readOnly
                           />
                           <FormLabel htmlFor="private-from">
                             PrivateKey From
@@ -484,6 +520,7 @@ export default function ContractsIndex(props: IProps) {
                             placeholder="0x"
                             value={deployParams.privateKeyFrom}
                             isDisabled
+                            readOnly
                           />
                           <FormLabel htmlFor="tessera-key">
                             Tessera Public Key
@@ -494,6 +531,7 @@ export default function ContractsIndex(props: IProps) {
                             placeholder="Node is not a Member"
                             value={currentTesseraPublicKey}
                             isDisabled
+                            readOnly
                           />
                         </FormControl>
                       </AccordionPanel>
@@ -533,7 +571,6 @@ export default function ContractsIndex(props: IProps) {
                   </Accordion>
                 </SimpleGrid>
               </TabPanel>
-
               {/* compiler output */}
               <TabPanel overflow="scroll" h="550px">
                 <VStack

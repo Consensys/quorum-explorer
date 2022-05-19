@@ -14,6 +14,9 @@ import ExplorerTxnCard from "./ExplorerTxnCard";
 import ExplorerTxnToast from "./ExplorerTxnToast";
 import { QuorumTxn } from "../../types/Explorer";
 import { motion } from "framer-motion";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
 const BoxMotion = motion(Box);
 
 interface IProps {
@@ -48,7 +51,7 @@ export default function ExplorerTxns({ txns, url }: IProps) {
         rpcUrl: url,
         txnHash: txnSearch,
       }),
-      baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
     });
     var txn: QuorumTxn = res.data as QuorumTxn;
     toastIdRef.current = toast({

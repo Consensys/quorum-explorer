@@ -1,12 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 //@ts-ignore
 import solc from "solc";
+import apiAuth from "../../common/lib/authentication";
 import { CompiledContract } from "../../common/types/Contracts";
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<CompiledContract>
 ) {
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
+    return;
+  }
   console.log(req.body);
   let output = compile(req.body.content);
   res.status(200).json(output);

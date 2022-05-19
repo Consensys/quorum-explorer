@@ -1,4 +1,4 @@
-import { Dispatch, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   FormControl,
   FormLabel,
@@ -20,7 +20,8 @@ import {
   NumberDecrementStepper,
   HStack,VStack, Divider
 } from "@chakra-ui/react";
-import { Select as MultiSelect } from "chakra-react-select";
+//@ts-ignore
+// import { Select as MultiSelect } from "chakra-react-select";
 import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract, SCDefinition, SCDFunction } from "../../types/Contracts";
@@ -29,6 +30,18 @@ import { getContractFunctions, setFunctionArgValue, setFunctionInputsArgValue } 
 import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import dynamic from "next/dynamic";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
+const DynamicSelect = dynamic(
+  // @ts-ignore
+  () => import("chakra-react-select").then((mod) => mod.Select),
+  {
+    loading: () => <p>Loading Select component...</p>,
+    ssr: false,
+  }
+);
 
 interface IProps {
   config: QuorumConfig;
@@ -39,7 +52,7 @@ interface IProps {
   privateFor: string[];
   privateFrom: string;
   fromPrivateKey: string;
-  tesseraKeys: { label: string; value: string }[] | undefined;
+  tesseraKeys: { label: string; value: string }[];
   selectLoading: boolean;
   closeAllToasts: () => void;
   reuseToast: any;
@@ -105,7 +118,7 @@ export default function ContractsInteract(props: IProps) {
           fromPrivateKey: props.fromPrivateKey,
           functionToCall: e.target.id
         }),
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((result) => {
           // console.log(result);
@@ -210,7 +223,7 @@ export default function ContractsInteract(props: IProps) {
           functionToCall: functionToCall,
           functionArgs: params[0].inputs
         }),
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((result) => {
           // console.log(result);
@@ -259,28 +272,31 @@ export default function ContractsInteract(props: IProps) {
               value={props.contractAddress}
               onChange={props.handleContractAddress}
               isDisabled
+              readOnly
             />
           </FormControl>
           <Box mt={1}>
-            <MultiSelect
+            <DynamicSelect
+              //@ts-ignore
               isLoading={props.selectLoading}
               instanceId="private-for-deploy"
               isMulti
               options={props.tesseraKeys}
-              onChange={(e) => {
+              onChange={(e: any) => {
                 const myList: string[] = [];
-                e.map((k) => myList.push(k.value));
+                e.map((k: any) => myList.push(k.value));
                 setGetSetTessera(myList);
               }}
-              placeholder="Select Tessera node recipients to use the functions below..."
+              placeholder="Select Tessera recipients to use the functions below..."
               closeMenuOnSelect={false}
               selectedOptionStyle="check"
               hideSelectedOptions={false}
               // menuPortalTarget={document.body}
-              // styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+              // styles={{
+              //   menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+              // }}
             />
           </Box>
-
           <Flex justifyContent="space-between" alignItems="center" m={1}>
             <VStack 
             spacing={5} 

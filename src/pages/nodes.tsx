@@ -1,4 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { GetServerSideProps } from "next";
+import type { Session } from "next-auth";
+import { useSession, getSession } from "next-auth/react";
+import AccessDenied from "../common/components/Misc/AccessDenied";
 import { Container } from "@chakra-ui/react";
 import PageHeader from "../common/components/Misc/PageHeader";
 import NodeOverview from "../common/components/Nodes/NodeOverview";
@@ -18,6 +22,8 @@ import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import { refresh5s } from "../common/lib/common";
 import axios from "axios";
 import { configReader } from "../common/lib/getConfig";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 interface IState {
   selectedNode: string;
@@ -39,6 +45,9 @@ interface IProps {
 }
 
 export default function Nodes({ config }: IProps) {
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
+
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [node, setNode] = useState<IState>({
     selectedNode: config.nodes[0].name,
@@ -102,7 +111,7 @@ export default function Nodes({ config }: IProps) {
   const nodeInfoHandler = useCallback(
     async (name: string) => {
       const needle: QuorumNode = getDetailsByNodeName(config, name);
-      const res = await axios({
+      await axios({
         method: "POST",
         url: `/api/nodeGetDetails`,
         headers: {
@@ -112,23 +121,41 @@ export default function Nodes({ config }: IProps) {
           client: needle.client,
           rpcUrl: needle.rpcUrl,
         }),
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
-      }).then((res) => {
-        setNode({
-          selectedNode: name,
-          client: needle.client,
-          nodeId: res.data.nodeId,
-          nodeName: res.data.nodeName,
-          enode: res.data.enode,
-          ip: res.data.ip,
-          statusText: res.data.statusText,
-          rpcUrl: needle.rpcUrl,
-          blocks: res.data.blocks,
-          peers: res.data.peers,
-          pendingTxns: res.data.pendingTxns,
-          queuedTxns: res.data.queuedTxns,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+      })
+        .then((res) => {
+          setNode({
+            selectedNode: name,
+            client: needle.client,
+            nodeId: res.data.nodeId,
+            nodeName: res.data.nodeName,
+            enode: res.data.enode,
+            ip: res.data.ip,
+            statusText: res.data.statusText,
+            rpcUrl: needle.rpcUrl,
+            blocks: res.data.blocks,
+            peers: res.data.peers,
+            pendingTxns: res.data.pendingTxns,
+            queuedTxns: res.data.queuedTxns,
+          });
+        })
+        .catch((err) => {
+          if ((err.status = 401)) console.error(`${err.status} Unauthorized`);
+          setNode({
+            selectedNode: name,
+            client: needle.client,
+            nodeId: "",
+            nodeName: "",
+            enode: "",
+            ip: "",
+            statusText: "error",
+            rpcUrl: needle.rpcUrl,
+            blocks: 0,
+            peers: 0,
+            pendingTxns: 0,
+            queuedTxns: 0,
+          });
         });
-      });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [config]
@@ -143,13 +170,16 @@ export default function Nodes({ config }: IProps) {
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [node.selectedNode]);
+  }, [node.selectedNode, session]);
 
   const handleSelectNode = (e: any) => {
     clearInterval(intervalRef.current as NodeJS.Timeout);
     setNode({ ...node, selectedNode: e.target.value });
   };
-
+  if (typeof window !== "undefined" && loading) return null;
+  if (!session && publicRuntimeConfig.DISABLE_AUTH === "false") {
+    return <AccessDenied />;
+  }
   return (
     <>
       <Container maxW={{ base: "container.sm", md: "container.xl" }}>
@@ -173,8 +203,15 @@ export default function Nodes({ config }: IProps) {
   );
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps<{
+  session: Session | null;
+}> = async (context) => {
   const res = await configReader();
   const config: QuorumConfig = JSON.parse(res);
-  return { props: { config } };
-}
+  return {
+    props: {
+      config,
+      session: await getSession(context),
+    },
+  };
+};

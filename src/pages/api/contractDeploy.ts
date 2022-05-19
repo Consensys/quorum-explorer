@@ -4,11 +4,16 @@ import Web3 from "web3";
 import Web3Quorum from "web3js-quorum";
 import axios from "axios";
 import { CompiledContract, SCDFunctionArg } from "../../common/types/Contracts";
+import apiAuth from "../../common/lib/authentication";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
+    return;
+  }
   console.log(req.body);
   await deployContract(
     req.body.client,

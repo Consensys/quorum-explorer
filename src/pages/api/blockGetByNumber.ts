@@ -1,12 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ethApiCall } from "../../common/lib/ethApiCall";
 import { QuorumBlock } from "../../common/types/Explorer";
+import apiAuth from "../../common/lib/authentication";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body);
+  // console.log(req.body);
   const blockNumber = req.body.blockNumber;
   const rpcUrl = req.body.rpcUrl;
   let quorumBlock: QuorumBlock = {
@@ -25,6 +26,12 @@ export default async function handler(
     uncles: [],
     transactions: [],
   };
+
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
+    return;
+  }
+
   try {
     const ethBlockByNumber = await ethApiCall(rpcUrl, "eth_getBlockByNumber", [
       blockNumber,
@@ -50,7 +57,9 @@ export default async function handler(
     console.error(
       "Node is unreachable. Ensure ports are open and client is running!"
     );
+    res.status(500);
   } finally {
     res.status(200).json(quorumBlock);
+    res.end();
   }
 }

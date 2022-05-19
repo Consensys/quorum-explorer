@@ -1,12 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { NodeDetails } from "../../common/types/api/responses";
 import { ethApiCall } from "../../common/lib/ethApiCall";
+import apiAuth from "../../common/lib/authentication";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body);
+  // console.log(req.body);
   const userClient = req.body.client;
   const rpcUrl = req.body.rpcUrl;
   let nodeDetails: NodeDetails = {
@@ -20,6 +21,11 @@ export default async function handler(
     queuedTxns: -1,
     pendingTxns: -1,
   };
+
+  const checkSession = await apiAuth(req, res);
+  if (!checkSession) {
+    return;
+  }
 
   try {
     const adminNodeInfo = await ethApiCall(rpcUrl, "admin_nodeInfo");
@@ -59,5 +65,6 @@ export default async function handler(
     nodeDetails["statusText"] = "error";
   } finally {
     res.status(200).json(nodeDetails);
+    res.end();
   }
 }

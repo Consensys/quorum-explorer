@@ -12,6 +12,9 @@ import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
 import axios from "axios";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import { motion } from "framer-motion";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
 const MotionBox = motion(Box);
 
 interface IProps {
@@ -41,7 +44,7 @@ export default function ValidatorsPropose(props: IProps) {
     const rpcUrl: string = needle.rpcUrl;
     const client: string = needle.client;
 
-    const addValidator = await axios({
+    await axios({
       method: "POST",
       url: `/api/validatorsPropose`,
       headers: {
@@ -54,12 +57,20 @@ export default function ValidatorsPropose(props: IProps) {
         address: propose.address_input,
         vote: true,
       }),
-      baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
-    });
+      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("Successfully proposed: " + propose.address_input);
+        }
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          console.error(`${err.status} Unauthorized`);
+        }
+      });
     // console.log(addValidator);
-    if (addValidator.status === 200) {
-      console.log("Successfully proposed: " + propose.address_input);
-    }
+
     setButtonLoading(false);
   };
 
