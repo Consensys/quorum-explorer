@@ -209,6 +209,22 @@ export default function ContractsIndex(props: IProps) {
       Compile: { status: true, isDisabled: false },
     });
 
+    if (code === "") {
+      toast({
+        title: "Empty Contract!",
+        description: `Please enter a contract into the code editor`,
+        status: "error",
+        duration: 5000,
+        position: "bottom",
+        isClosable: true,
+      });
+      setButtonLoading({
+        ...buttonLoading,
+        Compile: { status: false, isDisabled: false },
+      });
+      return;
+    }
+
     axios({
       method: "POST",
       url: `/api/contractCompile`,
