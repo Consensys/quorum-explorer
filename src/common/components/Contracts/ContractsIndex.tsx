@@ -24,6 +24,7 @@ import {
   Divider,
   Select,
   useColorMode,
+  Portal,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -53,6 +54,15 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
   loading: () => <p>Loading interaction component...</p>,
 });
+
+const DynamicSelect = dynamic(
+  // @ts-ignore
+  () => import("chakra-react-select").then((mod) => mod.Select),
+  {
+    loading: () => <p>Loading Select component...</p>,
+    ssr: false,
+  }
+);
 
 const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
   loading: () => <p>Loading interaction component...</p>,
@@ -92,12 +102,11 @@ export default function ContractsIndex(props: IProps) {
     privateFor: [],
   });
   const controller = new AbortController();
-  const [simpleStorageValue, setSimpleStorageValue] = useState(0);
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
-    Deploy: { status: false, isDisabled: true },
   });
   const [selectLoading, setSelectLoading] = useState(true);
+  const [getSetTessera, setGetSetTessera] = useState<string[]>([]);
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -174,10 +183,6 @@ export default function ContractsIndex(props: IProps) {
     toast.closeAll();
   }
 
-  const setStorageValue = (e: any) => {
-    setSimpleStorageValue(e.target.value);
-  };
-
   const ContractCodeHandler = (e: any) => {
     e.preventDefault();
     const needle: SmartContract = contracts.filter(
@@ -186,7 +191,6 @@ export default function ContractsIndex(props: IProps) {
     const joined = logs.concat("Navigated to: " + e.target.value);
     setLogs(joined);
     setButtonLoading({
-      Deploy: { status: false, isDisabled: true },
       Compile: { status: false, isDisabled: false },
     });
     setSelectedContract(e.target.value);
@@ -247,7 +251,6 @@ export default function ContractsIndex(props: IProps) {
           setLogs(joined);
         }
         setButtonLoading({
-          Deploy: { status: false, isDisabled: false },
           Compile: { status: false, isDisabled: false },
         });
       })
@@ -267,113 +270,11 @@ export default function ContractsIndex(props: IProps) {
         );
         setLogs(joined);
         setButtonLoading({
-          Deploy: { status: false, isDisabled: true },
           Compile: { status: false, isDisabled: false },
         });
       });
   };
 
-  const HandleDeploy = async (e: any) => {
-    e.preventDefault();
-    setButtonLoading({
-      ...buttonLoading,
-      Deploy: { status: true, isDisabled: false },
-    });
-    if (
-      accountAddress.length === 0 ||
-      deployParams.privateFor.length === 0 ||
-      deployParams.privateKeyFrom.length === 0
-    ) {
-      // check if nothing has been selected for account
-      closeAll();
-      toast({
-        title: "Missing Details",
-        description: `You must choose account to deploy and private for.`,
-        status: "warning",
-        duration: 5000,
-        position: "bottom",
-        isClosable: true,
-      });
-      setButtonLoading({
-        Deploy: { status: false, isDisabled: false },
-        Compile: { status: false, isDisabled: false },
-      });
-      return;
-    }
-    if (
-      accountAddress.length > 0 &&
-      deployParams.privateFor.length > 0 &&
-      deployParams.privateKeyFrom.length > 0 &&
-      simpleStorageValue !== undefined
-    ) {
-      // go ahead if all necessary parameters selected
-      const getAccountPrivKey = getPrivateKey(
-        props.config,
-        accountAddress
-      ).privateKey;
-      const needle = getDetailsByNodeName(props.config, props.selectedNode);
-      await axios({
-        method: "POST",
-        url: `/api/contractDeploy`,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: JSON.stringify({
-          client: needle.client,
-          rpcUrl: needle.rpcUrl,
-          privateUrl: needle.privateTxUrl,
-          accountPrivateKey: getAccountPrivKey,
-          privateForList: deployParams.privateFor,
-          compiledContract: compiledContract,
-          deployArgs: simpleStorageValue,
-        }),
-        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
-      })
-        .then((result) => {
-          closeAll();
-          toast({
-            title: "Deployed Contract!",
-            description: `The contract was successfully deployed through ${props.selectedNode} @ address: ${result.data.contractAddress}`,
-            status: "success",
-            duration: 5000,
-            position: "bottom",
-            isClosable: true,
-          });
-          setDeployedAddress(result.data.contractAddress);
-          const joined = logs.concat(
-            "Contract: " +
-              selectedContract +
-              "\n \n" +
-              "Address: " +
-              result.data.contractAddress
-          );
-          setLogs(joined);
-          setButtonLoading({
-            Deploy: { status: false, isDisabled: false },
-            Compile: { status: false, isDisabled: false },
-          });
-        })
-        .catch((e) => {
-          closeAll();
-          toast({
-            title: "Error!",
-            description: `There was an error deploying the contract.`,
-            status: "error",
-            duration: 5000,
-            position: "bottom",
-            isClosable: true,
-          });
-          const joined = logs.concat(
-            "Error in deploying contract: " + selectedContract
-          );
-          setLogs(joined);
-          setButtonLoading({
-            Compile: { status: false, isDisabled: false },
-            Deploy: { status: false, isDisabled: false },
-          });
-        });
-    }
-  };
   return (
     <>
       <MotionGrid
@@ -503,6 +404,36 @@ export default function ContractsIndex(props: IProps) {
                             isDisabled
                             readOnly
                           />
+                          <FormLabel htmlFor="private-for">
+                            Private For
+                          </FormLabel>
+                          <DynamicSelect
+                            //@ts-ignore
+                            isLoading={selectLoading}
+                            instanceId="private-for-deploy"
+                            isMulti
+                            options={tesseraKeys}
+                            onChange={(e: any) => {
+                              const myList: string[] = [];
+                              e.map((k: any) => myList.push(k.value));
+                              setGetSetTessera(myList);
+                            }}
+                            placeholder="Select Tessera node recipients..."
+                            closeMenuOnSelect={false}
+                            selectedOptionStyle="check"
+                            hideSelectedOptions={false}
+                            menuPortalTarget={
+                              typeof window !== "undefined"
+                                ? document.body
+                                : null
+                            }
+                            styles={{
+                              menuPortal: (base: any) => ({
+                                ...base,
+                                zIndex: 9999,
+                              }),
+                            }}
+                          />
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
@@ -515,13 +446,13 @@ export default function ContractsIndex(props: IProps) {
                       privateFor={deployParams.privateFor}
                       privateFrom={currentTesseraPublicKey}
                       fromPrivateKey={deployParams.privateKeyFrom}
-                      tesseraKeys={tesseraKeys}
                       selectLoading={selectLoading}
                       setDeployedAddress={setDeployedAddress}
                       closeAllToasts={closeAll}
                       reuseToast={toast}
                       logs={logs}
                       setLogs={setLogs}
+                      getSetTessera={getSetTessera}
                     />
                     <DynamicContractsInteract
                       config={props.config}
@@ -532,11 +463,11 @@ export default function ContractsIndex(props: IProps) {
                       privateFor={deployParams.privateFor}
                       privateFrom={currentTesseraPublicKey}
                       fromPrivateKey={deployParams.privateKeyFrom}
-                      tesseraKeys={tesseraKeys}
                       selectLoading={selectLoading}
                       closeAllToasts={closeAll}
                       reuseToast={toast}
                       handleContractAddress={handleContractAddress}
+                      getSetTessera={getSetTessera}
                     />
                   </Accordion>
                 </SimpleGrid>

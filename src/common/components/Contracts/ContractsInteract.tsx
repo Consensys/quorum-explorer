@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import {
   FormControl,
   FormLabel,
@@ -10,12 +10,10 @@ import {
   StackDivider,
   Box,
   Input,
-  Flex,
   Text,
   Spacer,
   HStack,
   VStack,
-  Divider,
   Center,
 } from "@chakra-ui/react";
 import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
@@ -28,7 +26,6 @@ import {
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import {
   getContractFunctions,
-  setFunctionArgValue,
   setFunctionInputsArgValue,
 } from "../../lib/contracts";
 import axios from "axios";
@@ -37,16 +34,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import dynamic from "next/dynamic";
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
-
-const DynamicSelect = dynamic(
-  // @ts-ignore
-  () => import("chakra-react-select").then((mod) => mod.Select),
-  {
-    loading: () => <p>Loading Select component...</p>,
-    ssr: false,
-  }
-);
-
 interface IProps {
   config: QuorumConfig;
   selectedNode: string;
@@ -56,17 +43,16 @@ interface IProps {
   privateFor: string[];
   privateFrom: string;
   fromPrivateKey: string;
-  tesseraKeys: { label: string; value: string }[];
   selectLoading: boolean;
   closeAllToasts: () => void;
   reuseToast: any;
   handleContractAddress: (e: any) => void;
+  getSetTessera: string[];
 }
 
 export default function ContractsInteract(props: IProps) {
   const [readButtonLoading, setReadButtonLoading] = useState(false);
   const [writeButtonLoading, setWriteButtonLoading] = useState(false);
-  const [getSetTessera, setGetSetTessera] = useState<string[]>();
   const scDefinition: SCDefinition = getContractFunctions(
     props.compiledContract.abi
   );
@@ -95,7 +81,7 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
-    if (getSetTessera === undefined || getSetTessera.length < 1) {
+    if (props.getSetTessera === undefined || props.getSetTessera.length < 1) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -108,8 +94,8 @@ export default function ContractsInteract(props: IProps) {
     }
     if (
       props.contractAddress.length > 0 &&
-      getSetTessera !== undefined &&
-      getSetTessera.length > 0
+      props.getSetTessera !== undefined &&
+      props.getSetTessera.length > 0
     ) {
       await axios({
         method: "POST",
@@ -124,7 +110,7 @@ export default function ContractsInteract(props: IProps) {
           contractAddress: props.contractAddress,
           compiledContract: props.compiledContract,
           privateFrom: props.privateFrom,
-          privateFor: getSetTessera,
+          privateFor: props.getSetTessera,
           fromPrivateKey: props.fromPrivateKey,
           functionToCall: e.target.id,
         }),
@@ -203,7 +189,7 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
-    if (getSetTessera === undefined || getSetTessera.length < 1) {
+    if (props.getSetTessera === undefined || props.getSetTessera.length < 1) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -216,8 +202,8 @@ export default function ContractsInteract(props: IProps) {
     }
     if (
       props.contractAddress.length > 0 &&
-      getSetTessera !== undefined &&
-      getSetTessera.length > 0
+      props.getSetTessera !== undefined &&
+      props.getSetTessera.length > 0
     ) {
       const needle = getDetailsByNodeName(props.config, props.selectedNode);
       await axios({
@@ -234,7 +220,7 @@ export default function ContractsInteract(props: IProps) {
           contractAddress: props.contractAddress,
           compiledContract: props.compiledContract,
           sender: props.privateFrom,
-          privateFor: getSetTessera,
+          privateFor: props.getSetTessera,
           functionToCall: functionToCall,
           functionArgs: params[0].inputs,
         }),
@@ -290,28 +276,6 @@ export default function ContractsInteract(props: IProps) {
               readOnly
             />
           </FormControl>
-          <Box mt={1}>
-            <DynamicSelect
-              //@ts-ignore
-              isLoading={props.selectLoading}
-              instanceId="private-for-deploy"
-              isMulti
-              options={props.tesseraKeys}
-              onChange={(e: any) => {
-                const myList: string[] = [];
-                e.map((k: any) => myList.push(k.value));
-                setGetSetTessera(myList);
-              }}
-              placeholder="Select Tessera node recipients..."
-              closeMenuOnSelect={false}
-              selectedOptionStyle="check"
-              hideSelectedOptions={false}
-              // menuPortalTarget={document.body}
-              // styles={{
-              //   menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
-              // }}
-            />
-          </Box>
           <VStack
             spacing={2}
             align="stretch"

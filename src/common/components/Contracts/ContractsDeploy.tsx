@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FormControl,
   FormLabel,
@@ -12,37 +12,21 @@ import {
   Input,
   HStack,
 } from "@chakra-ui/react";
-// import { Select as MultiSelect } from "chakra-react-select";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract, SCDefinition } from "../../types/Contracts";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-import {
-  getContractFunctions,
-  setFunctionArgValue,
-  getDefaultValue,
-} from "../../lib/contracts";
+import { getContractFunctions, setFunctionArgValue } from "../../lib/contracts";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faRocket } from "@fortawesome/free-solid-svg-icons";
-import dynamic from "next/dynamic";
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
-
-const DynamicSelect = dynamic(
-  // @ts-ignore
-  () => import("chakra-react-select").then((mod) => mod.Select),
-  {
-    loading: () => <p>Loading Select component...</p>,
-    ssr: false,
-  }
-);
 
 interface IProps {
   config: QuorumConfig;
   selectedNode: string;
   compiledContract: CompiledContract;
-  tesseraKeys: { label: string; value: string }[] | undefined;
   account: string;
   privateFor: string[];
   privateFrom: string;
@@ -53,10 +37,11 @@ interface IProps {
   reuseToast: any;
   logs: string[];
   setLogs: (e: any) => void;
+  getSetTessera: string[];
 }
 
 export default function ContractsDeploy(props: IProps) {
-  const [getSetTessera, setGetSetTessera] = useState<string[]>();
+  // const [getSetTessera, setGetSetTessera] = useState<string[]>();
   const [deployButtonLoading, setDeployButtonLoading] = useState(false);
   const scDefinition: SCDefinition = getContractFunctions(
     props.compiledContract.abi
@@ -85,7 +70,7 @@ export default function ContractsDeploy(props: IProps) {
         isClosable: true,
       });
     }
-    if (getSetTessera === undefined || getSetTessera.length < 1) {
+    if (props.getSetTessera === undefined || props.getSetTessera.length < 1) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -99,8 +84,8 @@ export default function ContractsDeploy(props: IProps) {
 
     if (
       props.account.length > 0 &&
-      getSetTessera !== undefined &&
-      getSetTessera.length > 0
+      props.getSetTessera !== undefined &&
+      props.getSetTessera.length > 0
       // && simpleStorageValue !== undefined
     ) {
       // go ahead if all necessary parameters selected
@@ -121,7 +106,7 @@ export default function ContractsDeploy(props: IProps) {
           rpcUrl: needle.rpcUrl,
           privateUrl: needle.privateTxUrl,
           accountPrivateKey: getAccountPrivKey,
-          privateForList: getSetTessera,
+          privateForList: props.getSetTessera,
           compiledContract: props.compiledContract,
           deployArgs: scDefinition.constructor.inputs,
         }),
@@ -171,24 +156,6 @@ export default function ContractsDeploy(props: IProps) {
         </AccordionButton>
         <AccordionPanel pb={4}>
           <FormControl>
-            <FormLabel htmlFor="private-for">Private For</FormLabel>
-            <DynamicSelect
-              //@ts-ignore
-              isLoading={props.selectLoading}
-              instanceId="private-for-deploy"
-              isMulti
-              options={props.tesseraKeys}
-              onChange={(e: any) => {
-                const myList: string[] = [];
-                e.map((k: any) => myList.push(k.value));
-                setGetSetTessera(myList);
-              }}
-              placeholder="Select Tessera node recipients..."
-              closeMenuOnSelect={false}
-              selectedOptionStyle="check"
-              hideSelectedOptions={false}
-            />
-
             {scDefinition.constructor.inputs.map((input) => (
               <>
                 <Text
@@ -203,8 +170,7 @@ export default function ContractsDeploy(props: IProps) {
                 />
               </>
             ))}
-
-            <HStack mt={5}>
+            <HStack mt={scDefinition.constructor.inputs.length > 0 ? 4 : 0}>
               <Button
                 leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
                 loadingText="Deploying..."
@@ -214,6 +180,10 @@ export default function ContractsDeploy(props: IProps) {
                 colorScheme="green"
                 onClick={handleDeploy}
                 isLoading={deployButtonLoading}
+                isDisabled={
+                  props.compiledContract.abi.length === 0 &&
+                  props.compiledContract.bytecode.length === 0
+                }
               >
                 Deploy
               </Button>
