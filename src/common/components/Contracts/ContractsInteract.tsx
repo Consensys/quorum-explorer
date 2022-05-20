@@ -272,7 +272,6 @@ export default function ContractsInteract(props: IProps) {
               placeholder="0x"
               value={props.contractAddress}
               onChange={props.handleContractAddress}
-              isDisabled
               readOnly
             />
           </FormControl>

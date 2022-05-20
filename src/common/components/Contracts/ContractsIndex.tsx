@@ -404,7 +404,6 @@ export default function ContractsIndex(props: IProps) {
                             variant="filled"
                             placeholder="Node is not a Member"
                             value={accountAddress}
-                            isDisabled
                             readOnly
                           />
                           <FormLabel htmlFor="private-from">
@@ -415,7 +414,6 @@ export default function ContractsIndex(props: IProps) {
                             variant="filled"
                             placeholder="0x"
                             value={deployParams.privateKeyFrom}
-                            isDisabled
                             readOnly
                           />
                           <FormLabel htmlFor="tessera-key">
@@ -426,7 +424,6 @@ export default function ContractsIndex(props: IProps) {
                             variant="filled"
                             placeholder="Node is not a Member"
                             value={currentTesseraPublicKey}
-                            isDisabled
                             readOnly
                           />
                           <FormLabel htmlFor="private-for">
