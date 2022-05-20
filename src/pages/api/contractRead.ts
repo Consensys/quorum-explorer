@@ -82,7 +82,6 @@ async function besuReadValueAtAddress(
     return e.name === functionToCall;
   });
   console.log("Function ABI: " + JSON.stringify(functionAbi));
-  const funcOutputType = functionAbi.outputs[0].type;
   const functionParams = {
     to: contractAddress,
     data: functionAbi.signature,
@@ -98,13 +97,21 @@ async function besuReadValueAtAddress(
   const result = await web3quorum.priv.waitForTransactionReceipt(
     transactionHash
   );
-  const outputSimplified = web3.eth.abi.decodeParameters(
-    [funcOutputType],
-    result.output
-  );
-  console.log("Raw value from deployed contract is: " + result.output);
-  console.log("Type to decode is: " + funcOutputType);
-  console.log("Value from deployed contract is: ");
-  console.log(outputSimplified);
-  return outputSimplified[0];
+  
+  if (functionAbi.outputs.length > 0){
+    const funcOutputType = functionAbi.outputs[0].type;
+    const outputSimplified = web3.eth.abi.decodeParameters(
+      [funcOutputType],
+      result.output
+    );
+    console.log("Raw value from deployed contract is: " + result.output);
+    console.log("Type to decode is: " + funcOutputType);
+    console.log("Value from deployed contract is: ");
+    console.log(outputSimplified);
+    return outputSimplified[0];
+  } else {
+    console.log("Raw value from deployed contract is: " + JSON.stringify(result));
+    return result.output;
+  }
+
 }
