@@ -45,28 +45,26 @@ export async function deployContract(
 ) {
   const abi = compiledContract.abi;
   const bytecode = compiledContract.bytecode;
+  const gasEstmate = parseInt(compiledContract.gasEstimates.creation.codeDepositCost) * 2;
 
   const web3 = new Web3(rpcUrl);
-  const web3quorum = new Web3Quorum(
-    web3,
-    { privateUrl: privateUrl },
-    client === "goquorum" ? true : false
-  );
-
+  const web3quorum = new Web3Quorum( web3, { privateUrl: privateUrl },true);
   const account = web3.eth.accounts.privateKeyToAccount(accountPrivateKey);
   const txCount = await web3.eth.getTransactionCount(account.address);
   const chainId = await web3.eth.getChainId();
+
   const fromTxPublicKey = await axios
     .get(privateUrl + "/keys", {
       headers: { "Content-Type": "application/json" },
     })
     .then((res) => res.data.keys[0].key);
   const constructorValues: string = constructorInitValues(web3, deployArgs);
+  // const gasPrice = bytecode.gasEstimates.creation.codeDepositCost
   const txOptions = {
     chainId,
     nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
-    gasLimit: 0x30122, //max number of gas units the tx is allowed to use
+    gasLimit: gasEstmate, 
     value: 0,
     data: "0x" + bytecode + constructorValues,
     from: account,
@@ -75,6 +73,7 @@ export async function deployContract(
     privateFrom: fromTxPublicKey,
     privateFor: privateForList,
   };
+  
   console.log("Creating contract...");
 
   // Generate and send the Raw transaction to the Besu node using the eea_sendRawTransaction JSON-RPC call

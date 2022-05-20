@@ -240,6 +240,8 @@ export default function ContractsIndex(props: IProps) {
           setCompiledContract({
             abi: response.data.abi,
             bytecode: response.data.bytecode,
+            name: response.data.name,
+            gasEstimates: response.data.gasEstimates
           });
           closeAll();
           toast({

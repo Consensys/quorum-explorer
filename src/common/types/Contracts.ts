@@ -46,25 +46,36 @@ export type SmartContract = {
   contract: string;
 };
 
+export type GasEstimates = {
+  creation: {
+    codeDepositCost: string,
+		executionCost: string,
+		totalCost: string
+  }
+  external: {[key: string]: string}
+}
+
 export type CompiledContract = {
+  name: string;
   abi: [];
   bytecode: string;
+  gasEstimates: GasEstimates;
 };
+
+
 
 export const defaultSmartContracts: SmartContract[] = [
   {
     name: "DoubleStorage",
     contract: `pragma solidity ^0.8.13;
 
-    contract DoubleStorage {
+    contract SimpleStorage {
       uint public storedData;
-      uint public secondData;
       event stored(address _to, uint _amount);
     
       constructor(uint initVal) public {
         emit stored(msg.sender, initVal);
         storedData = initVal;
-        secondData = initVal;
       }
     
       function set(uint x) public {
@@ -72,18 +83,9 @@ export const defaultSmartContracts: SmartContract[] = [
         storedData = x;
       }
     
-      function setSecond(uint x) public { 
-        secondData = x;
-      }
-    
       function get() view public returns (uint retVal) {
         return storedData;
       }
-    
-      function getSecond() view public returns (uint retVal) {
-        return secondData;
-      }
-    
     }
     `,
   },

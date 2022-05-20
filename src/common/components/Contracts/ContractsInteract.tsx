@@ -73,7 +73,7 @@ export default function ContractsInteract(props: IProps) {
       [e.target.id]: true,
     });
     setInteracting(true);
-
+        
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
     if (props.contractAddress.length < 1) {
       props.closeAllToasts();
@@ -182,8 +182,8 @@ export default function ContractsInteract(props: IProps) {
 
   const handleTransact = async (e: any) => {
     e.preventDefault();
-    console.log(">> TRANSACT >> " + e.target.id);
-    console.log(scDefinition);
+    // console.log(">> TRANSACT >> " + e.target.id);
+    // console.log(scDefinition);
     const functionToCall = e.target.id;
     setDynamicButtonLoading({
       ...dynamicButtonLoading,
