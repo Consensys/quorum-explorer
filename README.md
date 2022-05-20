@@ -12,10 +12,11 @@
     - [Docker-Compose](#docker-compose)
     - [Building your own Docker container](#building-your-own-docker-container)
   - [Additional Features](#additional-features)
-  - [Handy links:](#handy-links)
   - [Troubleshooting](#troubleshooting)
+    - [MetaMask Transaction is Stuck](#metamask-transaction-is-stuck)
     - [Developing your app/DApp with React and web3js](#developing-your-appdapp-with-react-and-web3js)
     - [Solc doesn't compile on the frontend and requires a backend](#solc-doesnt-compile-on-the-frontend-and-requires-a-backend)
+    - [TODO:](#todo)
 
 ## Description
 
@@ -126,11 +127,22 @@ The above you can find a bare-minimum `docker-compose.yaml`. You should edit the
 We welcome PRs for bugs or added functionality :) Please sign the CLA and submit a PR with your work for us to review.
 
 If you raise an issue, please include steps for us to reproduce your issue so we can solve it faster.
-## Handy links:
-
-[Fontawesome icons ](https://fontawesome.com/v5/cheatsheet/free/solid)
-
 ## Troubleshooting
+
+### MetaMask Transaction is Stuck
+
+Sometimes you may run into an issue where sending a transaction through the Wallets page on the app becomes stuck indefinitely. This issue occurs if you import an account into MetaMask and then you subsequently restart/recreate your private network. 
+
+**ENSURE THAT YOUR PRIVATE KEYS OR SEEDS ARE BACKED UP PRIOR TO DOING THIS**
+
+To resolve this problem: 
+1. Select the account in MetaMask
+2. Go to Advanced Settings in MetaMask and click "Reset Account"
+3. Remove the account from MetaMask. Skip this step and the 4th step if this was not an imported account.
+4. Import the account back into MetaMask
+5. Attempt transaction again on Wallets page
+
+You should not need to do this if the network is persisting for a long period of time like in production. However, may be necessary in development where the network is periodically reset.
 
 ### Developing your app/DApp with React and web3js
 

@@ -185,16 +185,21 @@ export default function ContractsIndex(props: IProps) {
 
   const ContractCodeHandler = (e: any) => {
     e.preventDefault();
-    const needle: SmartContract = contracts.filter(
-      (_) => _.name === e.target.value
-    )[0];
+    if (e.target.value !== "custom") {
+      const needle: SmartContract = contracts.filter(
+        (_) => _.name === e.target.value
+      )[0];
+      setCode(needle.contract);
+    }
+    if (e.target.value === "custom") {
+      setCode("");
+    }
     const joined = logs.concat("Navigated to: " + e.target.value);
     setLogs(joined);
     setButtonLoading({
       Compile: { status: false, isDisabled: false },
     });
     setSelectedContract(e.target.value);
-    setCode(needle.contract);
   };
 
   const HandleCompile = async (e: any) => {
@@ -203,6 +208,22 @@ export default function ContractsIndex(props: IProps) {
       ...buttonLoading,
       Compile: { status: true, isDisabled: false },
     });
+
+    if (code === "") {
+      toast({
+        title: "Empty Contract!",
+        description: `Please enter a contract into the code editor`,
+        status: "error",
+        duration: 5000,
+        position: "bottom",
+        isClosable: true,
+      });
+      setButtonLoading({
+        ...buttonLoading,
+        Compile: { status: false, isDisabled: false },
+      });
+      return;
+    }
 
     axios({
       method: "POST",
@@ -260,7 +281,7 @@ export default function ContractsIndex(props: IProps) {
         console.log(error);
         toast({
           title: "Backend API Error",
-          description: `Issue encountered contacting back-end!`,
+          description: `Issue encountered from the back-end!`,
           status: "error",
           duration: 5000,
           position: "bottom",
@@ -300,6 +321,9 @@ export default function ContractsIndex(props: IProps) {
                 {c.name}
               </option>
             ))}
+            <option key="custom" value="custom">
+              Custom Contract
+            </option>
           </Select>
           <Box mb={10}>
             <ChakraEditor
@@ -309,7 +333,8 @@ export default function ContractsIndex(props: IProps) {
               autoFocus
               value={code}
               language="sol"
-              placeholder="Empty code"
+              placeholder="Start typing here!"
+              onChange={(evn) => setCode(evn.target.value)}
               style={{
                 fontSize: 16,
                 backgroundColor: colorMode === "light" ? "#f5f5f5" : "#2D3748",
@@ -318,7 +343,7 @@ export default function ContractsIndex(props: IProps) {
                 overflow: "auto",
                 height: "550px",
               }}
-              readOnly
+              readOnly={selectedContract === "custom" ? false : true}
             />
           </Box>
 
@@ -381,7 +406,6 @@ export default function ContractsIndex(props: IProps) {
                             variant="filled"
                             placeholder="Node is not a Member"
                             value={accountAddress}
-                            isDisabled
                             readOnly
                           />
                           <FormLabel htmlFor="private-from">
@@ -392,7 +416,6 @@ export default function ContractsIndex(props: IProps) {
                             variant="filled"
                             placeholder="0x"
                             value={deployParams.privateKeyFrom}
-                            isDisabled
                             readOnly
                           />
                           <FormLabel htmlFor="tessera-key">
@@ -403,7 +426,6 @@ export default function ContractsIndex(props: IProps) {
                             variant="filled"
                             placeholder="Node is not a Member"
                             value={currentTesseraPublicKey}
-                            isDisabled
                             readOnly
                           />
                           <FormLabel htmlFor="private-for">

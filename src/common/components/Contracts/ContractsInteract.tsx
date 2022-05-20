@@ -22,6 +22,7 @@ import {
   CompiledContract,
   SCDefinition,
   SCDFunction,
+  buttonLoading,
 } from "../../types/Contracts";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import {
@@ -31,7 +32,6 @@ import {
 import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import dynamic from "next/dynamic";
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 interface IProps {
@@ -51,8 +51,9 @@ interface IProps {
 }
 
 export default function ContractsInteract(props: IProps) {
-  const [readButtonLoading, setReadButtonLoading] = useState(false);
-  const [writeButtonLoading, setWriteButtonLoading] = useState(false);
+  const [dynamicButtonLoading, setDynamicButtonLoading] =
+    useState<buttonLoading>({});
+  const [interacting, setInteracting] = useState(false);
   const scDefinition: SCDefinition = getContractFunctions(
     props.compiledContract.abi
   );
@@ -65,9 +66,14 @@ export default function ContractsInteract(props: IProps) {
 
   const handleRead = async (e: any) => {
     e.preventDefault();
-    // console.log(">> READ >> " + e.target.id);
-    // console.log(scDefinition);
-    setReadButtonLoading(true);
+    console.log(">> READ >> " + e.target.id);
+    console.log(scDefinition);
+    setDynamicButtonLoading({
+      ...dynamicButtonLoading,
+      [e.target.id]: true,
+    });
+    setInteracting(true);
+        
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
     if (props.contractAddress.length < 1) {
       props.closeAllToasts();
@@ -155,7 +161,11 @@ export default function ContractsInteract(props: IProps) {
           // setLogs(joined);
         });
     }
-    setReadButtonLoading(false);
+    setDynamicButtonLoading({
+      ...dynamicButtonLoading,
+      [e.target.id]: false,
+    });
+    setInteracting(false);
   };
 
   const handleTransactArgs = (e: any) => {
@@ -175,8 +185,12 @@ export default function ContractsInteract(props: IProps) {
     // console.log(">> TRANSACT >> " + e.target.id);
     // console.log(scDefinition);
     const functionToCall = e.target.id;
+    setDynamicButtonLoading({
+      ...dynamicButtonLoading,
+      [functionToCall]: true,
+    });
+    setInteracting(true);
     const params = transactFunctions.filter((_) => _.name === functionToCall);
-    setWriteButtonLoading(true);
     if (props.contractAddress.length < 1) {
       props.closeAllToasts();
       props.reuseToast({
@@ -249,7 +263,11 @@ export default function ContractsInteract(props: IProps) {
           });
         });
     }
-    setWriteButtonLoading(false);
+    setDynamicButtonLoading({
+      ...dynamicButtonLoading,
+      [functionToCall]: false,
+    });
+    setInteracting(false);
   };
 
   return (
@@ -271,7 +289,6 @@ export default function ContractsInteract(props: IProps) {
               placeholder="0x"
               value={props.contractAddress}
               onChange={props.handleContractAddress}
-              isDisabled
               readOnly
             />
           </FormControl>
@@ -302,6 +319,8 @@ export default function ContractsInteract(props: IProps) {
                     onClick={handleRead}
                     variant="solid"
                     minW={125}
+                    isLoading={dynamicButtonLoading[f.name]}
+                    isDisabled={interacting}
                   >
                     Read
                   </Button>
@@ -331,6 +350,8 @@ export default function ContractsInteract(props: IProps) {
                       onClick={handleTransact}
                       variant="solid"
                       minW={125}
+                      isLoading={dynamicButtonLoading[f.name]}
+                      isDisabled={interacting}
                     >
                       Transact
                     </Button>

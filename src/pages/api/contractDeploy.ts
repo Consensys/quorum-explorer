@@ -29,9 +29,9 @@ export default async function handler(
 }
 
 function constructorInitValues(web3: Web3, deployArgs: SCDFunctionArg[]) {
-    const stypes = deployArgs.map(_=> _.type);
-    const values = deployArgs.map(_=> _.value);
-    return web3.eth.abi.encodeParameters(stypes, values).slice(2);
+  const stypes = deployArgs.map((_) => _.type);
+  const values = deployArgs.map((_) => _.value);
+  return web3.eth.abi.encodeParameters(stypes, values).slice(2);
 }
 
 export async function deployContract(

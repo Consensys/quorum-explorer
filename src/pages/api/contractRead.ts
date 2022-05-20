@@ -55,7 +55,10 @@ async function readValueAtAddress(
   const web3quorum = Web3Quorum(web3, { privateUrl: privateUrl }, true);
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
   // contractInstance.defaultCommon.customChain = {name: 'GoQuorum', chainId: 1337};
-  const res = await contractInstance.methods[functionToCall]().call().catch(console.error);
+  const res = await contractInstance.methods[functionToCall]()
+    .call()
+    .catch(console.error);
+
   console.log("obtained value at deployed contract is: " + res);
   return res;
 }
@@ -78,9 +81,9 @@ async function besuReadValueAtAddress(
   const functionAbi = contract._jsonInterface.find((e: any) => {
     return e.name === functionToCall;
   });
-  console.log("Function ABI: " + JSON.stringify(functionAbi))
+  console.log("Function ABI: " + JSON.stringify(functionAbi));
   const funcOutputType = functionAbi.outputs[0].type;
-    const functionParams = {
+  const functionParams = {
     to: contractAddress,
     data: functionAbi.signature,
     privateKey: fromPrivateKey.slice(2),
@@ -95,10 +98,13 @@ async function besuReadValueAtAddress(
   const result = await web3quorum.priv.waitForTransactionReceipt(
     transactionHash
   );
-  const outputSimplified = web3.eth.abi.decodeParameters([funcOutputType],result.output)
-  console.log("Raw value from deployed contract is: " + result.output );
-  console.log("Type to decode is: " + funcOutputType );
-  console.log("Value from deployed contract is: " );
-  console.log(outputSimplified)
+  const outputSimplified = web3.eth.abi.decodeParameters(
+    [funcOutputType],
+    result.output
+  );
+  console.log("Raw value from deployed contract is: " + result.output);
+  console.log("Type to decode is: " + funcOutputType);
+  console.log("Value from deployed contract is: ");
+  console.log(outputSimplified);
   return outputSimplified[0];
 }
