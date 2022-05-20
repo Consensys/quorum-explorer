@@ -331,7 +331,7 @@ export default function ContractsIndex(props: IProps) {
               autoFocus
               value={code}
               language="sol"
-              placeholder="Empty code"
+              placeholder="Start typing here!"
               onChange={(evn) => setCode(evn.target.value)}
               style={{
                 fontSize: 16,

@@ -1,3 +1,7 @@
+export interface buttonLoading {
+  [key: string]: boolean;
+}
+
 export type SCDFunctionArg = {
   name: string;
   type: string;
