@@ -59,8 +59,8 @@ async function readValueAtAddress(
     .call()
     .catch(console.error);
 
-  console.log("obtained value at deployed contract is: " + res);
-  return res;
+  console.log("obtained value at deployed contract is: " + JSON.stringify(res));
+  return JSON.stringify(res);
 }
 
 async function besuReadValueAtAddress(
