@@ -60,6 +60,9 @@ async function transactAtAddress(
   const web3 = new Web3(rpcUrl);
   const chainId = await web3.eth.getChainId();
   const web3quorum = new Web3Quorum(web3, { privateUrl: privateUrl }, true);
+  //some funcs have `infinite` gas under the gasEsimates, so we just use the blockGasLimit minus a bit
+  const latestBlock = await web3.eth.getBlock("latest");
+  const gasEstmate = latestBlock.gasLimit - 1000;
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
   // eslint-disable-next-line no-underscore-dangle
   const functionAbi = contractInstance._jsonInterface.find((e: any) => {
@@ -80,7 +83,7 @@ async function transactAtAddress(
     chainId,
     nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
-    gasLimit: 0x24a22, //max number of gas units the tx is allowed to use
+    gasLimit: gasEstmate, //max number of gas units the tx is allowed to use
     value: 0,
     data,
     to: contractAddress,
@@ -113,7 +116,7 @@ async function besuTransactAtAddress(
   const abi = compiledContract.abi;
   const web3 = new Web3(rpcUrl);
   const web3quorum = new Web3Quorum(web3, { privateUrl: privateUrl });
-
+  const gasEstmate = parseInt(compiledContract.gasEstimates.creation.codeDepositCost) * 2;
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
   const functionAbi = contractInstance._jsonInterface.find((e: any) => {
     return e.name === functionToCall;
