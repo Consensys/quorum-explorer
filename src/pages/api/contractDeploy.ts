@@ -64,7 +64,6 @@ export async function deployContract(
     })
     .then((res) => res.data.keys[0].key);
   const constructorValues: string = constructorInitValues(web3, deployArgs);
-  // const gasPrice = bytecode.gasEstimates.creation.codeDepositCost
   const txOptions = {
     chainId,
     nonce: txCount,

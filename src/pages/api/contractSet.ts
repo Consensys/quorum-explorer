@@ -83,7 +83,7 @@ async function transactAtAddress(
     chainId,
     nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
-    gasLimit: gasEstmate, //max number of gas units the tx is allowed to use
+    gasLimit: 0x3D090, //max number of gas units the tx is allowed to use
     value: 0,
     data,
     to: contractAddress,

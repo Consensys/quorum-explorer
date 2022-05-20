@@ -57,7 +57,7 @@ It has not been designed for production use yet!
 
 ```bash
 QE_BASEPATH="/explorer"
-QE_CONFIG_PATH="path/to/config.json"
+QE_CONFIG_PATH="src/config/config.json"
 NODE_ENV=development
 DISABLE_AUTH=true
 NEXTAUTH_URL=http://localhost:25000
