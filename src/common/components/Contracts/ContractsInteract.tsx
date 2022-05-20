@@ -66,8 +66,8 @@ export default function ContractsInteract(props: IProps) {
 
   const handleRead = async (e: any) => {
     e.preventDefault();
-    // console.log("Contract READ: " + e.target.id);
-    // console.log(scDefinition);
+    console.log("Contract READ: " + e.target.id);
+    console.log(scDefinition);
     setDynamicButtonLoading({
       ...dynamicButtonLoading,
       [e.target.id]: true,

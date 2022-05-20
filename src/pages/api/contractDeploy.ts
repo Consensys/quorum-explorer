@@ -80,6 +80,7 @@ export async function deployContract(
   };
 
   console.log("Creating contract...");
+  console.log(txOptions);
 
   // Generate and send the Raw transaction to the Besu node using the eea_sendRawTransaction JSON-RPC call
   const txHash = await web3quorum.priv.generateAndSendRawTransaction(txOptions);
