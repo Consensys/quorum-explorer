@@ -185,16 +185,21 @@ export default function ContractsIndex(props: IProps) {
 
   const ContractCodeHandler = (e: any) => {
     e.preventDefault();
-    const needle: SmartContract = contracts.filter(
-      (_) => _.name === e.target.value
-    )[0];
+    if (e.target.value !== "custom") {
+      const needle: SmartContract = contracts.filter(
+        (_) => _.name === e.target.value
+      )[0];
+      setCode(needle.contract);
+    }
+    if (e.target.value === "custom") {
+      setCode("");
+    }
     const joined = logs.concat("Navigated to: " + e.target.value);
     setLogs(joined);
     setButtonLoading({
       Compile: { status: false, isDisabled: false },
     });
     setSelectedContract(e.target.value);
-    setCode(needle.contract);
   };
 
   const HandleCompile = async (e: any) => {
@@ -258,7 +263,7 @@ export default function ContractsIndex(props: IProps) {
         console.log(error);
         toast({
           title: "Backend API Error",
-          description: `Issue encountered contacting back-end!`,
+          description: `Issue encountered from the back-end!`,
           status: "error",
           duration: 5000,
           position: "bottom",
@@ -298,6 +303,9 @@ export default function ContractsIndex(props: IProps) {
                 {c.name}
               </option>
             ))}
+            <option key="custom" value="custom">
+              Custom Contract
+            </option>
           </Select>
           <Box mb={10}>
             <ChakraEditor
@@ -308,6 +316,7 @@ export default function ContractsIndex(props: IProps) {
               value={code}
               language="sol"
               placeholder="Empty code"
+              onChange={(evn) => setCode(evn.target.value)}
               style={{
                 fontSize: 16,
                 backgroundColor: colorMode === "light" ? "#f5f5f5" : "#2D3748",
@@ -316,7 +325,7 @@ export default function ContractsIndex(props: IProps) {
                 overflow: "auto",
                 height: "550px",
               }}
-              readOnly
+              readOnly={selectedContract === "custom" ? false : true}
             />
           </Box>
 
