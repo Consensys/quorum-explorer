@@ -56,6 +56,7 @@ async function readValueAtAddress(
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
   // contractInstance.defaultCommon.customChain = {name: 'GoQuorum', chainId: 1337};
   const res = await contractInstance.methods[functionToCall]().call().catch(console.error);
+  
   console.log("obtained value at deployed contract is: " + res);
   return res;
 }

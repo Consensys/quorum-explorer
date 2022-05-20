@@ -66,7 +66,7 @@ export async function deployContract(
     chainId,
     nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
-    gasLimit: 0x24a22, //max number of gas units the tx is allowed to use
+    gasLimit: 0x30122, //max number of gas units the tx is allowed to use
     value: 0,
     data: "0x" + bytecode + constructorValues,
     from: account,

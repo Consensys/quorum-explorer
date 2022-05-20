@@ -27,6 +27,7 @@ export default function ExplorerBlockCard({ block }: IProps) {
         pb={{ base: "5", md: "4" }}
         borderRadius="lg"
         borderWidth={2}
+        boxShadow="lg"
         overflow="hidden"
       >
         <VStack>

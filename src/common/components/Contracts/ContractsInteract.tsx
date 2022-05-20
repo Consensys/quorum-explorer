@@ -16,6 +16,7 @@ import {
   HStack,
   VStack,
   Divider,
+  Center,
 } from "@chakra-ui/react";
 import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../../types/QuorumConfig";
@@ -312,14 +313,23 @@ export default function ContractsInteract(props: IProps) {
             />
           </Box>
           <VStack
-            spacing={5}
+            spacing={2}
             align="stretch"
             divider={<StackDivider borderColor="gray.200" />}
+            mt={1}
           >
-            <>
-              {readFunctions.map((f, i) => (
-                <HStack key={i} p={2} align="stretch">
-                  <Text fontSize="md">{f.name}</Text>
+            {readFunctions.map((f, i) => (
+              <Box
+                key={i}
+                borderRadius="lg"
+                borderWidth={2}
+                boxShadow="md"
+                p={5}
+              >
+                <HStack align="stretch">
+                  <Center>
+                    <Text fontSize="md">{f.name}</Text>
+                  </Center>
                   <Spacer />
                   <Button
                     id={f.name}
@@ -333,17 +343,18 @@ export default function ContractsInteract(props: IProps) {
                     Read
                   </Button>
                 </HStack>
-              ))}
-            </>
+              </Box>
+            ))}
           </VStack>
           <VStack
-            spacing={5}
+            spacing={2}
             align="stretch"
             divider={<StackDivider borderColor="gray.200" />}
+            mt={1}
           >
-            <>
-              {transactFunctions.map((f, i) => (
-                <VStack key={i} p={2} align="stretch">
+            {transactFunctions.map((f, i) => (
+              <VStack key={i} align="stretch">
+                <Box borderRadius="lg" borderWidth={2} boxShadow="md" p={5}>
                   <HStack>
                     <Text fontSize="md">{f.name}</Text>
                     <Spacer />
@@ -376,9 +387,9 @@ export default function ContractsInteract(props: IProps) {
                       />
                     </>
                   ))}
-                </VStack>
-              ))}
-            </>
+                </Box>
+              </VStack>
+            ))}
           </VStack>
         </AccordionPanel>
       </AccordionItem>

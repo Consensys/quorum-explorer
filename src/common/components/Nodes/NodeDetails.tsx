@@ -1,5 +1,11 @@
-
-import { Text, Skeleton, Container, Flex, Box, Divider, } from "@chakra-ui/react";
+import {
+  Text,
+  Skeleton,
+  Container,
+  Flex,
+  Box,
+  Divider,
+} from "@chakra-ui/react";
 import { motion } from "framer-motion";
 const MotionContainer = motion(Container);
 const MotionText = motion(Text);
@@ -23,7 +29,12 @@ export default function NodeDetails(props: IProps) {
         transition={{ duration: 1 }}
         maxW={{ base: "container.sm", md: "container.xl" }}
       >
-        <Flex flexDirection="column" borderRadius="lg" borderWidth={2}>
+        <Flex
+          flexDirection="column"
+          borderRadius="lg"
+          borderWidth={2}
+          boxShadow="lg"
+        >
           <Box m={5}>
             <Flex flexDirection="row" flexWrap="wrap">
               <Text as="b" width={"200px"}>

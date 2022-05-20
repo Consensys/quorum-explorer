@@ -26,6 +26,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faRocket } from "@fortawesome/free-solid-svg-icons";
 import dynamic from "next/dynamic";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 const DynamicSelect = dynamic(
   // @ts-ignore
@@ -123,7 +125,7 @@ export default function ContractsDeploy(props: IProps) {
           compiledContract: props.compiledContract,
           deployArgs: scDefinition.constructor.inputs,
         }),
-        baseURL: `${process.env.NEXT_PUBLIC_QE_BASEPATH}`,
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((result) => {
           props.closeAllToasts();

@@ -326,13 +326,14 @@ export default function WalletsTransferEth(props: IProps) {
         transition={{ delay: 0.2 }}
         borderRadius="lg"
         borderWidth={2}
+        boxShadow="2xl"
         p={5}
         mx={2}
         my={3}
       >
         <Box mt={5}>
-          <Heading as="h5" size="md">
-            Transfer ETH to Account
+          <Heading as="h5" size="md" mb={5}>
+            Transfer ETH
           </Heading>
           <Divider />
           <br />
