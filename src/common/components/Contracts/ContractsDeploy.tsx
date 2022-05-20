@@ -159,6 +159,7 @@ export default function ContractsDeploy(props: IProps) {
             {scDefinition.constructor.inputs.map((input) => (
               <>
                 <Text
+                  key="text-{input.name}"
                   fontSize="sm"
                   as="i"
                 >{`${input.name} (${input.type})`}</Text>
