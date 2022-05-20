@@ -45,10 +45,15 @@ export async function deployContract(
 ) {
   const abi = compiledContract.abi;
   const bytecode = compiledContract.bytecode;
-  const gasEstmate = parseInt(compiledContract.gasEstimates.creation.codeDepositCost) * 2;
+  const gasEstmate =
+    parseInt(compiledContract.gasEstimates.creation.codeDepositCost) * 2;
 
   const web3 = new Web3(rpcUrl);
-  const web3quorum = new Web3Quorum( web3, { privateUrl: privateUrl },true);
+  const web3quorum = new Web3Quorum(
+    web3,
+    { privateUrl: privateUrl },
+    client === "goquorum" ? true : false
+  );
   const account = web3.eth.accounts.privateKeyToAccount(accountPrivateKey);
   const txCount = await web3.eth.getTransactionCount(account.address);
   const chainId = await web3.eth.getChainId();
@@ -64,7 +69,7 @@ export async function deployContract(
     chainId,
     nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
-    gasLimit: gasEstmate, 
+    gasLimit: gasEstmate,
     value: 0,
     data: "0x" + bytecode + constructorValues,
     from: account,
@@ -73,7 +78,7 @@ export async function deployContract(
     privateFrom: fromTxPublicKey,
     privateFor: privateForList,
   };
-  
+
   console.log("Creating contract...");
 
   // Generate and send the Raw transaction to the Besu node using the eea_sendRawTransaction JSON-RPC call
