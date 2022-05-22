@@ -92,20 +92,20 @@ export const defaultSmartContracts: SmartContract[] = [
     `,
   },
   {
-    name: "DoubleStorage",
+    name: "MultiArgConstructor",
     contract: `
     // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.13;
 
-    contract DoubleStorage {
+    contract MultiArgConstructor {
       uint public storedData;
       uint public secondData;
       event stored(address _to, uint _amount);
     
-      constructor(uint initVal) public {
+      constructor(uint initVal, uint initValB) public {
         emit stored(msg.sender, initVal);
         storedData = initVal;
-        secondData = initVal;
+        secondData = initValB;
       }
     
       function set(uint x) public {

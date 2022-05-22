@@ -64,6 +64,8 @@ export async function deployContract(
     })
     .then((res) => res.data.keys[0].key);
   const constructorValues: string = constructorInitValues(web3, deployArgs);
+  console.log("MMMMMMMMMMMMMM");
+  console.log(constructorValues);
   const txOptions = {
     chainId,
     nonce: txCount,
