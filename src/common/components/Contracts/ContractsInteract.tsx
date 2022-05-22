@@ -28,6 +28,7 @@ import { getDetailsByNodeName } from "../../lib/quorumConfig";
 import {
   getContractFunctions,
   setFunctionInputsArgValue,
+  prettyPrintToast,
 } from "../../lib/contracts";
 import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -137,7 +138,7 @@ export default function ContractsInteract(props: IProps) {
             props.closeAllToasts();
             props.reuseToast({
               title: "Read Success!",
-              description: `Value from contract function ${e.target.id}( ): ${result.data}`,
+              description: `Value from contract function ${e.target.id}( ): ${prettyPrintToast(result.data)}`,
               status: "success",
               duration: 5000,
               position: "bottom",

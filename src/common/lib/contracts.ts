@@ -8,6 +8,10 @@ import {
   VoidSCDConstructor,
 } from "../types/Contracts";
 
+export function prettyPrintToast(i: any){
+  return ((typeof(i)==="object") ? JSON.stringify(i) : i);
+}
+
 export function getDefaultValue(t: string) {
   if (typeof t == "string") {
     if (t.startsWith("int") || t.startsWith("uint")) {
