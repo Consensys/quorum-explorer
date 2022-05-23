@@ -1,4 +1,3 @@
-import { endianness, type } from "os";
 import {
   SCDefinition,
   SCDConstructor,
@@ -8,8 +7,8 @@ import {
   VoidSCDConstructor,
 } from "../types/Contracts";
 
-export function prettyPrintToast(i: any){
-  return ((typeof(i)==="object") ? JSON.stringify(i) : i);
+export function prettyPrintToast(i: any) {
+  return typeof i === "object" ? JSON.stringify(i) : i;
 }
 
 export function getDefaultValue(t: string) {
@@ -46,6 +45,7 @@ function createFunction(obj: any) {
   const c: SCDFunction = {
     inputs: obj.inputs.map((_: any) => _ as SCDFunctionArg),
     outputs: obj.outputs.map((_: any) => _ as SCDFunctionArg),
+    stateMutability: obj.stateMutability,
     name: obj.name,
   };
   c.inputs.map((_) => (_.value = getDefaultValue(_.type)));
@@ -82,6 +82,7 @@ function createEvent(obj: any) {
   const c: SCDFunction = {
     inputs: obj.inputs.map((_: any) => _ as SCDFunctionArg),
     outputs: [],
+    stateMutability: obj.stateMutability,
     name: obj.name,
   };
   return c;

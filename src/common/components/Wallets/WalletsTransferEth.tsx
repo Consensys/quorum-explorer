@@ -26,13 +26,10 @@ import {
   Code,
 } from "@chakra-ui/react";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { connectMetaMask, detectMetaMask } from "../../lib/connectMetaMask";
 import MetaMask from "../Misc/MetaMask";
 import { BigNumber, ethers } from "ethers";
-import getConfig from "next/config";
-const { publicRuntimeConfig } = getConfig();
 
 const MotionBox = motion(Box);
 
@@ -43,7 +40,6 @@ interface IProps {
 
 export default function WalletsTransferEth(props: IProps) {
   const [buttonLoading, setButtonLoading] = useState(false);
-  const [privateKeyFrom, setPrivateKeyFrom] = useState("0x");
   const [accountTo, setAccountTo] = useState("0x");
   const [amount, setAmount] = useState("0x");
   const toast = useToast();
@@ -153,57 +149,12 @@ export default function WalletsTransferEth(props: IProps) {
     };
   }, []);
 
-  const handlePrivateKeyFrom = (e: any) => {
-    setPrivateKeyFrom(e.target.value);
-  };
-
   const handleAccountTo = (e: any) => {
     setAccountTo(e.target.value);
   };
 
   const handleAmount = (e: any) => {
     setAmount(e.target.value);
-  };
-
-  const handleTransfer = async (e: any) => {
-    e.preventDefault();
-    setButtonLoading(true);
-    const ethRes = await axios({
-      method: "POST",
-      url: `/api/walletTransferEth`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: JSON.stringify({
-        rpcUrl: needle.rpcUrl,
-        privateKeyFrom: privateKeyFrom,
-        accountTo: accountTo,
-        amount: amount,
-      }),
-      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
-    });
-    const walletRes = await axios({
-      method: "POST",
-      url: `/api/walletGetBalance`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: JSON.stringify({
-        rpcUrl: needle.rpcUrl,
-        account: accountTo,
-      }),
-      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
-    });
-    var wallet: QuorumWallet = walletRes.data as QuorumWallet;
-    toast({
-      title: "Eth Transfer",
-      description: `The eth transfer was successul! Transaction hash: ${ethRes.data.txHash}. Account ${wallet.account} has an updated balance of ${wallet.balance} Wei`,
-      status: "success",
-      duration: 5000,
-      position: "bottom",
-      isClosable: true,
-    });
-    setButtonLoading(false);
   };
 
   const metamaskTransfer = async (e: any) => {

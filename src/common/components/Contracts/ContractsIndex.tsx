@@ -82,6 +82,7 @@ export default function ContractsIndex(props: IProps) {
   const contracts: SmartContract[] = defaultSmartContracts;
   const toast = useToast();
   const [code, setCode] = useState(contracts[0].contract);
+  //@ts-ignore
   const [compiledContract, setCompiledContract] = useState<CompiledContract>({
     abi: [],
     bytecode: "",
@@ -241,7 +242,7 @@ export default function ContractsIndex(props: IProps) {
             abi: response.data.abi,
             bytecode: response.data.bytecode,
             name: response.data.name,
-            gasEstimates: response.data.gasEstimates
+            gasEstimates: response.data.gasEstimates,
           });
           closeAll();
           toast({

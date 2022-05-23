@@ -19,6 +19,7 @@ export const VoidSCDConstructor: SCDConstructor = {
 export type SCDFunction = {
   inputs: SCDFunctionArg[];
   outputs: SCDFunctionArg[];
+  stateMutability: string;
   name: string;
 };
 // todo check on this type - we don't really use it atm
@@ -48,12 +49,12 @@ export type SmartContract = {
 
 export type GasEstimates = {
   creation: {
-    codeDepositCost: string,
-		executionCost: string,
-		totalCost: string
-  }
-  external: {[key: string]: string}
-}
+    codeDepositCost: string;
+    executionCost: string;
+    totalCost: string;
+  };
+  external: { [key: string]: string };
+};
 
 export type CompiledContract = {
   name: string;
@@ -62,13 +63,10 @@ export type CompiledContract = {
   gasEstimates: GasEstimates;
 };
 
-
-
 export const defaultSmartContracts: SmartContract[] = [
   {
     name: "SimpleStorage",
-    contract: `
-    // SPDX-License-Identifier: MIT
+    contract: `// SPDX-License-Identifier: MIT
     pragma solidity ^0.8.13;
 
     contract SimpleStorage {
@@ -93,8 +91,7 @@ export const defaultSmartContracts: SmartContract[] = [
   },
   {
     name: "MultiArgConstructor",
-    contract: `
-    // SPDX-License-Identifier: MIT
+    contract: `// SPDX-License-Identifier: MIT
     pragma solidity ^0.8.13;
 
     contract MultiArgConstructor {
@@ -131,8 +128,7 @@ export const defaultSmartContracts: SmartContract[] = [
   },
   {
     name: "Counter",
-    contract: `
-    // SPDX-License-Identifier: MIT
+    contract: `// SPDX-License-Identifier: MIT
     pragma solidity ^0.8.13;
 
     contract Counter {
@@ -156,8 +152,7 @@ export const defaultSmartContracts: SmartContract[] = [
   },
   {
     name: "Array",
-    contract: `
-    // SPDX-License-Identifier: MIT
+    contract: `// SPDX-License-Identifier: MIT
     pragma solidity ^0.8.13;
     
     contract Array {
@@ -208,6 +203,4 @@ export const defaultSmartContracts: SmartContract[] = [
     }
     `,
   },
-  
 ];
-

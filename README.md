@@ -138,9 +138,8 @@ Sometimes you may run into an issue where sending a transaction through the Wall
 To resolve this problem: 
 1. Select the account in MetaMask
 2. Go to Advanced Settings in MetaMask and click "Reset Account"
-3. Remove the account from MetaMask. Skip this step and the 4th step if this was not an imported account.
-4. Import the account back into MetaMask
-5. Attempt transaction again on Wallets page
+3. Do steps 1-2 for each account that was used or will be used to transact on the private network
+4. Attempt transaction again on Wallets page
 
 You should not need to do this if the network is persisting for a long period of time like in production. However, may be necessary in development where the network is periodically reset.
 

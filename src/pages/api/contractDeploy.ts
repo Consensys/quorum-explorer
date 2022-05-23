@@ -64,8 +64,7 @@ export async function deployContract(
     })
     .then((res) => res.data.keys[0].key);
   const constructorValues: string = constructorInitValues(web3, deployArgs);
-  console.log("MMMMMMMMMMMMMM");
-  console.log(constructorValues);
+  // const gasPrice = bytecode.gasEstimates.creation.codeDepositCost
   const txOptions = {
     chainId,
     nonce: txCount,
@@ -81,7 +80,6 @@ export async function deployContract(
   };
 
   console.log("Creating contract...");
-  console.log(txOptions);
 
   // Generate and send the Raw transaction to the Besu node using the eea_sendRawTransaction JSON-RPC call
   const txHash = await web3quorum.priv.generateAndSendRawTransaction(txOptions);

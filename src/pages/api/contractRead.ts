@@ -23,7 +23,8 @@ export default async function handler(
       req.body.fromPrivateKey,
       req.body.privateFrom,
       req.body.privateFor,
-      req.body.functionToCall
+      req.body.functionToCall,
+      req.body.functionArgs
     ).then((value) => {
       res.status(200).json(value);
     });
@@ -34,7 +35,8 @@ export default async function handler(
       req.body.privateUrl,
       req.body.contractAddress,
       req.body.compiledContract,
-      req.body.functionToCall
+      req.body.functionToCall,
+      req.body.functionArgs
     ).then((value) => {
       res.status(200).json(value);
     });
@@ -47,20 +49,34 @@ async function readValueAtAddress(
   privateUrl: string,
   contractAddress: string,
   compiledContract: CompiledContract,
-  functionToCall: string
+  functionToCall: string,
+  functionArgs: any
 ) {
   console.log("calling contract function: " + functionToCall);
   const abi = compiledContract.abi;
   const web3 = new Web3(rpcUrl);
   const web3quorum = Web3Quorum(web3, { privateUrl: privateUrl }, true);
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
-  // contractInstance.defaultCommon.customChain = {name: 'GoQuorum', chainId: 1337};
-  const res = await contractInstance.methods[functionToCall]()
-    .call()
-    .catch(console.error);
 
-  console.log("obtained value at deployed contract is: " + JSON.stringify(res));
-  return JSON.stringify(res);
+  if (functionArgs === undefined || functionArgs.length === 0) {
+    const res = await contractInstance.methods[functionToCall]()
+      .call()
+      .catch(console.error);
+    console.log(
+      "obtained value at deployed contract is: " + JSON.stringify(res)
+    );
+    return JSON.stringify(res);
+  } else {
+    const superArray = functionArgs.map((a: any) => a.value);
+
+    const res = await contractInstance.methods[functionToCall](...superArray)
+      .call()
+      .catch(console.error);
+    console.log(
+      "obtained value at deployed contract is: " + JSON.stringify(res)
+    );
+    return JSON.stringify(res);
+  }
 }
 
 async function besuReadValueAtAddress(
@@ -70,7 +86,8 @@ async function besuReadValueAtAddress(
   fromPrivateKey: string,
   fromPublicKey: string,
   toPublicKey: string[],
-  functionToCall: string
+  functionToCall: string,
+  functionArgs: any
 ) {
   console.log("calling contract function: " + functionToCall);
   const web3 = new Web3(rpcUrl);
@@ -82,9 +99,13 @@ async function besuReadValueAtAddress(
     return e.name === functionToCall;
   });
   console.log("Function ABI: " + JSON.stringify(functionAbi));
+  const functionCallParams = functionArgs.map((_: any) => _.value);
+  const functionEncoded = web3quorum.eth.abi
+    .encodeParameters(functionAbi.inputs, functionCallParams)
+    .slice(2);
   const functionParams = {
     to: contractAddress,
-    data: functionAbi.signature,
+    data: functionAbi.signature + functionEncoded,
     privateKey: fromPrivateKey.slice(2),
     privateFrom: fromPublicKey,
     privateFor: toPublicKey,
@@ -97,8 +118,8 @@ async function besuReadValueAtAddress(
   const result = await web3quorum.priv.waitForTransactionReceipt(
     transactionHash
   );
-  
-  if (functionAbi.outputs.length > 0){
+
+  if (functionAbi.outputs.length > 0) {
     const funcOutputType = functionAbi.outputs[0].type;
     const outputSimplified = web3.eth.abi.decodeParameters(
       [funcOutputType],
@@ -110,8 +131,9 @@ async function besuReadValueAtAddress(
     console.log(outputSimplified);
     return outputSimplified[0];
   } else {
-    console.log("Raw value from deployed contract is: " + JSON.stringify(result));
+    console.log(
+      "Raw value from deployed contract is: " + JSON.stringify(result)
+    );
     return result.output;
   }
-
 }
