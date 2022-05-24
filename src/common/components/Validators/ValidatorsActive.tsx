@@ -51,6 +51,7 @@ export default function ValidatorsActive(props: IProps) {
         vote: false,
       }),
       baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+      timeout: 2000,
     })
       .then((res) => {
         if (res.status === 200) {

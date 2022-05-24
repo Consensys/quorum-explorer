@@ -52,6 +52,7 @@ export default function ValidatorsPending(props: IProps) {
         address: e[0],
       }),
       baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+      timeout: 2000,
     })
       .then((res) => {
         if (res.status === 200) {

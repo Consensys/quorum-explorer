@@ -59,6 +59,7 @@ export default function ExplorerBlocks(props: IProps) {
         blockNumber: blockSearch,
       }),
       baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+      timeout: 2000,
     });
     var block: QuorumBlock = res.data as QuorumBlock;
     toastIdRef.current = toast({
