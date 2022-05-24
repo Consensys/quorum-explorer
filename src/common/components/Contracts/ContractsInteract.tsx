@@ -30,7 +30,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ethers } from "ethers";
 import getConfig from "next/config";
-import { createCipheriv } from "crypto";
+
 const { publicRuntimeConfig } = getConfig();
 interface IProps {
   config: QuorumConfig;
@@ -65,7 +65,14 @@ export default function ContractsInteract(props: IProps) {
   );
 
   useEffect(() => {
-    setTransactParams({});
+    // dirty way to remove from function state if switching contracts
+    const newObj: any = {};
+    Object.keys(transactParams).map((x) => {
+      Object.values(scDefinition.functions)
+        .map((x) => x.name)
+        .includes(x) && (newObj[x] = transactParams[x]);
+      setTransactParams(newObj);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.compiledContract]);
 
@@ -315,6 +322,16 @@ export default function ContractsInteract(props: IProps) {
         props.reuseToast({
           title: `Call: ${funcToCall}`,
           description: `Result: ${res.hash}`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+        const waiting = await res.wait();
+        props.closeAllToasts();
+        props.reuseToast({
+          title: `Call Successful: ${funcToCall}`,
+          description: `Validated in block: ${waiting.blockNumber}`,
           status: "success",
           duration: 5000,
           position: "bottom",

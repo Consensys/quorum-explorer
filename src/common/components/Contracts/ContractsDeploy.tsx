@@ -60,9 +60,18 @@ export default function ContractsDeploy(props: IProps) {
     });
   };
 
-  // useEffect(() => {
-  //   setConstructorParams({});
-  // }, [props.compiledContract]);
+  useEffect(() => {
+    // dirty way to remove from constructor state if switching contracts
+    const newObj: any = {};
+    Object.keys(constructorParams).map((x) => {
+      const res =
+        Object.values(scDefinition.constructor.inputs)
+          .map((x) => x.name)
+          .includes(x) && (newObj[x] = constructorParams[x]);
+      setConstructorParams(newObj);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.compiledContract]);
 
   const handleDeploy = async (e: any) => {
     e.preventDefault();
@@ -79,6 +88,7 @@ export default function ContractsDeploy(props: IProps) {
         isClosable: true,
       });
     }
+
     if (
       needle.privateTxUrl !== "" &&
       (props.getSetTessera === undefined || props.getSetTessera.length < 1)
@@ -94,7 +104,7 @@ export default function ContractsDeploy(props: IProps) {
       });
     }
 
-    if (props.privTxState === false) {
+    if (!props.privTxState) {
       // public transaction
       if (props.metaChain.chainId !== props.myChain.chainId) {
         // check whether selected chain is also the network chain
@@ -115,9 +125,6 @@ export default function ContractsDeploy(props: IProps) {
       );
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
-      const constructor = new ethers.utils.AbiCoder();
-      // const encodedConstructor = constructor.encode(stypes, values).slice(2);
-
       const factory = new ethers.ContractFactory(
         props.compiledContract.abi,
         props.compiledContract.bytecode,
@@ -165,7 +172,7 @@ export default function ContractsDeploy(props: IProps) {
     }
 
     if (
-      props.privTxState !== true &&
+      props.privTxState &&
       props.account.length > 0 &&
       props.getSetTessera !== undefined &&
       props.getSetTessera.length > 0
