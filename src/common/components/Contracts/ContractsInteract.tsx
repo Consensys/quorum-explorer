@@ -76,16 +76,21 @@ export default function ContractsInteract(props: IProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.compiledContract]);
 
-  const handleTransactArgs = (e: any) => {
+  const handleTransactArgs = (e: any, i: any) => {
     console.log(e.target.id);
     const funcName = e.target.id.split("-")[0];
     const paramName = e.target.id.split("-")[1];
     const functionGetter = scDefinition.functions.filter(
       (_) => _.name === funcName
     )[0];
-    functionGetter.inputs[0].value = e.target.value;
+    if (i.type === "bytes") {
+      functionGetter.inputs[0].value = ethers.utils.formatBytes32String(
+        e.target.value
+      );
+    } else {
+      functionGetter.inputs[0].value = e.target.value;
+    }
     const save = Object.assign({}, functionGetter.inputs[0]);
-    console.log(save);
     setTransactParams({
       ...transactParams,
       [`${funcName}`]: {
@@ -476,7 +481,7 @@ export default function ContractsInteract(props: IProps) {
                         key={`${f.name}-${i.name}`}
                         id={`${f.name}-${i.name}`}
                         placeholder={i.value}
-                        onChange={handleTransactArgs}
+                        onChange={(e) => handleTransactArgs(e, i)}
                       />
                     </>
                   ))}
@@ -519,7 +524,7 @@ export default function ContractsInteract(props: IProps) {
                           key={`${f.name}-${i.name}`}
                           id={`${f.name}-${i.name}`}
                           placeholder={i.value}
-                          onChange={handleTransactArgs}
+                          onChange={(e) => handleTransactArgs(e, i)}
                         />
                       </>
                     ))}

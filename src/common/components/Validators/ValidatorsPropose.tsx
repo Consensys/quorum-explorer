@@ -36,7 +36,6 @@ export default function ValidatorsPropose(props: IProps) {
     e.preventDefault();
     // console.log(e);
     setButtonLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
     const needle: QuorumNode = getDetailsByNodeName(
       props.config,
       props.selectedNode

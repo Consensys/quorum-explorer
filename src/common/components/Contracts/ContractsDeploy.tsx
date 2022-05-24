@@ -162,12 +162,12 @@ export default function ContractsDeploy(props: IProps) {
           "Contract Address: " + txReceipt.contractAddress
         );
         props.setLogs(joined);
-      } catch (err) {
+      } catch (err: any) {
         props.closeAllToasts();
         console.error(err);
         props.reuseToast({
           title: "Error!",
-          description: `An issue was encountered deploying the public contract`,
+          description: `MetaMask error: ${err.code}`,
           status: "error",
           duration: 10000,
           isClosable: true,
