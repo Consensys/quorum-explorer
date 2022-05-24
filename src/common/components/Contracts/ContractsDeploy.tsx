@@ -54,10 +54,18 @@ export default function ContractsDeploy(props: IProps) {
 
   const handleConstructorArgs = (e: any) => {
     const constructName = e.target.id;
-    setConstructorParams({
-      ...constructorParams,
-      [`${constructName}`]: e.target.value,
-    });
+    try {
+      JSON.parse(e.target.value);
+      setConstructorParams({
+        ...constructorParams,
+        [`${constructName}`]: JSON.parse(e.target.value),
+      });
+    } catch (err) {
+      setConstructorParams({
+        ...constructorParams,
+        [`${constructName}`]: e.target.value,
+      });
+    }
   };
 
   useEffect(() => {
