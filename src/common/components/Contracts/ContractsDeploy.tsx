@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FormControl,
   Button,
@@ -50,15 +50,19 @@ export default function ContractsDeploy(props: IProps) {
   const scDefinition: SCDefinition = getContractFunctions(
     props.compiledContract.abi
   );
+  const [constructorParams, setConstructorParams] = useState<any>({});
 
   const handleConstructorArgs = (e: any) => {
-    setFunctionArgValue(
-      scDefinition.constructor.inputs,
-      e.target.id,
-      e.target.value
-    );
-    // console.log(scDefinition);
+    const constructName = e.target.id;
+    setConstructorParams({
+      ...constructorParams,
+      [`${constructName}`]: e.target.value,
+    });
   };
+
+  useEffect(() => {
+    setConstructorParams({});
+  }, [props.compiledContract]);
 
   const handleDeploy = async (e: any) => {
     e.preventDefault();
@@ -112,16 +116,17 @@ export default function ContractsDeploy(props: IProps) {
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const constructor = new ethers.utils.AbiCoder();
-      const stypes = scDefinition.constructor.inputs.map((_) => _.type);
-      const values = scDefinition.constructor.inputs.map((_) => _.value);
-      const encodedConstructor = constructor.encode(stypes, values).slice(2);
+      // const encodedConstructor = constructor.encode(stypes, values).slice(2);
+
       const factory = new ethers.ContractFactory(
         props.compiledContract.abi,
         props.compiledContract.bytecode,
         signer
       );
       try {
-        const contract = await factory.deploy(encodedConstructor);
+        const contract = await factory.deploy(
+          ...Object.values(constructorParams)
+        );
         props.reuseToast({
           title: `Deploying...`,
           description: `TX Hash: ${contract.deployTransaction.hash}`,
@@ -137,7 +142,13 @@ export default function ContractsDeploy(props: IProps) {
           duration: 10000,
           isClosable: true,
         });
+        props.setDeployedAddress(txReceipt.contractAddress);
+        const joined = props.logs.concat(
+          "Contract Address: " + txReceipt.contractAddress
+        );
+        props.setLogs(joined);
       } catch (err) {
+        props.closeAllToasts();
         console.error(err);
         props.reuseToast({
           title: "Error!",
@@ -146,6 +157,8 @@ export default function ContractsDeploy(props: IProps) {
           duration: 10000,
           isClosable: true,
         });
+        const joined = props.logs.concat("Error deploying contract");
+        props.setLogs(joined);
       } finally {
         setDeployButtonLoading(false);
       }
@@ -207,7 +220,7 @@ export default function ContractsDeploy(props: IProps) {
             position: "bottom",
             isClosable: true,
           });
-          const joined = props.logs.concat("Error in deploying contract");
+          const joined = props.logs.concat("Error deploying contract");
           props.setLogs(joined);
           setDeployButtonLoading(false);
         });

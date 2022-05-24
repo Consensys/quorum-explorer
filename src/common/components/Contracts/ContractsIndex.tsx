@@ -549,6 +549,7 @@ export default function ContractsIndex(props: IProps) {
                       reuseToast={toast}
                       handleContractAddress={handleContractAddress}
                       getSetTessera={getSetTessera}
+                      privTxState={privTxState}
                     />
                   </Accordion>
                 </SimpleGrid>

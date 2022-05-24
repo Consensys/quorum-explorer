@@ -28,6 +28,7 @@ import { getContractFunctions, prettyPrintToast } from "../../lib/contracts";
 import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ethers } from "ethers";
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 interface IProps {
@@ -44,6 +45,7 @@ interface IProps {
   reuseToast: any;
   handleContractAddress: (e: any) => void;
   getSetTessera: string[];
+  privTxState: boolean;
 }
 
 export default function ContractsInteract(props: IProps) {
@@ -88,7 +90,10 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
-    if (props.getSetTessera === undefined || props.getSetTessera.length < 1) {
+    if (
+      props.privTxState &&
+      (props.getSetTessera === undefined || props.getSetTessera.length < 1)
+    ) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -99,7 +104,32 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
+    if (!props.privTxState) {
+      // public contract using ethers
+      const provider = new ethers.providers.Web3Provider(
+        (window as any).ethereum
+      );
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        props.contractAddress,
+        props.compiledContract.abi,
+        signer
+      );
+      const funcToCall = e.target.id;
+      console.log(funcToCall);
+      if (typeof transactParams[funcToCall] !== "undefined") {
+        const res = await contract[funcToCall](
+          Object.values(transactParams[funcToCall])
+        );
+        console.log(res);
+      } else {
+        const res = await contract[funcToCall]();
+        console.log(res);
+      }
+    }
     if (
+      props.privTxState &&
       props.contractAddress.length > 0 &&
       props.getSetTessera !== undefined &&
       props.getSetTessera.length > 0
