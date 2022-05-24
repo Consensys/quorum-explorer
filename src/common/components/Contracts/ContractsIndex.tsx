@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import {
   Tabs,
@@ -24,7 +24,8 @@ import {
   Divider,
   Select,
   useColorMode,
-  Portal,
+  Switch,
+  Flex,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -41,13 +42,13 @@ import {
   defaultSmartContracts,
   CompiledContract,
 } from "../../types/Contracts";
-import { getContractFunctions } from "../../lib/contracts";
 import axios from "axios";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 import dynamic from "next/dynamic";
 import "@uiw/react-textarea-code-editor/dist.css";
 import getConfig from "next/config";
 import ContractsDeploy from "./ContractsDeploy";
+import ContractsMetaMask from "./ContractsMetaMask";
 const { publicRuntimeConfig } = getConfig();
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
@@ -69,7 +70,6 @@ const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
 });
 
 const MotionGrid = motion(SimpleGrid);
-// const ChakraCode = chakra(SyntaxHighlighter);
 const ChakraEditor = chakra(CodeEditor);
 
 interface IProps {
@@ -106,8 +106,12 @@ export default function ContractsIndex(props: IProps) {
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
   });
-  const [selectLoading, setSelectLoading] = useState(true);
+  const [selectLoading, setSelectLoading] = useState<boolean>(true);
   const [getSetTessera, setGetSetTessera] = useState<string[]>([]);
+  const [privTxState, setPrivTxState] = useState<boolean>(false);
+  const [metaMaskAccount, setMetaMaskAccount] = useState("");
+  const [myChain, setMyChain] = useState({ chainId: "", chainName: "" });
+  const [metaChain, setMetaChain] = useState({ chainId: "", chainName: "" });
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -172,6 +176,11 @@ export default function ContractsIndex(props: IProps) {
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.selectedNode]);
+
+  const privTx = (e: any) => {
+    // set the state of whether we are using private txns or not
+    setPrivTxState(e.target.checked);
+  };
 
   const handleContractAddress = (e: any) => {
     setDeployedAddress(e.target.value);
@@ -347,21 +356,38 @@ export default function ContractsIndex(props: IProps) {
               readOnly={selectedContract === "custom" ? false : true}
             />
           </Box>
-
-          <Button
-            leftIcon={<FontAwesomeIcon icon={faHammer as IconProp} />}
-            isLoading={buttonLoading.Compile.status}
-            isDisabled={buttonLoading.Compile.isDisabled}
-            loadingText="Compiling..."
-            type="submit"
-            variant="solid"
-            // backgroundColor="orange.200"
-            colorScheme="yellow"
-            onClick={HandleCompile}
-            mr={2}
+          <Flex
+            justifyContent="space-between"
+            alignContent="center"
+            alignItems="center"
           >
-            Compile
-          </Button>
+            <Button
+              leftIcon={<FontAwesomeIcon icon={faHammer as IconProp} />}
+              isLoading={buttonLoading.Compile.status}
+              isDisabled={buttonLoading.Compile.isDisabled}
+              loadingText="Compiling..."
+              type="submit"
+              variant="solid"
+              colorScheme="yellow"
+              onClick={HandleCompile}
+              mr={2}
+            >
+              Compile
+            </Button>
+            <Box>
+              <FormControl>
+                <FormLabel display="inline" htmlFor="private-for-enable" mb="0">
+                  Enable Private TX
+                </FormLabel>
+                <Switch
+                  id="private-for-enable"
+                  size="lg"
+                  colorScheme="messenger"
+                  onChange={privTx}
+                />
+              </FormControl>
+            </Box>
+          </Flex>
         </Box>
 
         {/* tabs  */}
@@ -405,60 +431,87 @@ export default function ContractsIndex(props: IProps) {
                           <Input
                             id="predefined-account"
                             variant="filled"
-                            placeholder="Node is not a Member"
-                            value={accountAddress}
-                            readOnly
-                          />
-                          <FormLabel htmlFor="private-from">
-                            PrivateKey From
-                          </FormLabel>
-                          <Input
-                            id="private-from"
-                            variant="filled"
-                            placeholder="0x"
-                            value={deployParams.privateKeyFrom}
-                            readOnly
-                          />
-                          <FormLabel htmlFor="tessera-key">
-                            Tessera Public Key
-                          </FormLabel>
-                          <Input
-                            id="predefined-tessera-key"
-                            variant="filled"
-                            placeholder="Node is not a Member"
-                            value={currentTesseraPublicKey}
-                            readOnly
-                          />
-                          <FormLabel htmlFor="private-for">
-                            Private For
-                          </FormLabel>
-                          <DynamicSelect
-                            //@ts-ignore
-                            isLoading={selectLoading}
-                            instanceId="private-for-deploy"
-                            isMulti
-                            options={tesseraKeys}
-                            onChange={(e: any) => {
-                              const myList: string[] = [];
-                              e.map((k: any) => myList.push(k.value));
-                              setGetSetTessera(myList);
-                            }}
-                            placeholder="Select Tessera node recipients..."
-                            closeMenuOnSelect={false}
-                            selectedOptionStyle="check"
-                            hideSelectedOptions={false}
-                            menuPortalTarget={
-                              typeof window !== "undefined"
-                                ? document.body
-                                : null
+                            placeholder={
+                              privTxState
+                                ? "Node is not a Member"
+                                : "Not Connected"
                             }
-                            styles={{
-                              menuPortal: (base: any) => ({
-                                ...base,
-                                zIndex: 9999,
-                              }),
-                            }}
+                            value={
+                              !privTxState ? metaMaskAccount : accountAddress
+                            }
+                            readOnly
                           />
+                          {privTxState ? (
+                            <>
+                              <FormLabel htmlFor="private-from">
+                                PrivateKey From
+                              </FormLabel>
+                              <Input
+                                id="private-from"
+                                variant="filled"
+                                placeholder="0x"
+                                value={deployParams.privateKeyFrom}
+                                readOnly
+                              />
+                              <FormLabel htmlFor="tessera-key">
+                                Tessera Public Key
+                              </FormLabel>
+                              <Input
+                                id="predefined-tessera-key"
+                                variant="filled"
+                                placeholder="Node is not a Member"
+                                value={currentTesseraPublicKey}
+                                readOnly
+                              />
+                            </>
+                          ) : (
+                            <Box mt={3}>
+                              <ContractsMetaMask
+                                config={props.config}
+                                selectedNode={props.selectedNode}
+                                privTxState={privTxState}
+                                metaMaskAccount={metaMaskAccount}
+                                setMetaMaskAccount={setMetaMaskAccount}
+                                setMyChain={setMyChain}
+                                setMetaChain={setMetaChain}
+                              />
+                            </Box>
+                          )}
+
+                          {privTxState && (
+                            <>
+                              <FormLabel htmlFor="private-for">
+                                Private For
+                              </FormLabel>
+                              <DynamicSelect
+                                //@ts-ignore
+                                isLoading={selectLoading}
+                                instanceId="private-for-deploy"
+                                isMulti
+                                options={tesseraKeys}
+                                onChange={(e: any) => {
+                                  const myList: string[] = [];
+                                  e.map((k: any) => myList.push(k.value));
+                                  setGetSetTessera(myList);
+                                }}
+                                placeholder="Select Tessera node recipients..."
+                                closeMenuOnSelect={false}
+                                selectedOptionStyle="check"
+                                hideSelectedOptions={false}
+                                menuPortalTarget={
+                                  typeof window !== "undefined"
+                                    ? document.body
+                                    : null
+                                }
+                                styles={{
+                                  menuPortal: (base: any) => ({
+                                    ...base,
+                                    zIndex: 9999,
+                                  }),
+                                }}
+                              />
+                            </>
+                          )}
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
@@ -478,6 +531,9 @@ export default function ContractsIndex(props: IProps) {
                       logs={logs}
                       setLogs={setLogs}
                       getSetTessera={getSetTessera}
+                      privTxState={privTxState}
+                      myChain={myChain}
+                      metaChain={metaChain}
                     />
                     <DynamicContractsInteract
                       config={props.config}

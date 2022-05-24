@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   FormControl,
-  FormLabel,
   Button,
   AccordionItem,
   AccordionButton,
@@ -20,6 +19,8 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faRocket } from "@fortawesome/free-solid-svg-icons";
+import { BigNumber, ethers } from "ethers";
+
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
@@ -38,6 +39,9 @@ interface IProps {
   logs: string[];
   setLogs: (e: any) => void;
   getSetTessera: string[];
+  privTxState: boolean;
+  myChain: { chainId: string; chainName: string };
+  metaChain: { chainId: string; chainName: string };
 }
 
 export default function ContractsDeploy(props: IProps) {
@@ -58,8 +62,9 @@ export default function ContractsDeploy(props: IProps) {
 
   const handleDeploy = async (e: any) => {
     e.preventDefault();
+    const needle = getDetailsByNodeName(props.config, props.selectedNode);
 
-    if (props.account.length < 1) {
+    if (props.privTxState && props.account.length < 1) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -70,7 +75,10 @@ export default function ContractsDeploy(props: IProps) {
         isClosable: true,
       });
     }
-    if (props.getSetTessera === undefined || props.getSetTessera.length < 1) {
+    if (
+      needle.privateTxUrl !== "" &&
+      (props.getSetTessera === undefined || props.getSetTessera.length < 1)
+    ) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -82,19 +90,79 @@ export default function ContractsDeploy(props: IProps) {
       });
     }
 
+    if (props.privTxState === false) {
+      // public transaction
+      if (props.metaChain.chainId !== props.myChain.chainId) {
+        // check whether selected chain is also the network chain
+        console.error("You are on the wrong chain!");
+        props.reuseToast({
+          title: "Wrong Chain",
+          description: `Please select/add the network to MetaMask!`,
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+        });
+        return;
+      }
+      setDeployButtonLoading(true);
+
+      const provider = new ethers.providers.Web3Provider(
+        (window as any).ethereum
+      );
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const constructor = new ethers.utils.AbiCoder();
+      const stypes = scDefinition.constructor.inputs.map((_) => _.type);
+      const values = scDefinition.constructor.inputs.map((_) => _.value);
+      const encodedConstructor = constructor.encode(stypes, values).slice(2);
+      const factory = new ethers.ContractFactory(
+        props.compiledContract.abi,
+        props.compiledContract.bytecode,
+        signer
+      );
+      try {
+        const contract = await factory.deploy(encodedConstructor);
+        props.reuseToast({
+          title: `Deploying...`,
+          description: `TX Hash: ${contract.deployTransaction.hash}`,
+          status: "info",
+          duration: 5000,
+          isClosable: true,
+        });
+        const txReceipt = await contract.deployTransaction.wait();
+        props.reuseToast({
+          title: "Deployed!",
+          description: `Deployed contract available @ ${txReceipt.contractAddress} on block ${txReceipt.blockNumber}`,
+          status: "success",
+          duration: 10000,
+          isClosable: true,
+        });
+      } catch (err) {
+        console.error(err);
+        props.reuseToast({
+          title: "Error!",
+          description: `An issue was encountered deploying the public contract`,
+          status: "error",
+          duration: 10000,
+          isClosable: true,
+        });
+      } finally {
+        setDeployButtonLoading(false);
+      }
+    }
+
     if (
+      props.privTxState !== true &&
       props.account.length > 0 &&
       props.getSetTessera !== undefined &&
       props.getSetTessera.length > 0
-      // && simpleStorageValue !== undefined
     ) {
-      // go ahead if all necessary parameters selected
+      // private transaction
       const getAccountPrivKey = getPrivateKey(
         props.config,
         props.account
       ).privateKey;
       setDeployButtonLoading(true);
-      const needle = getDetailsByNodeName(props.config, props.selectedNode);
       await axios({
         method: "POST",
         url: `/api/contractDeploy`,

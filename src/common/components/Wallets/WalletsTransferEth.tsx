@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { QuorumWallet } from "../../types/Wallets";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
 import {
   Divider,
@@ -231,41 +230,6 @@ export default function WalletsTransferEth(props: IProps) {
         });
       }
       setButtonLoading(false);
-    }
-  };
-
-  const switchChain = async () => {
-    try {
-      await (window as any).ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: myChain.chainId }],
-      });
-    } catch (switchError: any) {
-      // This error code indicates that the chain has not been added to MetaMask.
-      if (switchError.code === 4902) {
-        console.error("Network does not exist in MetaMask!");
-        try {
-          await (window as any).ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: myChain.chainId,
-                chainName: myChain.chainName,
-                rpcUrls: [needle.rpcUrl],
-                nativeCurrency: {
-                  name: "ETH",
-                  symbol: "ETH",
-                  decimals: 18,
-                },
-              },
-            ],
-          });
-        } catch (addError) {
-          // handle "add" error
-          console.error(addError);
-        }
-      }
-      // handle other "switch" errors
     }
   };
 
