@@ -30,6 +30,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ethers } from "ethers";
 import getConfig from "next/config";
+import { createCipheriv } from "crypto";
 const { publicRuntimeConfig } = getConfig();
 interface IProps {
   config: QuorumConfig;
@@ -68,10 +69,29 @@ export default function ContractsInteract(props: IProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.compiledContract]);
 
+  const handleTransactArgs = (e: any) => {
+    console.log(e.target.id);
+    const funcName = e.target.id.split("-")[0];
+    const paramName = e.target.id.split("-")[1];
+    const functionGetter = scDefinition.functions.filter(
+      (_) => _.name === funcName
+    )[0];
+    functionGetter.inputs[0].value = e.target.value;
+    const save = Object.assign({}, functionGetter.inputs[0]);
+    console.log(save);
+    setTransactParams({
+      ...transactParams,
+      [`${funcName}`]: {
+        ...transactParams[`${funcName}`],
+        [`${paramName}`]: save,
+      },
+    });
+  };
+
   const handleRead = async (e: any) => {
     e.preventDefault();
     console.log("Contract READ: " + e.target.id);
-    // console.log(scDefinition);
+    console.log(scDefinition);
     setDynamicButtonLoading({
       ...dynamicButtonLoading,
       [e.target.id]: true,
@@ -117,15 +137,40 @@ export default function ContractsInteract(props: IProps) {
         signer
       );
       const funcToCall = e.target.id;
-      console.log(funcToCall);
-      if (typeof transactParams[funcToCall] !== "undefined") {
-        const res = await contract[funcToCall](
-          Object.values(transactParams[funcToCall])
-        );
-        console.log(res);
-      } else {
-        const res = await contract[funcToCall]();
-        console.log(res);
+      let res;
+      try {
+        if (typeof transactParams[funcToCall] !== "undefined") {
+          res = await contract[funcToCall](
+            ...Object.values(transactParams[funcToCall]).map(
+              (x: any) => x.value
+            )
+          );
+        } else {
+          res = await contract[funcToCall]();
+        }
+        props.closeAllToasts();
+        props.reuseToast({
+          title: `Call: ${funcToCall}`,
+          description: `Result: ${
+            res instanceof Array
+              ? JSON.stringify(res.map((x) => x.toString()))
+              : res.toString()
+          }`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+      } catch (err) {
+        props.closeAllToasts();
+        props.reuseToast({
+          title: `Call: ${funcToCall}`,
+          description: `${err}`,
+          status: "error",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
       }
     }
     if (
@@ -207,24 +252,6 @@ export default function ContractsInteract(props: IProps) {
     setInteracting(false);
   };
 
-  const handleTransactArgs = (e: any) => {
-    console.log(e.target.id);
-    const funcName = e.target.id.split("-")[0];
-    const paramName = e.target.id.split("-")[1];
-    const functionGetter = scDefinition.functions.filter(
-      (_) => _.name === funcName
-    )[0];
-    functionGetter.inputs[0].value = e.target.value;
-    const save = Object.assign({}, functionGetter.inputs[0]);
-    setTransactParams({
-      ...transactParams,
-      [`${funcName}`]: {
-        ...transactParams[`${funcName}`],
-        [`${paramName}`]: save,
-      },
-    });
-  };
-
   const handleTransact = async (e: any) => {
     e.preventDefault();
     console.log("Contract TRANSACT: " + e.target.id);
@@ -235,7 +262,7 @@ export default function ContractsInteract(props: IProps) {
       [functionToCall]: true,
     });
     setInteracting(true);
-    if (props.contractAddress.length < 1) {
+    if (props.privTxState && props.contractAddress.length < 1) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -246,7 +273,10 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
-    if (props.getSetTessera === undefined || props.getSetTessera.length < 1) {
+    if (
+      props.privTxState &&
+      (props.getSetTessera === undefined || props.getSetTessera.length < 1)
+    ) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -257,7 +287,53 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
+    if (!props.privTxState) {
+      // public contract using ethers
+      const provider = new ethers.providers.Web3Provider(
+        (window as any).ethereum
+      );
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        props.contractAddress,
+        props.compiledContract.abi,
+        signer
+      );
+      const funcToCall = e.target.id;
+      let res;
+      try {
+        if (typeof transactParams[funcToCall] !== "undefined") {
+          res = await contract[funcToCall](
+            ...Object.values(transactParams[funcToCall]).map(
+              (x: any) => x.value
+            )
+          );
+        } else {
+          res = await contract[funcToCall]();
+        }
+        props.closeAllToasts();
+        props.reuseToast({
+          title: `Call: ${funcToCall}`,
+          description: `Result: ${res.hash}`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+      } catch (err) {
+        props.closeAllToasts();
+        props.reuseToast({
+          title: `Call: ${funcToCall}`,
+          description: `${err}`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+      }
+    }
     if (
+      props.privTxState &&
       props.contractAddress.length > 0 &&
       props.getSetTessera !== undefined &&
       props.getSetTessera.length > 0

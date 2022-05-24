@@ -60,9 +60,9 @@ export default function ContractsDeploy(props: IProps) {
     });
   };
 
-  useEffect(() => {
-    setConstructorParams({});
-  }, [props.compiledContract]);
+  // useEffect(() => {
+  //   setConstructorParams({});
+  // }, [props.compiledContract]);
 
   const handleDeploy = async (e: any) => {
     e.preventDefault();
