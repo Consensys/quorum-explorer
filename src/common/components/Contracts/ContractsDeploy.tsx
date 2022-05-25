@@ -10,11 +10,12 @@ import {
   Text,
   Input,
   HStack,
+  FormLabel,
+  Select,
 } from "@chakra-ui/react";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract, SCDefinition } from "../../types/Contracts";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-import { getContractFunctions, setFunctionArgValue } from "../../lib/contracts";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -22,6 +23,7 @@ import { faRocket } from "@fortawesome/free-solid-svg-icons";
 import { ethers } from "ethers";
 
 import getConfig from "next/config";
+import { getContractFunctions } from "../../lib/contracts";
 const { publicRuntimeConfig } = getConfig();
 
 interface IProps {
@@ -33,7 +35,6 @@ interface IProps {
   privateFrom: string;
   fromPrivateKey: string;
   selectLoading: boolean;
-  setDeployedAddress: (e: string) => void;
   closeAllToasts: () => void;
   reuseToast: any;
   logs: string[];
@@ -42,22 +43,28 @@ interface IProps {
   privTxState: boolean;
   myChain: { chainId: string; chainName: string };
   metaChain: { chainId: string; chainName: string };
+  contractToDeploy: string;
+  handleDeployContract: (e: any) => void;
+  contractFunctions: SCDefinition;
+  handleDeployedAddress: any;
+  setInteractAddress: any;
+  contractToInteract: any;
 }
 
 export default function ContractsDeploy(props: IProps) {
   const [deployButtonLoading, setDeployButtonLoading] = useState(false);
-  const scDefinition: SCDefinition = getContractFunctions(
-    props.compiledContract.abi
-  );
   const [constructorParams, setConstructorParams] = useState<any>({});
 
-  const handleConstructorArgs = (e: any) => {
+  const handleConstructorArgs = (e: any, i: any) => {
     const constructName = e.target.id;
     try {
       JSON.parse(e.target.value);
       setConstructorParams({
         ...constructorParams,
-        [`${constructName}`]: JSON.parse(e.target.value),
+        [`${constructName}`]:
+          i.type === "bytes"
+            ? ethers.utils.formatBytes32String(e.target.value)
+            : JSON.parse(e.target.value),
       });
     } catch (err) {
       setConstructorParams({
@@ -67,18 +74,23 @@ export default function ContractsDeploy(props: IProps) {
     }
   };
 
+  // useEffect(() => {
+  //   console.log(props.contractFunctions);
+  //   console.log(props.contractToDeploy);
+  // }, [props.contractFunctions, props.contractToDeploy]);
+
   useEffect(() => {
     // dirty way to remove from constructor state if switching contracts
     const newObj: any = {};
-    const nameMap = Object.values(scDefinition.constructor.inputs).map(
-      (x) => x.name
-    );
+    const nameMap = Object.values(
+      props.contractFunctions!.constructor.inputs
+    ).map((x) => x.name);
     Object.keys(constructorParams).map((x) => {
       nameMap.includes(x) && (newObj[x] = constructorParams[x]);
       setConstructorParams(newObj);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.compiledContract]);
+  }, [props.compiledContract, props.contractFunctions]);
 
   const handleDeploy = async (e: any) => {
     e.preventDefault();
@@ -133,8 +145,8 @@ export default function ContractsDeploy(props: IProps) {
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const factory = new ethers.ContractFactory(
-        props.compiledContract.abi,
-        props.compiledContract.bytecode,
+        props.compiledContract[props.contractToDeploy].abi,
+        props.compiledContract[props.contractToDeploy].bytecode,
         signer
       );
       try {
@@ -151,12 +163,16 @@ export default function ContractsDeploy(props: IProps) {
         const txReceipt = await contract.deployTransaction.wait();
         props.reuseToast({
           title: "Deployed!",
-          description: `Deployed contract available @ ${txReceipt.contractAddress} on block ${txReceipt.blockNumber}`,
+          description: `Contract available @ ${txReceipt.contractAddress} on block #${txReceipt.blockNumber}`,
           status: "success",
           duration: 10000,
           isClosable: true,
         });
-        props.setDeployedAddress(txReceipt.contractAddress);
+        props.handleDeployedAddress({
+          contract: props.contractToDeploy,
+          deployedAddress: txReceipt.contractAddress,
+        });
+        props.setInteractAddress(txReceipt.contractAddress);
         const joined = props.logs.concat(
           "Contract Address: " + txReceipt.contractAddress
         );
@@ -202,8 +218,11 @@ export default function ContractsDeploy(props: IProps) {
           privateUrl: needle.privateTxUrl,
           accountPrivateKey: getAccountPrivKey,
           privateForList: props.getSetTessera,
-          compiledContract: props.compiledContract,
-          deployArgs: scDefinition.constructor.inputs,
+          compiledContract: props.compiledContract[props.contractToDeploy],
+          deployArgs: [
+            props.contractFunctions!.constructor.inputs,
+            Object.values(constructorParams),
+          ],
         }),
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
@@ -217,7 +236,11 @@ export default function ContractsDeploy(props: IProps) {
             position: "bottom",
             isClosable: true,
           });
-          props.setDeployedAddress(result.data.contractAddress);
+          props.handleDeployedAddress({
+            contract: props.contractToDeploy,
+            deployedAddress: result.data.contractAddress,
+          });
+          props.setInteractAddress(result.data.contractAddress);
           const joined = props.logs.concat(
             "Contract Address: " + result.data.contractAddress
           );
@@ -225,6 +248,7 @@ export default function ContractsDeploy(props: IProps) {
           setDeployButtonLoading(false);
         })
         .catch((e) => {
+          console.error(e);
           props.closeAllToasts();
           props.reuseToast({
             title: "Error!",
@@ -251,7 +275,25 @@ export default function ContractsDeploy(props: IProps) {
         </AccordionButton>
         <AccordionPanel pb={4}>
           <FormControl>
-            {scDefinition.constructor.inputs.map((input) => (
+            <FormLabel htmlFor="select-deploy-contract">
+              Select Contract
+            </FormLabel>
+            <Select
+              id="select-deploy-contract"
+              value={props.contractToDeploy}
+              onChange={props.handleDeployContract}
+            >
+              {Object.keys(props.compiledContract).map((c, i) => {
+                if (props.compiledContract[c].bytecode !== "") {
+                  return (
+                    <option key={i} value={c}>
+                      {c}
+                    </option>
+                  );
+                }
+              })}
+            </Select>
+            {props.contractFunctions!.constructor.inputs.map((input) => (
               <>
                 <Text
                   key="text-{input.name}"
@@ -262,11 +304,11 @@ export default function ContractsDeploy(props: IProps) {
                   key="input-{input.name}"
                   id={input.name}
                   placeholder={input.value}
-                  onChange={handleConstructorArgs}
+                  onChange={(e) => handleConstructorArgs(e, input)}
                 />
               </>
             ))}
-            <HStack mt={scDefinition.constructor.inputs.length > 0 ? 4 : 0}>
+            <HStack mt={4}>
               <Button
                 leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
                 loadingText="Deploying..."
@@ -276,10 +318,7 @@ export default function ContractsDeploy(props: IProps) {
                 colorScheme="green"
                 onClick={handleDeploy}
                 isLoading={deployButtonLoading}
-                isDisabled={
-                  props.compiledContract.abi.length === 0 &&
-                  props.compiledContract.bytecode.length === 0
-                }
+                isDisabled={props.contractToDeploy === ""}
               >
                 Deploy
               </Button>

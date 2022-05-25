@@ -49,6 +49,7 @@ import getConfig from "next/config";
 import ContractsDeploy from "./ContractsDeploy";
 import ContractsMetaMask from "./ContractsMetaMask";
 import "@uiw/react-textarea-code-editor/dist.css";
+import { getContractFunctions } from "../../lib/contracts";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -83,12 +84,25 @@ export default function ContractsIndex(props: IProps) {
   const contracts: SmartContract[] = defaultSmartContracts;
   const toast = useToast();
   const [code, setCode] = useState(contracts[0].contract);
-  //@ts-ignore
   const [compiledContract, setCompiledContract] = useState<CompiledContract>({
-    abi: [],
-    bytecode: "",
+    "": {
+      abi: [],
+      bytecode: "",
+      gasEstimates: {
+        creation: {
+          codeDepositCost: "",
+          executionCost: "",
+          totalCost: "",
+        },
+        external: {},
+      },
+    },
   });
-  const [deployedAddress, setDeployedAddress] = useState("");
+  const [contractFunctions, setContractFunctions] = useState(
+    getContractFunctions(compiledContract[Object.keys(compiledContract)[0]].abi)
+  );
+  const [contractToDeploy, setContractToDeploy] = useState("");
+  const [contractToInteract, setContractToInteract] = useState<any[]>([]);
   const [accountAddress, setAccountAddress] = useState("");
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
   const [logs, setLogs] = useState<string[]>([]);
@@ -113,6 +127,7 @@ export default function ContractsIndex(props: IProps) {
   const [metaMaskAccount, setMetaMaskAccount] = useState("");
   const [myChain, setMyChain] = useState({ chainId: "", chainName: "" });
   const [metaChain, setMetaChain] = useState({ chainId: "", chainName: "" });
+  const [interactAddress, setInteractAddress] = useState("");
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -183,8 +198,29 @@ export default function ContractsIndex(props: IProps) {
     setPrivTxState(e.target.checked);
   };
 
-  const handleContractAddress = (e: any) => {
-    setDeployedAddress(e.target.value);
+  const handleDeployContract = (e: any) => {
+    // function for handling select of which contract from compilation to deploy
+    // handleDeployedAddress({});
+    setContractFunctions(
+      getContractFunctions(compiledContract[e.target.value].abi)
+    );
+    setContractToDeploy(e.target.value);
+  };
+
+  const handleDeployedAddress = (e: any) => {
+    if (e === true) {
+      setContractToInteract([]);
+    } else {
+      if (
+        contractToInteract.filter((x) => x.contract === e.contract).length > 0
+      ) {
+        const replace = contractToInteract.filter(
+          (x) => x.contract !== e.contract
+        );
+        setContractToInteract(replace);
+      }
+      setContractToInteract((oldArray) => [...oldArray, e]);
+    }
   };
 
   function closeAll() {
@@ -236,6 +272,9 @@ export default function ContractsIndex(props: IProps) {
       return;
     }
 
+    handleDeployedAddress(true);
+    setInteractAddress("");
+
     axios({
       method: "POST",
       url: `/api/contractCompile`,
@@ -244,16 +283,18 @@ export default function ContractsIndex(props: IProps) {
       },
       data: JSON.stringify({ name: selectedContract, content: code }),
       baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+      timeout: 5000,
     })
       .then((response) => {
         if (response.status === 200) {
           //console.log(response.data);
-          setCompiledContract({
-            abi: response.data.abi,
-            bytecode: response.data.bytecode,
-            name: response.data.name,
-            gasEstimates: response.data.gasEstimates,
-          });
+          setCompiledContract(response.data);
+          setContractToDeploy(Object.keys(response.data)[0]);
+          setContractFunctions(
+            getContractFunctions(
+              response.data[Object.keys(response.data)[0]].abi
+            )
+          );
           closeAll();
           toast({
             title: "Compiled Contract!",
@@ -336,11 +377,15 @@ export default function ContractsIndex(props: IProps) {
               Custom Contract
             </option>
           </Select>
-          <Box mb={10} height="500px">
+          <Box
+            mb={10}
+            height="500px"
+            overflow="auto"
+            borderRadius="lg"
+            borderWidth={2}
+            boxShadow="2xl"
+          >
             <ChakraEditor
-              borderRadius="lg"
-              borderWidth={2}
-              boxShadow="2xl"
               autoFocus
               value={code}
               language="sol"
@@ -351,10 +396,8 @@ export default function ContractsIndex(props: IProps) {
                 backgroundColor: colorMode === "light" ? "#f5f5f5" : "#2D3748",
                 fontFamily:
                   "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                overflowY: "auto",
-                resize: "none",
-                height: "100%",
               }}
+              minHeight="500px"
               readOnly={selectedContract === "custom" ? false : true}
             />
           </Box>
@@ -527,7 +570,6 @@ export default function ContractsIndex(props: IProps) {
                       privateFrom={currentTesseraPublicKey}
                       fromPrivateKey={deployParams.privateKeyFrom}
                       selectLoading={selectLoading}
-                      setDeployedAddress={setDeployedAddress}
                       closeAllToasts={closeAll}
                       reuseToast={toast}
                       logs={logs}
@@ -536,12 +578,17 @@ export default function ContractsIndex(props: IProps) {
                       privTxState={privTxState}
                       myChain={myChain}
                       metaChain={metaChain}
+                      contractToDeploy={contractToDeploy}
+                      handleDeployContract={handleDeployContract}
+                      contractFunctions={contractFunctions}
+                      handleDeployedAddress={handleDeployedAddress}
+                      setInteractAddress={setInteractAddress}
+                      contractToInteract={contractToInteract}
                     />
                     <DynamicContractsInteract
                       config={props.config}
                       selectedNode={props.selectedNode}
                       compiledContract={compiledContract}
-                      contractAddress={deployedAddress}
                       account={accountAddress}
                       privateFor={deployParams.privateFor}
                       privateFrom={currentTesseraPublicKey}
@@ -549,9 +596,12 @@ export default function ContractsIndex(props: IProps) {
                       selectLoading={selectLoading}
                       closeAllToasts={closeAll}
                       reuseToast={toast}
-                      handleContractAddress={handleContractAddress}
                       getSetTessera={getSetTessera}
                       privTxState={privTxState}
+                      contractFunctions={contractFunctions}
+                      contractToInteract={contractToInteract}
+                      setInteractAddress={setInteractAddress}
+                      interactAddress={interactAddress}
                     />
                   </Accordion>
                 </SimpleGrid>
@@ -563,11 +613,21 @@ export default function ContractsIndex(props: IProps) {
                   divider={<Divider borderColor="gray.200" />}
                   spacing={5}
                 >
-                  {compiledContract.abi.length && (
-                    <pre>{JSON.stringify(compiledContract.abi, null, 2)}</pre>
+                  {typeof compiledContract[contractToDeploy] !==
+                    "undefined" && (
+                    <pre>
+                      {JSON.stringify(
+                        compiledContract[contractToDeploy].abi,
+                        null,
+                        2
+                      )}
+                    </pre>
                   )}
-                  {compiledContract.bytecode && (
-                    <Code>{compiledContract.bytecode.toString()}</Code>
+                  {typeof compiledContract[contractToDeploy] !==
+                    "undefined" && (
+                    <Code>
+                      {compiledContract[contractToDeploy].bytecode.toString()}
+                    </Code>
                   )}
                 </VStack>
               </TabPanel>

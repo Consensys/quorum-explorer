@@ -23,7 +23,6 @@ export function getDefaultValue(t: string) {
       //   return "";
     } else if (t.includes("[")) {
       return "[]";
-    } else {
       return "";
     }
   }

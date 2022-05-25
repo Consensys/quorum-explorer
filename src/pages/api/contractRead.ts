@@ -110,7 +110,6 @@ async function besuReadValueAtAddress(
     privateFrom: fromPublicKey,
     privateFor: toPublicKey,
   };
-  console.log(functionParams);
   const transactionHash = await web3quorum.priv.generateAndSendRawTransaction(
     functionParams
   );

@@ -14,12 +14,12 @@ import {
   HStack,
   VStack,
   Center,
+  Select,
 } from "@chakra-ui/react";
 import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import {
   CompiledContract,
-  SCDefinition,
   SCDFunction,
   buttonLoading,
 } from "../../types/Contracts";
@@ -36,7 +36,6 @@ interface IProps {
   config: QuorumConfig;
   selectedNode: string;
   compiledContract: CompiledContract;
-  contractAddress: string;
   account: string;
   privateFor: string[];
   privateFrom: string;
@@ -44,9 +43,12 @@ interface IProps {
   selectLoading: boolean;
   closeAllToasts: () => void;
   reuseToast: any;
-  handleContractAddress: (e: any) => void;
   getSetTessera: string[];
   privTxState: boolean;
+  contractFunctions: any;
+  contractToInteract: any;
+  setInteractAddress: any;
+  interactAddress: string;
 }
 
 export default function ContractsInteract(props: IProps) {
@@ -54,24 +56,29 @@ export default function ContractsInteract(props: IProps) {
     useState<buttonLoading>({});
   const [interacting, setInteracting] = useState(false);
   const [transactParams, setTransactParams] = useState<any>({});
-  const scDefinition: SCDefinition = getContractFunctions(
-    props.compiledContract.abi
+  const pogu = getContractFunctions(
+    props.compiledContract[
+      props.contractToInteract.filter(
+        (x: any) => x.deployedAddress === props.interactAddress
+      )[0]?.contract
+    ]?.abi
   );
-  const readFunctions: SCDFunction[] = scDefinition.functions.filter(
-    (_) => _.stateMutability === "view"
+  const readFunctions: SCDFunction[] = pogu!.functions.filter(
+    (_: any) => _.stateMutability === "view"
   );
-  const transactFunctions: SCDFunction[] = scDefinition.functions.filter(
-    (_) => _.stateMutability !== "view"
+  const transactFunctions: SCDFunction[] = pogu!.functions.filter(
+    (_: any) => _.stateMutability !== "view"
   );
 
   useEffect(() => {
     // dirty way to remove from function state if switching contracts
-    const newObj: any = {};
-    const nameMap = Object.values(scDefinition.functions).map((x) => x.name);
-    Object.keys(transactParams).map((x) => {
-      nameMap.includes(x) && (newObj[x] = transactParams[x]);
-      setTransactParams(newObj);
-    });
+    // const newObj: any = {};
+    // const nameMap = Object.values(pogu!.functions).map((x: any) => x.name);
+    // Object.keys(transactParams).map((x) => {
+    //   nameMap.includes(x) && (newObj[x] = transactParams[x]);
+    //   setTransactParams(newObj);
+    // });
+    setTransactParams({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.compiledContract]);
 
@@ -79,8 +86,8 @@ export default function ContractsInteract(props: IProps) {
     console.log(e.target.id);
     const funcName = e.target.id.split("-")[0];
     const paramName = e.target.id.split("-")[1];
-    const functionGetter = scDefinition.functions.filter(
-      (_) => _.name === funcName
+    const functionGetter = props.contractFunctions!.functions.filter(
+      (_: any) => _.name === funcName
     )[0];
     if (i.type === "bytes") {
       functionGetter.inputs[0].value = ethers.utils.formatBytes32String(
@@ -109,7 +116,7 @@ export default function ContractsInteract(props: IProps) {
     setInteracting(true);
 
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
-    if (props.contractAddress.length < 1) {
+    if (props.interactAddress.length < 1) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -142,8 +149,12 @@ export default function ContractsInteract(props: IProps) {
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const contract = new ethers.Contract(
-        props.contractAddress,
-        props.compiledContract.abi,
+        props.interactAddress,
+        props.compiledContract[
+          props.contractToInteract.filter(
+            (x: any) => x.deployedAddress === props.interactAddress
+          )[0].contract
+        ].abi,
         signer
       );
       const funcToCall = e.target.id;
@@ -185,7 +196,7 @@ export default function ContractsInteract(props: IProps) {
     }
     if (
       props.privTxState &&
-      props.contractAddress.length > 0 &&
+      props.interactAddress.length > 0 &&
       props.getSetTessera !== undefined &&
       props.getSetTessera.length > 0
     ) {
@@ -200,8 +211,13 @@ export default function ContractsInteract(props: IProps) {
           client: needle.client,
           rpcUrl: needle.rpcUrl,
           privateUrl: needle.privateTxUrl,
-          contractAddress: props.contractAddress,
-          compiledContract: props.compiledContract,
+          contractAddress: props.interactAddress,
+          compiledContract:
+            props.compiledContract[
+              props.contractToInteract.filter(
+                (x: any) => x.deployedAddress === props.interactAddress
+              )[0].contract
+            ],
           privateFrom: props.privateFrom,
           privateFor: props.getSetTessera,
           fromPrivateKey: props.fromPrivateKey,
@@ -209,7 +225,7 @@ export default function ContractsInteract(props: IProps) {
           functionArgs:
             typeof transactParams[funcToCall] !== "undefined"
               ? Object.values(transactParams[funcToCall])
-              : undefined,
+              : [],
         }),
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
@@ -272,7 +288,7 @@ export default function ContractsInteract(props: IProps) {
       [functionToCall]: true,
     });
     setInteracting(true);
-    if (props.privTxState && props.contractAddress.length < 1) {
+    if (props.privTxState && props.interactAddress.length < 1) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -305,8 +321,12 @@ export default function ContractsInteract(props: IProps) {
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const contract = new ethers.Contract(
-        props.contractAddress,
-        props.compiledContract.abi,
+        props.interactAddress,
+        props.compiledContract[
+          props.contractToInteract.filter(
+            (x: any) => x.deployedAddress === props.interactAddress
+          )[0].contract
+        ].abi,
         signer
       );
       const funcToCall = e.target.id;
@@ -354,11 +374,10 @@ export default function ContractsInteract(props: IProps) {
     }
     if (
       props.privTxState &&
-      props.contractAddress.length > 0 &&
+      props.interactAddress.length > 0 &&
       props.getSetTessera !== undefined &&
       props.getSetTessera.length > 0
     ) {
-      // const params = transactFunctions.filter((_) => _.name === functionToCall);
       const needle = getDetailsByNodeName(props.config, props.selectedNode);
       await axios({
         method: "POST",
@@ -371,12 +390,16 @@ export default function ContractsInteract(props: IProps) {
           rpcUrl: needle.rpcUrl,
           privateUrl: needle.privateTxUrl,
           fromPrivateKey: props.fromPrivateKey,
-          contractAddress: props.contractAddress,
-          compiledContract: props.compiledContract,
+          contractAddress: props.interactAddress,
+          compiledContract:
+            props.compiledContract[
+              props.contractToInteract.filter(
+                (x: any) => x.deployedAddress === props.interactAddress
+              )[0].contract
+            ],
           sender: props.privateFrom,
           privateFor: props.getSetTessera,
           functionToCall: functionToCall,
-          // functionArgs: params[0].inputs,
           functionArgs:
             typeof transactParams[functionToCall] !== "undefined"
               ? Object.values(transactParams[functionToCall])
@@ -426,14 +449,33 @@ export default function ContractsInteract(props: IProps) {
         </AccordionButton>
         <AccordionPanel pb={4}>
           <FormControl>
-            <FormLabel htmlFor="contract-address">
-              Deployed Contract Address
-            </FormLabel>
+            <FormLabel htmlFor="select-contract">Select Contract</FormLabel>
+            <Select
+              id="select-contract"
+              value={
+                props.contractToInteract.filter(
+                  (x: any) => x.deployedAddress === props.interactAddress
+                )[0]?.contract
+              }
+              onChange={(e: any) => {
+                props.setInteractAddress(
+                  props.contractToInteract.filter(
+                    (x: any) => x.contract === e.target.value
+                  )[0].deployedAddress
+                );
+              }}
+            >
+              {props.contractToInteract.map((c: any, i: any) => (
+                <option key={i} value={c.contract}>
+                  {c.contract}
+                </option>
+              ))}
+            </Select>
+            <FormLabel htmlFor="contract-address">Deployed Address</FormLabel>
             <Input
               id="contract-address"
               placeholder="0x"
-              value={props.contractAddress}
-              onChange={props.handleContractAddress}
+              value={props.interactAddress}
               readOnly
             />
           </FormControl>
