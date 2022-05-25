@@ -55,13 +55,16 @@ export default function ContractsDeploy(props: IProps) {
   const [deployButtonLoading, setDeployButtonLoading] = useState(false);
   const [constructorParams, setConstructorParams] = useState<any>({});
 
-  const handleConstructorArgs = (e: any) => {
+  const handleConstructorArgs = (e: any, i: any) => {
     const constructName = e.target.id;
     try {
       JSON.parse(e.target.value);
       setConstructorParams({
         ...constructorParams,
-        [`${constructName}`]: JSON.parse(e.target.value),
+        [`${constructName}`]:
+          i.type === "bytes"
+            ? ethers.utils.formatBytes32String(e.target.value)
+            : JSON.parse(e.target.value),
       });
     } catch (err) {
       setConstructorParams({
@@ -301,7 +304,7 @@ export default function ContractsDeploy(props: IProps) {
                   key="input-{input.name}"
                   id={input.name}
                   placeholder={input.value}
-                  onChange={handleConstructorArgs}
+                  onChange={(e) => handleConstructorArgs(e, input)}
                 />
               </>
             ))}
