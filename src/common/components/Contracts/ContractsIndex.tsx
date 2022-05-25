@@ -377,11 +377,15 @@ export default function ContractsIndex(props: IProps) {
               Custom Contract
             </option>
           </Select>
-          <Box mb={10} height="500px">
+          <Box
+            mb={10}
+            height="500px"
+            overflow="auto"
+            borderRadius="lg"
+            borderWidth={2}
+            boxShadow="2xl"
+          >
             <ChakraEditor
-              borderRadius="lg"
-              borderWidth={2}
-              boxShadow="2xl"
               autoFocus
               value={code}
               language="sol"
@@ -392,10 +396,8 @@ export default function ContractsIndex(props: IProps) {
                 backgroundColor: colorMode === "light" ? "#f5f5f5" : "#2D3748",
                 fontFamily:
                   "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                overflowY: "auto",
-                resize: "none",
-                height: "100%",
               }}
+              minHeight="500px"
               readOnly={selectedContract === "custom" ? false : true}
             />
           </Box>
