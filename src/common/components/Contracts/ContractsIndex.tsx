@@ -211,6 +211,14 @@ export default function ContractsIndex(props: IProps) {
     if (e === true) {
       setContractToInteract([]);
     } else {
+      if (
+        contractToInteract.filter((x) => x.contract === e.contract).length > 0
+      ) {
+        const replace = contractToInteract.filter(
+          (x) => x.contract !== e.contract
+        );
+        setContractToInteract(replace);
+      }
       setContractToInteract((oldArray) => [...oldArray, e]);
     }
   };

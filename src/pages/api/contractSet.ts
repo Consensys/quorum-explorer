@@ -117,8 +117,8 @@ async function besuTransactAtAddress(
   const abi = compiledContract.abi;
   const web3 = new Web3(rpcUrl);
   const web3quorum = new Web3Quorum(web3, { privateUrl: privateUrl });
-  const gasEstimate =
-    parseInt(compiledContract.gasEstimates.creation.codeDepositCost) * 2;
+  // const gasEstimate =
+  //   parseInt(compiledContract.gasEstimates.creation.codeDepositCost) * 2;
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
   const functionAbi = contractInstance._jsonInterface.find((e: any) => {
     return e.name === functionToCall;

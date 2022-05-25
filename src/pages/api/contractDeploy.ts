@@ -28,9 +28,9 @@ export default async function handler(
   });
 }
 
-function constructorInitValues(web3: Web3, deployArgs: SCDFunctionArg[]) {
-  const stypes = deployArgs.map((_) => _.type);
-  const values = deployArgs.map((_) => _.value);
+function constructorInitValues(web3: Web3, deployArgs: any) {
+  const stypes = deployArgs[0].map((_: any) => _.type);
+  const values = deployArgs[1];
   return web3.eth.abi.encodeParameters(stypes, values).slice(2);
 }
 
@@ -40,12 +40,12 @@ export async function deployContract(
   privateUrl: string,
   accountPrivateKey: string,
   privateForList: string[],
-  compiledContract: CompiledContract,
+  compiledContract: any,
   deployArgs: any
 ) {
   const abi = compiledContract.abi;
   const bytecode = compiledContract.bytecode;
-  const gasEstmate =
+  const gasEstimate =
     parseInt(compiledContract.gasEstimates.creation.codeDepositCost) * 2;
 
   const web3 = new Web3(rpcUrl);
@@ -64,12 +64,11 @@ export async function deployContract(
     })
     .then((res) => res.data.keys[0].key);
   const constructorValues: string = constructorInitValues(web3, deployArgs);
-  // const gasPrice = bytecode.gasEstimates.creation.codeDepositCost
   const txOptions = {
     chainId,
     nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
-    gasLimit: gasEstmate,
+    gasLimit: gasEstimate,
     value: 0,
     data: "0x" + bytecode + constructorValues,
     from: account,

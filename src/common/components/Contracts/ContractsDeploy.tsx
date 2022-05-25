@@ -23,6 +23,7 @@ import { faRocket } from "@fortawesome/free-solid-svg-icons";
 import { ethers } from "ethers";
 
 import getConfig from "next/config";
+import { getContractFunctions } from "../../lib/contracts";
 const { publicRuntimeConfig } = getConfig();
 
 interface IProps {
@@ -52,9 +53,6 @@ interface IProps {
 
 export default function ContractsDeploy(props: IProps) {
   const [deployButtonLoading, setDeployButtonLoading] = useState(false);
-  // let scDefinition: SCDefinition = getContractFunctions(
-  //   props.compiledContract[Object.keys(props.compiledContract)[0]].abi
-  // );
   const [constructorParams, setConstructorParams] = useState<any>({});
 
   const handleConstructorArgs = (e: any) => {
@@ -218,7 +216,10 @@ export default function ContractsDeploy(props: IProps) {
           accountPrivateKey: getAccountPrivKey,
           privateForList: props.getSetTessera,
           compiledContract: props.compiledContract[props.contractToDeploy],
-          deployArgs: props.contractFunctions!.constructor.inputs,
+          deployArgs: [
+            props.contractFunctions!.constructor.inputs,
+            Object.values(constructorParams),
+          ],
         }),
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })

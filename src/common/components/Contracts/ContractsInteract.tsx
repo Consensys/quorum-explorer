@@ -20,12 +20,11 @@ import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import {
   CompiledContract,
-  SCDefinition,
   SCDFunction,
   buttonLoading,
 } from "../../types/Contracts";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
-import { prettyPrintToast } from "../../lib/contracts";
+import { getContractFunctions, prettyPrintToast } from "../../lib/contracts";
 import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -57,30 +56,31 @@ export default function ContractsInteract(props: IProps) {
     useState<buttonLoading>({});
   const [interacting, setInteracting] = useState(false);
   const [transactParams, setTransactParams] = useState<any>({});
-  // const scDefinition: SCDefinition = getContractFunctions(
-  //   props.compiledContract[Object.keys(props.compiledContract)[0]].abi
-  // );
-  const readFunctions: SCDFunction[] =
-    props.contractFunctions!.functions.filter(
-      (_: any) => _.stateMutability === "view"
-    );
-  const transactFunctions: SCDFunction[] =
-    props.contractFunctions!.functions.filter(
-      (_: any) => _.stateMutability !== "view"
-    );
+  const pogu = getContractFunctions(
+    props.compiledContract[
+      props.contractToInteract.filter(
+        (x: any) => x.deployedAddress === props.interactAddress
+      )[0]?.contract
+    ]?.abi
+  );
+  const readFunctions: SCDFunction[] = pogu!.functions.filter(
+    (_: any) => _.stateMutability === "view"
+  );
+  const transactFunctions: SCDFunction[] = pogu!.functions.filter(
+    (_: any) => _.stateMutability !== "view"
+  );
 
   useEffect(() => {
     // dirty way to remove from function state if switching contracts
-    const newObj: any = {};
-    const nameMap = Object.values(props.contractFunctions!.functions).map(
-      (x: any) => x.name
-    );
-    Object.keys(transactParams).map((x) => {
-      nameMap.includes(x) && (newObj[x] = transactParams[x]);
-      setTransactParams(newObj);
-    });
+    // const newObj: any = {};
+    // const nameMap = Object.values(pogu!.functions).map((x: any) => x.name);
+    // Object.keys(transactParams).map((x) => {
+    //   nameMap.includes(x) && (newObj[x] = transactParams[x]);
+    //   setTransactParams(newObj);
+    // });
+    setTransactParams({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.compiledContract, props.contractFunctions]);
+  }, [props.compiledContract]);
 
   const handleTransactArgs = (e: any, i: any) => {
     console.log(e.target.id);
@@ -378,7 +378,6 @@ export default function ContractsInteract(props: IProps) {
       props.getSetTessera !== undefined &&
       props.getSetTessera.length > 0
     ) {
-      // const params = transactFunctions.filter((_) => _.name === functionToCall);
       const needle = getDetailsByNodeName(props.config, props.selectedNode);
       await axios({
         method: "POST",
@@ -392,11 +391,15 @@ export default function ContractsInteract(props: IProps) {
           privateUrl: needle.privateTxUrl,
           fromPrivateKey: props.fromPrivateKey,
           contractAddress: props.interactAddress,
-          compiledContract: props.compiledContract,
+          compiledContract:
+            props.compiledContract[
+              props.contractToInteract.filter(
+                (x: any) => x.deployedAddress === props.interactAddress
+              )[0].contract
+            ],
           sender: props.privateFrom,
           privateFor: props.getSetTessera,
           functionToCall: functionToCall,
-          // functionArgs: params[0].inputs,
           functionArgs:
             typeof transactParams[functionToCall] !== "undefined"
               ? Object.values(transactParams[functionToCall])
@@ -452,7 +455,7 @@ export default function ContractsInteract(props: IProps) {
               value={
                 props.contractToInteract.filter(
                   (x: any) => x.deployedAddress === props.interactAddress
-                )[0].contract
+                )[0]?.contract
               }
               onChange={(e: any) => {
                 props.setInteractAddress(
