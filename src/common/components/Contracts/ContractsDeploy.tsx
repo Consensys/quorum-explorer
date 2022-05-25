@@ -16,7 +16,6 @@ import {
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract, SCDefinition } from "../../types/Contracts";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-import { getContractFunctions, setFunctionArgValue } from "../../lib/contracts";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -74,7 +73,8 @@ export default function ContractsDeploy(props: IProps) {
 
   // useEffect(() => {
   //   console.log(props.contractFunctions);
-  // }, [props.contractFunctions]);
+  //   console.log(props.contractToDeploy);
+  // }, [props.contractFunctions, props.contractToDeploy]);
 
   useEffect(() => {
     // dirty way to remove from constructor state if switching contracts
@@ -293,11 +293,7 @@ export default function ContractsDeploy(props: IProps) {
                 />
               </>
             ))}
-            <HStack
-              mt={
-                props.contractFunctions!.constructor.inputs.length > 0 ? 4 : 0
-              }
-            >
+            <HStack mt={4}>
               <Button
                 leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
                 loadingText="Deploying..."
@@ -307,12 +303,7 @@ export default function ContractsDeploy(props: IProps) {
                 colorScheme="green"
                 onClick={handleDeploy}
                 isLoading={deployButtonLoading}
-                // isDisabled={
-                //   props.compiledContract[props.contractToDeploy].abi.length ===
-                //     0 &&
-                //   props.compiledContract[props.contractToDeploy].bytecode
-                //     .length === 0
-                // }
+                isDisabled={props.contractToDeploy === "empty"}
               >
                 Deploy
               </Button>

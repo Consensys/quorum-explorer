@@ -584,6 +584,7 @@ export default function ContractsIndex(props: IProps) {
                       handleContractAddress={handleContractAddress}
                       getSetTessera={getSetTessera}
                       privTxState={privTxState}
+                      contractFunctions={contractFunctions}
                     />
                   </Accordion>
                 </SimpleGrid>

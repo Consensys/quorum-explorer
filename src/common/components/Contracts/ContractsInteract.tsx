@@ -48,6 +48,7 @@ interface IProps {
   handleContractAddress: (e: any) => void;
   getSetTessera: string[];
   privTxState: boolean;
+  contractFunctions: any;
 }
 
 export default function ContractsInteract(props: IProps) {
@@ -56,20 +57,24 @@ export default function ContractsInteract(props: IProps) {
   const [interacting, setInteracting] = useState(false);
   const [contractToInteract, setContractToInteract] = useState("empty");
   const [transactParams, setTransactParams] = useState<any>({});
-  const scDefinition: SCDefinition = getContractFunctions(
-    props.compiledContract[Object.keys(props.compiledContract)[0]].abi
-  );
-  const readFunctions: SCDFunction[] = scDefinition!.functions.filter(
-    (_) => _.stateMutability === "view"
-  );
-  const transactFunctions: SCDFunction[] = scDefinition!.functions.filter(
-    (_) => _.stateMutability !== "view"
-  );
+  // const scDefinition: SCDefinition = getContractFunctions(
+  //   props.compiledContract[Object.keys(props.compiledContract)[0]].abi
+  // );
+  const readFunctions: SCDFunction[] =
+    props.contractFunctions!.functions.filter(
+      (_: any) => _.stateMutability === "view"
+    );
+  const transactFunctions: SCDFunction[] =
+    props.contractFunctions!.functions.filter(
+      (_: any) => _.stateMutability !== "view"
+    );
 
   useEffect(() => {
     // dirty way to remove from function state if switching contracts
     const newObj: any = {};
-    const nameMap = Object.values(scDefinition!.functions).map((x) => x.name);
+    const nameMap = Object.values(props.contractFunctions!.functions).map(
+      (x: any) => x.name
+    );
     Object.keys(transactParams).map((x) => {
       nameMap.includes(x) && (newObj[x] = transactParams[x]);
       setTransactParams(newObj);
@@ -81,8 +86,8 @@ export default function ContractsInteract(props: IProps) {
     console.log(e.target.id);
     const funcName = e.target.id.split("-")[0];
     const paramName = e.target.id.split("-")[1];
-    const functionGetter = scDefinition!.functions.filter(
-      (_) => _.name === funcName
+    const functionGetter = props.contractFunctions!.functions.filter(
+      (_: any) => _.name === funcName
     )[0];
     if (i.type === "bytes") {
       functionGetter.inputs[0].value = ethers.utils.formatBytes32String(
