@@ -45,7 +45,6 @@ interface IProps {
 }
 
 export default function ContractsDeploy(props: IProps) {
-  // const [getSetTessera, setGetSetTessera] = useState<string[]>();
   const [deployButtonLoading, setDeployButtonLoading] = useState(false);
   const scDefinition: SCDefinition = getContractFunctions(
     props.compiledContract.abi
@@ -72,10 +71,9 @@ export default function ContractsDeploy(props: IProps) {
     // dirty way to remove from constructor state if switching contracts
     const newObj: any = {};
     Object.keys(constructorParams).map((x) => {
-      const res =
-        Object.values(scDefinition.constructor.inputs)
-          .map((x) => x.name)
-          .includes(x) && (newObj[x] = constructorParams[x]);
+      Object.values(scDefinition.constructor.inputs)
+        .map((x) => x.name)
+        .includes(x) && (newObj[x] = constructorParams[x]);
       setConstructorParams(newObj);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
