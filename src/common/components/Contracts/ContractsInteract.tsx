@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   FormControl,
   FormLabel,
@@ -9,37 +9,29 @@ import {
   AccordionIcon,
   Box,
   Input,
-  Flex,
   Text,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  Spacer,
   HStack,
+  VStack,
+  Center,
 } from "@chakra-ui/react";
-//@ts-ignore
-// import { Select as MultiSelect } from "chakra-react-select";
 import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../../types/QuorumConfig";
-import { CompiledContract } from "../../types/Contracts";
+import {
+  CompiledContract,
+  SCDefinition,
+  SCDFunction,
+  buttonLoading,
+} from "../../types/Contracts";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
+import { getContractFunctions, prettyPrintToast } from "../../lib/contracts";
 import axios from "axios";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import dynamic from "next/dynamic";
+import { ethers } from "ethers";
 import getConfig from "next/config";
+
 const { publicRuntimeConfig } = getConfig();
-
-const DynamicSelect = dynamic(
-  // @ts-ignore
-  () => import("chakra-react-select").then((mod) => mod.Select),
-  {
-    loading: () => <p>Loading Select component...</p>,
-    ssr: false,
-  }
-);
-
 interface IProps {
   config: QuorumConfig;
   selectedNode: string;
@@ -49,27 +41,73 @@ interface IProps {
   privateFor: string[];
   privateFrom: string;
   fromPrivateKey: string;
-  tesseraKeys: { label: string; value: string }[];
   selectLoading: boolean;
   closeAllToasts: () => void;
   reuseToast: any;
   handleContractAddress: (e: any) => void;
+  getSetTessera: string[];
+  privTxState: boolean;
 }
 
 export default function ContractsInteract(props: IProps) {
-  const [readButtonLoading, setReadButtonLoading] = useState(false);
-  const [writeValue, setWriteValue] = useState("0");
-  const [writeButtonLoading, setWriteButtonLoading] = useState(false);
-  const [getSetTessera, setGetSetTessera] = useState<string[]>();
-  const [readValue, setReadValue] = useState("-");
+  const [dynamicButtonLoading, setDynamicButtonLoading] =
+    useState<buttonLoading>({});
+  const [interacting, setInteracting] = useState(false);
+  const [transactParams, setTransactParams] = useState<any>({});
+  const scDefinition: SCDefinition = getContractFunctions(
+    props.compiledContract.abi
+  );
+  const readFunctions: SCDFunction[] = scDefinition.functions.filter(
+    (_) => _.stateMutability === "view"
+  );
+  const transactFunctions: SCDFunction[] = scDefinition.functions.filter(
+    (_) => _.stateMutability !== "view"
+  );
 
-  const handleWriteValue = (e: any) => {
-    setWriteValue(e);
+  useEffect(() => {
+    // dirty way to remove from function state if switching contracts
+    const newObj: any = {};
+    const nameMap = Object.values(scDefinition.functions).map((x) => x.name);
+    Object.keys(transactParams).map((x) => {
+      nameMap.includes(x) && (newObj[x] = transactParams[x]);
+      setTransactParams(newObj);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.compiledContract]);
+
+  const handleTransactArgs = (e: any, i: any) => {
+    console.log(e.target.id);
+    const funcName = e.target.id.split("-")[0];
+    const paramName = e.target.id.split("-")[1];
+    const functionGetter = scDefinition.functions.filter(
+      (_) => _.name === funcName
+    )[0];
+    if (i.type === "bytes") {
+      functionGetter.inputs[0].value = ethers.utils.formatBytes32String(
+        e.target.value
+      );
+    } else {
+      functionGetter.inputs[0].value = e.target.value;
+    }
+    const save = Object.assign({}, functionGetter.inputs[0]);
+    setTransactParams({
+      ...transactParams,
+      [`${funcName}`]: {
+        ...transactParams[`${funcName}`],
+        [`${paramName}`]: save,
+      },
+    });
   };
 
   const handleRead = async (e: any) => {
     e.preventDefault();
-    setReadButtonLoading(true);
+    console.log("Contract READ: " + e.target.id);
+    setDynamicButtonLoading({
+      ...dynamicButtonLoading,
+      [e.target.id]: true,
+    });
+    setInteracting(true);
+
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
     if (props.contractAddress.length < 1) {
       props.closeAllToasts();
@@ -82,7 +120,10 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
-    if (getSetTessera === undefined || getSetTessera.length < 1) {
+    if (
+      props.privTxState &&
+      (props.getSetTessera === undefined || props.getSetTessera.length < 1)
+    ) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -93,11 +134,62 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
+    if (!props.privTxState) {
+      // public contract using ethers
+      const provider = new ethers.providers.Web3Provider(
+        (window as any).ethereum
+      );
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        props.contractAddress,
+        props.compiledContract.abi,
+        signer
+      );
+      const funcToCall = e.target.id;
+      let res;
+      try {
+        if (typeof transactParams[funcToCall] !== "undefined") {
+          res = await contract[funcToCall](
+            ...Object.values(transactParams[funcToCall]).map(
+              (x: any) => x.value
+            )
+          );
+        } else {
+          res = await contract[funcToCall]();
+        }
+        props.closeAllToasts();
+        props.reuseToast({
+          title: `Call: ${funcToCall}`,
+          description: `Result: ${
+            res instanceof Array
+              ? JSON.stringify(res.map((x) => x.toString()))
+              : res.toString()
+          }`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+      } catch (err) {
+        props.closeAllToasts();
+        props.reuseToast({
+          title: `Call: ${funcToCall}`,
+          description: `${err}`,
+          status: "error",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+      }
+    }
     if (
+      props.privTxState &&
       props.contractAddress.length > 0 &&
-      getSetTessera !== undefined &&
-      getSetTessera.length > 0
+      props.getSetTessera !== undefined &&
+      props.getSetTessera.length > 0
     ) {
+      const funcToCall = e.target.id;
       await axios({
         method: "POST",
         url: `/api/contractRead`,
@@ -111,30 +203,35 @@ export default function ContractsInteract(props: IProps) {
           contractAddress: props.contractAddress,
           compiledContract: props.compiledContract,
           privateFrom: props.privateFrom,
-          privateFor: getSetTessera,
+          privateFor: props.getSetTessera,
           fromPrivateKey: props.fromPrivateKey,
+          functionToCall: funcToCall,
+          functionArgs:
+            typeof transactParams[funcToCall] !== "undefined"
+              ? Object.values(transactParams[funcToCall])
+              : undefined,
         }),
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((result) => {
           // console.log(result);
           if (result.data === null || result.data === "") {
-            setReadValue("-");
             props.closeAllToasts();
             props.reuseToast({
-              title: "Not a Party!",
-              description: `${props.selectedNode} is not a member to the transaction!`,
+              title: "Error",
+              description: `${props.selectedNode} may not be a member to the transaction! Or the call failed.`,
               status: "info",
               duration: 5000,
               position: "bottom",
               isClosable: true,
             });
           } else {
-            setReadValue(result.data);
             props.closeAllToasts();
             props.reuseToast({
               title: "Read Success!",
-              description: `Value from contract: ${result.data}`,
+              description: `Value from contract function ${
+                e.target.id
+              }( ): ${prettyPrintToast(result.data)}`,
               status: "success",
               duration: 5000,
               position: "bottom",
@@ -158,13 +255,24 @@ export default function ContractsInteract(props: IProps) {
           // setLogs(joined);
         });
     }
-    setReadButtonLoading(false);
+    setDynamicButtonLoading({
+      ...dynamicButtonLoading,
+      [e.target.id]: false,
+    });
+    setInteracting(false);
   };
 
-  const handleWrite = async (e: any) => {
+  const handleTransact = async (e: any) => {
     e.preventDefault();
-    setWriteButtonLoading(true);
-    if (props.contractAddress.length < 1) {
+    console.log("Contract TRANSACT: " + e.target.id);
+    // console.log(scDefinition);
+    const functionToCall = e.target.id;
+    setDynamicButtonLoading({
+      ...dynamicButtonLoading,
+      [functionToCall]: true,
+    });
+    setInteracting(true);
+    if (props.privTxState && props.contractAddress.length < 1) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -175,7 +283,10 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
-    if (getSetTessera === undefined || getSetTessera.length < 1) {
+    if (
+      props.privTxState &&
+      (props.getSetTessera === undefined || props.getSetTessera.length < 1)
+    ) {
       props.closeAllToasts();
       props.reuseToast({
         title: "Notice",
@@ -186,11 +297,68 @@ export default function ContractsInteract(props: IProps) {
         isClosable: true,
       });
     }
+    if (!props.privTxState) {
+      // public contract using ethers
+      const provider = new ethers.providers.Web3Provider(
+        (window as any).ethereum
+      );
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        props.contractAddress,
+        props.compiledContract.abi,
+        signer
+      );
+      const funcToCall = e.target.id;
+      let res;
+      try {
+        if (typeof transactParams[funcToCall] !== "undefined") {
+          res = await contract[funcToCall](
+            ...Object.values(transactParams[funcToCall]).map(
+              (x: any) => x.value
+            )
+          );
+        } else {
+          res = await contract[funcToCall]();
+        }
+        props.closeAllToasts();
+        props.reuseToast({
+          title: `Call: ${funcToCall}`,
+          description: `Result: ${res.hash}`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+        const waiting = await res.wait();
+        props.closeAllToasts();
+        props.reuseToast({
+          title: `Call Successful: ${funcToCall}`,
+          description: `Validated in block: ${waiting.blockNumber}`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+      } catch (err) {
+        props.closeAllToasts();
+        props.reuseToast({
+          title: `Call: ${funcToCall}`,
+          description: `${err}`,
+          status: "success",
+          duration: 5000,
+          position: "bottom",
+          isClosable: true,
+        });
+      }
+    }
     if (
+      props.privTxState &&
       props.contractAddress.length > 0 &&
-      getSetTessera !== undefined &&
-      getSetTessera.length > 0
+      props.getSetTessera !== undefined &&
+      props.getSetTessera.length > 0
     ) {
+      // const params = transactFunctions.filter((_) => _.name === functionToCall);
       const needle = getDetailsByNodeName(props.config, props.selectedNode);
       await axios({
         method: "POST",
@@ -202,12 +370,17 @@ export default function ContractsInteract(props: IProps) {
           client: needle.client,
           rpcUrl: needle.rpcUrl,
           privateUrl: needle.privateTxUrl,
-          value: parseInt(writeValue),
           fromPrivateKey: props.fromPrivateKey,
           contractAddress: props.contractAddress,
           compiledContract: props.compiledContract,
           sender: props.privateFrom,
-          privateFor: getSetTessera,
+          privateFor: props.getSetTessera,
+          functionToCall: functionToCall,
+          // functionArgs: params[0].inputs,
+          functionArgs:
+            typeof transactParams[functionToCall] !== "undefined"
+              ? Object.values(transactParams[functionToCall])
+              : [],
         }),
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
@@ -216,7 +389,7 @@ export default function ContractsInteract(props: IProps) {
           props.closeAllToasts();
           props.reuseToast({
             title: "Success!",
-            description: `Contract set function called successfully.`,
+            description: `Contract function called successfully.`,
             status: "success",
             duration: 5000,
             position: "bottom",
@@ -235,7 +408,11 @@ export default function ContractsInteract(props: IProps) {
           });
         });
     }
-    setWriteButtonLoading(false);
+    setDynamicButtonLoading({
+      ...dynamicButtonLoading,
+      [functionToCall]: false,
+    });
+    setInteracting(false);
   };
 
   return (
@@ -257,92 +434,102 @@ export default function ContractsInteract(props: IProps) {
               placeholder="0x"
               value={props.contractAddress}
               onChange={props.handleContractAddress}
-              isDisabled
               readOnly
             />
           </FormControl>
-          <Box mt={1}>
-            <DynamicSelect
-              //@ts-ignore
-              isLoading={props.selectLoading}
-              instanceId="private-for-deploy"
-              isMulti
-              options={props.tesseraKeys}
-              onChange={(e: any) => {
-                const myList: string[] = [];
-                e.map((k: any) => myList.push(k.value));
-                setGetSetTessera(myList);
-              }}
-              placeholder="Select Tessera recipients to use the functions below..."
-              closeMenuOnSelect={false}
-              selectedOptionStyle="check"
-              hideSelectedOptions={false}
-              // menuPortalTarget={document.body}
-              // styles={{
-              //   menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
-              // }}
-            />
-          </Box>
-          <Flex justifyContent="space-between" alignItems="center" m={1}>
-            <Text fontWeight="semibold">get</Text>
-            <HStack spacing={5}>
-              <Input
-                size="sm"
-                maxW={100}
-                value={readValue}
-                textAlign="center"
-                readOnly
-              />
-              <Button
-                leftIcon={<FontAwesomeIcon icon={faDatabase as IconProp} />}
-                type="submit"
-                // backgroundColor="orange.200"
-                colorScheme="yellow"
-                isLoading={readButtonLoading}
-                onClick={handleRead}
-                loadingText=""
-                variant="solid"
-                minW={125}
-              >
-                Read
-              </Button>
-            </HStack>
-          </Flex>
-          <Flex justifyContent="space-between" alignItems="center" m={1}>
-            <FormLabel htmlFor="set" fontWeight="semibold" m={0} mr={5}>
-              set
-            </FormLabel>
-            <HStack spacing={5}>
-              <NumberInput
-                min={0}
-                maxW={100}
-                size="sm"
-                defaultValue={writeValue}
-                onChange={handleWriteValue}
-                allowMouseWheel
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-              <Button
-                leftIcon={<FontAwesomeIcon icon={faPencilAlt as IconProp} />}
-                minW={125}
-                type="submit"
-                // backgroundColor="green.200"
-                colorScheme="green"
-                isLoading={writeButtonLoading}
-                onClick={handleWrite}
-                loadingText=""
-                variant="solid"
-                ml={5}
-              >
-                Transact
-              </Button>
-            </HStack>
-          </Flex>
+          <VStack spacing={2} align="stretch" mt={1}>
+            {readFunctions
+              .filter((_) => _.inputs.filter((x) => x.name === "").length === 0)
+              .map((f, i) => (
+                <Box
+                  key={i}
+                  borderRadius="lg"
+                  borderWidth={2}
+                  boxShadow="md"
+                  p={5}
+                >
+                  <HStack align="stretch">
+                    <Center>
+                      <Text fontSize="md">{f.name}</Text>
+                    </Center>
+                    <Spacer />
+                    <Button
+                      id={f.name}
+                      leftIcon={
+                        <FontAwesomeIcon icon={faDatabase as IconProp} />
+                      }
+                      type="submit"
+                      colorScheme="blue"
+                      onClick={handleRead}
+                      variant="solid"
+                      minW={125}
+                      isLoading={dynamicButtonLoading[f.name]}
+                      isDisabled={interacting}
+                    >
+                      Call
+                    </Button>
+                  </HStack>
+                  {f.inputs.map((i) => (
+                    <>
+                      <Text
+                        fontSize="sm"
+                        as="i"
+                      >{`${i.name} (${i.type})`}</Text>
+                      <Input
+                        key={`${f.name}-${i.name}`}
+                        id={`${f.name}-${i.name}`}
+                        placeholder={i.value}
+                        onChange={(e) => handleTransactArgs(e, i)}
+                      />
+                    </>
+                  ))}
+                </Box>
+              ))}
+          </VStack>
+          <VStack spacing={2} align="stretch" mt={1}>
+            {transactFunctions
+              .filter((_) => _.inputs.filter((x) => x.name === "").length === 0)
+              .map((f, i) => (
+                <VStack key={i} align="stretch">
+                  <Box borderRadius="lg" borderWidth={2} boxShadow="md" p={5}>
+                    <HStack>
+                      <Text fontSize="md">{f.name}</Text>
+                      <Spacer />
+                      <Button
+                        id={f.name}
+                        leftIcon={
+                          <FontAwesomeIcon icon={faPencilAlt as IconProp} />
+                        }
+                        type="submit"
+                        colorScheme="purple"
+                        onClick={handleTransact}
+                        variant="solid"
+                        minW={125}
+                        isLoading={dynamicButtonLoading[f.name]}
+                        isDisabled={interacting}
+                      >
+                        Transact
+                      </Button>
+                    </HStack>
+
+                    {f.inputs.map((i) => (
+                      <>
+                        <Text
+                          fontSize="sm"
+                          as="i"
+                        >{`${i.name} (${i.type})`}</Text>
+                        <Input
+                          key={`${f.name}-${i.name}`}
+                          id={`${f.name}-${i.name}`}
+                          placeholder={i.value}
+                          onChange={(e) => handleTransactArgs(e, i)}
+                        />
+                      </>
+                    ))}
+                  </Box>
+                </VStack>
+              ))}
+          </VStack>
         </AccordionPanel>
       </AccordionItem>
     </>

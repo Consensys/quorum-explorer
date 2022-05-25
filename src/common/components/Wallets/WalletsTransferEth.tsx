@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { QuorumWallet } from "../../types/Wallets";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
 import {
   Divider,
@@ -26,13 +25,10 @@ import {
   Code,
 } from "@chakra-ui/react";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { connectMetaMask, detectMetaMask } from "../../lib/connectMetaMask";
 import MetaMask from "../Misc/MetaMask";
 import { BigNumber, ethers } from "ethers";
-import getConfig from "next/config";
-const { publicRuntimeConfig } = getConfig();
 
 const MotionBox = motion(Box);
 
@@ -43,7 +39,6 @@ interface IProps {
 
 export default function WalletsTransferEth(props: IProps) {
   const [buttonLoading, setButtonLoading] = useState(false);
-  const [privateKeyFrom, setPrivateKeyFrom] = useState("0x");
   const [accountTo, setAccountTo] = useState("0x");
   const [amount, setAmount] = useState("0x");
   const toast = useToast();
@@ -153,57 +148,12 @@ export default function WalletsTransferEth(props: IProps) {
     };
   }, []);
 
-  const handlePrivateKeyFrom = (e: any) => {
-    setPrivateKeyFrom(e.target.value);
-  };
-
   const handleAccountTo = (e: any) => {
     setAccountTo(e.target.value);
   };
 
   const handleAmount = (e: any) => {
     setAmount(e.target.value);
-  };
-
-  const handleTransfer = async (e: any) => {
-    e.preventDefault();
-    setButtonLoading(true);
-    const ethRes = await axios({
-      method: "POST",
-      url: `/api/walletTransferEth`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: JSON.stringify({
-        rpcUrl: needle.rpcUrl,
-        privateKeyFrom: privateKeyFrom,
-        accountTo: accountTo,
-        amount: amount,
-      }),
-      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
-    });
-    const walletRes = await axios({
-      method: "POST",
-      url: `/api/walletGetBalance`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: JSON.stringify({
-        rpcUrl: needle.rpcUrl,
-        account: accountTo,
-      }),
-      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
-    });
-    var wallet: QuorumWallet = walletRes.data as QuorumWallet;
-    toast({
-      title: "Eth Transfer",
-      description: `The eth transfer was successul! Transaction hash: ${ethRes.data.txHash}. Account ${wallet.account} has an updated balance of ${wallet.balance} Wei`,
-      status: "success",
-      duration: 5000,
-      position: "bottom",
-      isClosable: true,
-    });
-    setButtonLoading(false);
   };
 
   const metamaskTransfer = async (e: any) => {
@@ -283,41 +233,6 @@ export default function WalletsTransferEth(props: IProps) {
     }
   };
 
-  const switchChain = async () => {
-    try {
-      await (window as any).ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: myChain.chainId }],
-      });
-    } catch (switchError: any) {
-      // This error code indicates that the chain has not been added to MetaMask.
-      if (switchError.code === 4902) {
-        console.error("Network does not exist in MetaMask!");
-        try {
-          await (window as any).ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: myChain.chainId,
-                chainName: myChain.chainName,
-                rpcUrls: [needle.rpcUrl],
-                nativeCurrency: {
-                  name: "ETH",
-                  symbol: "ETH",
-                  decimals: 18,
-                },
-              },
-            ],
-          });
-        } catch (addError) {
-          // handle "add" error
-          console.error(addError);
-        }
-      }
-      // handle other "switch" errors
-    }
-  };
-
   return (
     <>
       <MotionBox
@@ -326,13 +241,14 @@ export default function WalletsTransferEth(props: IProps) {
         transition={{ delay: 0.2 }}
         borderRadius="lg"
         borderWidth={2}
+        boxShadow="2xl"
         p={5}
         mx={2}
         my={3}
       >
         <Box mt={5}>
-          <Heading as="h5" size="md">
-            Transfer ETH to Account
+          <Heading as="h5" size="md" mb={5}>
+            Transfer ETH
           </Heading>
           <Divider />
           <br />

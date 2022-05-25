@@ -86,6 +86,7 @@ export default function Explorer({ config }: IProps) {
               }),
               signal: controller.signal,
               baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+              timeout: 2000,
             });
             return res.data;
           });

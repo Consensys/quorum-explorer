@@ -1,4 +1,3 @@
-
 import { ReactElement } from "react";
 import { Box, Heading, Skeleton, HStack, VStack, Flex } from "@chakra-ui/react";
 import { motion } from "framer-motion";
@@ -12,8 +11,7 @@ interface IProps {
   statusText: string;
 }
 
-export default function NodeCard ({ title, text, icon, statusText }: IProps) {
-
+export default function NodeCard({ title, text, icon, statusText }: IProps) {
   return (
     <>
       <Flex
@@ -24,6 +22,7 @@ export default function NodeCard ({ title, text, icon, statusText }: IProps) {
         py={{ base: "5", md: "5" }}
         borderRadius="lg"
         borderWidth={2}
+        boxShadow="lg"
       >
         <HStack spacing={10}>
           <MotionBox
@@ -67,5 +66,3 @@ export default function NodeCard ({ title, text, icon, statusText }: IProps) {
     </>
   );
 }
-
-

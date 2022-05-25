@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import {
   Tabs,
@@ -24,14 +24,12 @@ import {
   Divider,
   Select,
   useColorMode,
-  HStack,
-  Center,
-  Portal,
+  Switch,
+  Flex,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import {
-  faRocket,
   faCode,
   faStream,
   faPaperPlane,
@@ -44,24 +42,19 @@ import {
   defaultSmartContracts,
   CompiledContract,
 } from "../../types/Contracts";
-import { getContractFunctions } from "../../lib/contracts";
 import axios from "axios";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
-// @ts-ignore
-// import { Select as MultiSelect } from "chakra-react-select";
 import dynamic from "next/dynamic";
-import "@uiw/react-textarea-code-editor/dist.css";
 import getConfig from "next/config";
+import ContractsDeploy from "./ContractsDeploy";
+import ContractsMetaMask from "./ContractsMetaMask";
+import "@uiw/react-textarea-code-editor/dist.css";
+
 const { publicRuntimeConfig } = getConfig();
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
-  loading: () => <p>Loading code editor component...</p>,
-});
-
-const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
   loading: () => <p>Loading interaction component...</p>,
-  ssr: false,
 });
 
 const DynamicSelect = dynamic(
@@ -72,6 +65,10 @@ const DynamicSelect = dynamic(
     ssr: false,
   }
 );
+
+const DynamicContractsInteract = dynamic(() => import("./ContractsInteract"), {
+  loading: () => <p>Loading interaction component...</p>,
+});
 
 const MotionGrid = motion(SimpleGrid);
 const ChakraEditor = chakra(CodeEditor);
@@ -86,6 +83,7 @@ export default function ContractsIndex(props: IProps) {
   const contracts: SmartContract[] = defaultSmartContracts;
   const toast = useToast();
   const [code, setCode] = useState(contracts[0].contract);
+  //@ts-ignore
   const [compiledContract, setCompiledContract] = useState<CompiledContract>({
     abi: [],
     bytecode: "",
@@ -106,15 +104,17 @@ export default function ContractsIndex(props: IProps) {
     privateFor: [],
   });
   const controller = new AbortController();
-  const [simpleStorageValue, setSimpleStorageValue] = useState(0);
   const [buttonLoading, setButtonLoading] = useState({
     Compile: { status: false, isDisabled: false },
-    Deploy: { status: false, isDisabled: true },
   });
-  const [selectLoading, setSelectLoading] = useState(true);
+  const [selectLoading, setSelectLoading] = useState<boolean>(true);
+  const [getSetTessera, setGetSetTessera] = useState<string[]>([]);
+  const [privTxState, setPrivTxState] = useState<boolean>(false);
+  const [metaMaskAccount, setMetaMaskAccount] = useState("");
+  const [myChain, setMyChain] = useState({ chainId: "", chainName: "" });
+  const [metaChain, setMetaChain] = useState({ chainId: "", chainName: "" });
 
   useEffect(() => {
-    // This is to have the code editor to be responsive to color modes
     document.documentElement.setAttribute(
       "data-color-mode",
       colorMode === "light" ? "light" : "dark"
@@ -178,6 +178,11 @@ export default function ContractsIndex(props: IProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.selectedNode]);
 
+  const privTx = (e: any) => {
+    // set the state of whether we are using private txns or not
+    setPrivTxState(e.target.checked);
+  };
+
   const handleContractAddress = (e: any) => {
     setDeployedAddress(e.target.value);
   };
@@ -189,23 +194,23 @@ export default function ContractsIndex(props: IProps) {
     toast.closeAll();
   }
 
-  const setStorageValue = (e: any) => {
-    setSimpleStorageValue(e.target.value);
-  };
-
   const ContractCodeHandler = (e: any) => {
     e.preventDefault();
-    const needle: SmartContract = contracts.filter(
-      (_) => _.name === e.target.value
-    )[0];
+    if (e.target.value !== "custom") {
+      const needle: SmartContract = contracts.filter(
+        (_) => _.name === e.target.value
+      )[0];
+      setCode(needle.contract);
+    }
+    if (e.target.value === "custom") {
+      setCode("");
+    }
     const joined = logs.concat("Navigated to: " + e.target.value);
     setLogs(joined);
     setButtonLoading({
-      Deploy: { status: false, isDisabled: true },
       Compile: { status: false, isDisabled: false },
     });
     setSelectedContract(e.target.value);
-    setCode(needle.contract);
   };
 
   const HandleCompile = async (e: any) => {
@@ -214,6 +219,22 @@ export default function ContractsIndex(props: IProps) {
       ...buttonLoading,
       Compile: { status: true, isDisabled: false },
     });
+
+    if (code === "") {
+      toast({
+        title: "Empty Contract!",
+        description: `Please enter a contract into the code editor`,
+        status: "error",
+        duration: 5000,
+        position: "bottom",
+        isClosable: true,
+      });
+      setButtonLoading({
+        ...buttonLoading,
+        Compile: { status: false, isDisabled: false },
+      });
+      return;
+    }
 
     axios({
       method: "POST",
@@ -230,6 +251,8 @@ export default function ContractsIndex(props: IProps) {
           setCompiledContract({
             abi: response.data.abi,
             bytecode: response.data.bytecode,
+            name: response.data.name,
+            gasEstimates: response.data.gasEstimates,
           });
           closeAll();
           toast({
@@ -246,7 +269,6 @@ export default function ContractsIndex(props: IProps) {
             ...buttonLoading,
             Compile: { status: false, isDisabled: false },
           });
-          getContractFunctions(response.data.abi);
         } else {
           closeAll();
           toast({
@@ -263,7 +285,6 @@ export default function ContractsIndex(props: IProps) {
           setLogs(joined);
         }
         setButtonLoading({
-          Deploy: { status: false, isDisabled: false },
           Compile: { status: false, isDisabled: false },
         });
       })
@@ -271,7 +292,7 @@ export default function ContractsIndex(props: IProps) {
         console.log(error);
         toast({
           title: "Backend API Error",
-          description: `Issue encountered contacting back-end!`,
+          description: `Issue encountered from the back-end!`,
           status: "error",
           duration: 5000,
           position: "bottom",
@@ -283,113 +304,11 @@ export default function ContractsIndex(props: IProps) {
         );
         setLogs(joined);
         setButtonLoading({
-          Deploy: { status: false, isDisabled: true },
           Compile: { status: false, isDisabled: false },
         });
       });
   };
 
-  const HandleDeploy = async (e: any) => {
-    e.preventDefault();
-    setButtonLoading({
-      ...buttonLoading,
-      Deploy: { status: true, isDisabled: false },
-    });
-    if (
-      accountAddress.length === 0 ||
-      deployParams.privateFor.length === 0 ||
-      deployParams.privateKeyFrom.length === 0
-    ) {
-      // check if nothing has been selected for account
-      closeAll();
-      toast({
-        title: "Missing Details",
-        description: `You must choose account to deploy and private for.`,
-        status: "warning",
-        duration: 5000,
-        position: "bottom",
-        isClosable: true,
-      });
-      setButtonLoading({
-        Deploy: { status: false, isDisabled: false },
-        Compile: { status: false, isDisabled: false },
-      });
-      return;
-    }
-    if (
-      accountAddress.length > 0 &&
-      deployParams.privateFor.length > 0 &&
-      deployParams.privateKeyFrom.length > 0 &&
-      simpleStorageValue !== undefined
-    ) {
-      // go ahead if all necessary parameters selected
-      const getAccountPrivKey = getPrivateKey(
-        props.config,
-        accountAddress
-      ).privateKey;
-      const needle = getDetailsByNodeName(props.config, props.selectedNode);
-      await axios({
-        method: "POST",
-        url: `/api/contractDeploy`,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: JSON.stringify({
-          client: needle.client,
-          rpcUrl: needle.rpcUrl,
-          privateUrl: needle.privateTxUrl,
-          accountPrivateKey: getAccountPrivKey,
-          privateForList: deployParams.privateFor,
-          compiledContract: compiledContract,
-          deployArgs: simpleStorageValue,
-        }),
-        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
-      })
-        .then((result) => {
-          closeAll();
-          toast({
-            title: "Deployed Contract!",
-            description: `The contract was successfully deployed through ${props.selectedNode} @ address: ${result.data.contractAddress}`,
-            status: "success",
-            duration: 5000,
-            position: "bottom",
-            isClosable: true,
-          });
-          setDeployedAddress(result.data.contractAddress);
-          const joined = logs.concat(
-            "Contract: " +
-              selectedContract +
-              "\n \n" +
-              "Address: " +
-              result.data.contractAddress
-          );
-          setLogs(joined);
-          setButtonLoading({
-            Deploy: { status: false, isDisabled: false },
-            Compile: { status: false, isDisabled: false },
-          });
-        })
-        .catch((e) => {
-          closeAll();
-          toast({
-            title: "Error!",
-            description: `There was an error deploying the contract.`,
-            status: "error",
-            duration: 5000,
-            position: "bottom",
-            isClosable: true,
-          });
-          const joined = logs.concat(
-            "Error in deploying contract: " + selectedContract
-          );
-          setLogs(joined);
-          setButtonLoading({
-            Compile: { status: false, isDisabled: false },
-            Deploy: { status: false, isDisabled: false },
-          });
-        });
-    }
-  };
   return (
     <>
       <MotionGrid
@@ -413,8 +332,11 @@ export default function ContractsIndex(props: IProps) {
                 {c.name}
               </option>
             ))}
+            <option key="custom" value="custom">
+              Custom Contract
+            </option>
           </Select>
-          <Box mb={10}>
+          <Box mb={10} height="500px">
             <ChakraEditor
               borderRadius="lg"
               borderWidth={2}
@@ -422,18 +344,52 @@ export default function ContractsIndex(props: IProps) {
               autoFocus
               value={code}
               language="sol"
-              placeholder="Empty code"
+              placeholder="Start typing here!"
+              onChange={(evn) => setCode(evn.target.value)}
               style={{
                 fontSize: 16,
                 backgroundColor: colorMode === "light" ? "#f5f5f5" : "#2D3748",
                 fontFamily:
                   "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                overflow: "auto",
-                height: "550px",
+                overflowY: "auto",
+                resize: "none",
+                height: "100%",
               }}
-              readOnly
+              readOnly={selectedContract === "custom" ? false : true}
             />
           </Box>
+          <Flex
+            justifyContent="space-between"
+            alignContent="center"
+            alignItems="center"
+          >
+            <Button
+              leftIcon={<FontAwesomeIcon icon={faHammer as IconProp} />}
+              isLoading={buttonLoading.Compile.status}
+              isDisabled={buttonLoading.Compile.isDisabled}
+              loadingText="Compiling..."
+              type="submit"
+              variant="solid"
+              colorScheme="yellow"
+              onClick={HandleCompile}
+              mr={2}
+            >
+              Compile
+            </Button>
+            <Box>
+              <FormControl>
+                <FormLabel display="inline" htmlFor="private-for-enable" mb="0">
+                  Enable Private TX
+                </FormLabel>
+                <Switch
+                  id="private-for-enable"
+                  size="lg"
+                  colorScheme="messenger"
+                  onChange={privTx}
+                />
+              </FormControl>
+            </Box>
+          </Flex>
         </Box>
 
         {/* tabs  */}
@@ -477,130 +433,110 @@ export default function ContractsIndex(props: IProps) {
                           <Input
                             id="predefined-account"
                             variant="filled"
-                            placeholder="Node is not a Member"
-                            value={accountAddress}
-                            isDisabled
+                            placeholder={
+                              privTxState
+                                ? "Node is not a Member"
+                                : "Not Connected"
+                            }
+                            value={
+                              !privTxState ? metaMaskAccount : accountAddress
+                            }
                             readOnly
                           />
-                          <FormLabel htmlFor="private-from">
-                            PrivateKey From
-                          </FormLabel>
-                          <Input
-                            id="private-from"
-                            variant="filled"
-                            placeholder="0x"
-                            value={deployParams.privateKeyFrom}
-                            isDisabled
-                            readOnly
-                          />
-                          <FormLabel htmlFor="tessera-key">
-                            Tessera Public Key
-                          </FormLabel>
-                          <Input
-                            id="predefined-tessera-key"
-                            variant="filled"
-                            placeholder="Node is not a Member"
-                            value={currentTesseraPublicKey}
-                            isDisabled
-                            readOnly
-                          />
-                        </FormControl>
-                      </AccordionPanel>
-                    </AccordionItem>
-                    <AccordionItem>
-                      <AccordionButton>
-                        <Box
-                          color="red.400"
-                          fontWeight="bold"
-                          flex="1"
-                          textAlign="left"
-                        >
-                          2. Deploy
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                      <AccordionPanel pb={4}>
-                        <FormControl>
-                          <FormLabel htmlFor="private-for">
-                            Private For
-                          </FormLabel>
-                          <DynamicSelect
-                            //@ts-ignore
-                            isLoading={selectLoading}
-                            instanceId="private-for"
-                            isMulti
-                            options={tesseraKeys}
-                            onChange={(e: any) => {
-                              const myList: string[] = [];
-                              e.map((k: any) => myList.push(k.value));
-                              setDeployParams({
-                                ...deployParams,
-                                privateFor: myList,
-                              });
-                            }}
-                            placeholder="Select Tessera node..."
-                            closeMenuOnSelect={false}
-                            selectedOptionStyle="check"
-                            hideSelectedOptions={false}
-                            // menuPortalTarget={document.body}
-                            // styles={{
-                            //   menuPortal: (base: any) => ({
-                            //     ...base,
-                            //     zIndex: 9999,
-                            //   }),
-                            // }}
-                          />
+                          {privTxState ? (
+                            <>
+                              <FormLabel htmlFor="private-from">
+                                PrivateKey From
+                              </FormLabel>
+                              <Input
+                                id="private-from"
+                                variant="filled"
+                                placeholder="0x"
+                                value={deployParams.privateKeyFrom}
+                                readOnly
+                              />
+                              <FormLabel htmlFor="tessera-key">
+                                Tessera Public Key
+                              </FormLabel>
+                              <Input
+                                id="predefined-tessera-key"
+                                variant="filled"
+                                placeholder="Node is not a Member"
+                                value={currentTesseraPublicKey}
+                                readOnly
+                              />
+                            </>
+                          ) : (
+                            <Box mt={3}>
+                              <ContractsMetaMask
+                                config={props.config}
+                                selectedNode={props.selectedNode}
+                                privTxState={privTxState}
+                                metaMaskAccount={metaMaskAccount}
+                                setMetaMaskAccount={setMetaMaskAccount}
+                                setMyChain={setMyChain}
+                                setMetaChain={setMetaChain}
+                              />
+                            </Box>
+                          )}
 
-                          <FormLabel htmlFor="storage-value">
-                            Initial Storage Value
-                          </FormLabel>
-                          <Input
-                            id="storage-value"
-                            placeholder={simpleStorageValue.toString()}
-                            onChange={setStorageValue}
-                          />
-                          <Center>
-                            <HStack mt={5}>
-                              <Button
-                                leftIcon={
-                                  <FontAwesomeIcon
-                                    icon={faHammer as IconProp}
-                                  />
+                          {privTxState && (
+                            <>
+                              <FormLabel htmlFor="private-for">
+                                Private For
+                              </FormLabel>
+                              <DynamicSelect
+                                //@ts-ignore
+                                isLoading={selectLoading}
+                                instanceId="private-for-deploy"
+                                isMulti
+                                options={tesseraKeys}
+                                onChange={(e: any) => {
+                                  const myList: string[] = [];
+                                  e.map((k: any) => myList.push(k.value));
+                                  setGetSetTessera(myList);
+                                }}
+                                placeholder="Select Tessera node recipients..."
+                                closeMenuOnSelect={false}
+                                selectedOptionStyle="check"
+                                hideSelectedOptions={false}
+                                menuPortalTarget={
+                                  typeof window !== "undefined"
+                                    ? document.body
+                                    : null
                                 }
-                                isLoading={buttonLoading.Compile.status}
-                                isDisabled={buttonLoading.Compile.isDisabled}
-                                loadingText="Compiling..."
-                                type="submit"
-                                variant="solid"
-                                // backgroundColor="orange.200"
-                                colorScheme="yellow"
-                                onClick={HandleCompile}
-                                mr={2}
-                              >
-                                Compile
-                              </Button>
-                              <Button
-                                leftIcon={
-                                  <FontAwesomeIcon
-                                    icon={faRocket as IconProp}
-                                  />
-                                }
-                                isLoading={buttonLoading.Deploy.status}
-                                isDisabled={buttonLoading.Deploy.isDisabled}
-                                loadingText="Deploying..."
-                                type="submit"
-                                variant="solid"
-                                // backgroundColor="green.200"
-                                colorScheme="green"
-                                onClick={HandleDeploy}
-                              >
-                                Deploy
-                              </Button>
-                            </HStack>
-                          </Center>
+                                styles={{
+                                  menuPortal: (base: any) => ({
+                                    ...base,
+                                    zIndex: 9999,
+                                  }),
+                                }}
+                              />
+                            </>
+                          )}
                         </FormControl>
                       </AccordionPanel>
                     </AccordionItem>
+
+                    <ContractsDeploy
+                      config={props.config}
+                      selectedNode={props.selectedNode}
+                      compiledContract={compiledContract}
+                      account={accountAddress}
+                      privateFor={deployParams.privateFor}
+                      privateFrom={currentTesseraPublicKey}
+                      fromPrivateKey={deployParams.privateKeyFrom}
+                      selectLoading={selectLoading}
+                      setDeployedAddress={setDeployedAddress}
+                      closeAllToasts={closeAll}
+                      reuseToast={toast}
+                      logs={logs}
+                      setLogs={setLogs}
+                      getSetTessera={getSetTessera}
+                      privTxState={privTxState}
+                      myChain={myChain}
+                      metaChain={metaChain}
+                    />
                     <DynamicContractsInteract
                       config={props.config}
                       selectedNode={props.selectedNode}
@@ -610,11 +546,12 @@ export default function ContractsIndex(props: IProps) {
                       privateFor={deployParams.privateFor}
                       privateFrom={currentTesseraPublicKey}
                       fromPrivateKey={deployParams.privateKeyFrom}
-                      tesseraKeys={tesseraKeys}
                       selectLoading={selectLoading}
                       closeAllToasts={closeAll}
                       reuseToast={toast}
                       handleContractAddress={handleContractAddress}
+                      getSetTessera={getSetTessera}
+                      privTxState={privTxState}
                     />
                   </Accordion>
                 </SimpleGrid>

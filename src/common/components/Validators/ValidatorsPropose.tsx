@@ -36,7 +36,6 @@ export default function ValidatorsPropose(props: IProps) {
     e.preventDefault();
     // console.log(e);
     setButtonLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
     const needle: QuorumNode = getDetailsByNodeName(
       props.config,
       props.selectedNode
@@ -58,6 +57,7 @@ export default function ValidatorsPropose(props: IProps) {
         vote: true,
       }),
       baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+      timeout: 2000,
     })
       .then((res) => {
         if (res.status === 200) {
@@ -86,6 +86,7 @@ export default function ValidatorsPropose(props: IProps) {
         transition={{ delay: 0.2 }}
         borderRadius="lg"
         borderWidth={2}
+        boxShadow="lg"
         p={5}
         mx={2}
         my={3}
