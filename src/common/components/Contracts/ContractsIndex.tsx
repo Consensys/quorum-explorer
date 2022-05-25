@@ -49,6 +49,7 @@ import getConfig from "next/config";
 import ContractsDeploy from "./ContractsDeploy";
 import ContractsMetaMask from "./ContractsMetaMask";
 import "@uiw/react-textarea-code-editor/dist.css";
+import { getContractFunctions } from "../../lib/contracts";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -97,6 +98,9 @@ export default function ContractsIndex(props: IProps) {
       },
     },
   });
+  const [contractFunctions, setContractFunctions] = useState(
+    getContractFunctions(compiledContract[Object.keys(compiledContract)[0]].abi)
+  );
   const [contractToDeploy, setContractToDeploy] = useState("empty");
   const [deployedAddress, setDeployedAddress] = useState("");
   const [accountAddress, setAccountAddress] = useState("");
@@ -266,6 +270,12 @@ export default function ContractsIndex(props: IProps) {
           //   name: response.data.name,
           //   gasEstimates: response.data.gasEstimates,
           // });
+          setContractToDeploy(Object.keys(response.data)[0]);
+          setContractFunctions(
+            getContractFunctions(
+              response.data[Object.keys(response.data)[0]].abi
+            )
+          );
           closeAll();
           toast({
             title: "Compiled Contract!",
@@ -323,6 +333,9 @@ export default function ContractsIndex(props: IProps) {
 
   const handleDeployContract = async (e: any) => {
     // function for handling select of which contract from compilation to deploy
+    setContractFunctions(
+      getContractFunctions(compiledContract[e.target.value].abi)
+    );
     setContractToDeploy(e.target.value);
   };
   return (
@@ -554,6 +567,7 @@ export default function ContractsIndex(props: IProps) {
                       metaChain={metaChain}
                       contractToDeploy={contractToDeploy}
                       handleDeployContract={handleDeployContract}
+                      contractFunctions={contractFunctions}
                     />
                     <DynamicContractsInteract
                       config={props.config}

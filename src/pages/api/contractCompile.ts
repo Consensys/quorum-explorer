@@ -57,11 +57,4 @@ function compile(sourceCode: any) {
   });
 
   return listContracts;
-
-  // return {
-  //   name: contractName,
-  //   abi: artifact.abi,
-  //   bytecode: artifact.evm.bytecode.object,
-  //   gasEstimates: artifact.evm.gasEstimates,
-  // };
 }

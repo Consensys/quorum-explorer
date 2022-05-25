@@ -46,13 +46,14 @@ interface IProps {
   metaChain: { chainId: string; chainName: string };
   contractToDeploy: string;
   handleDeployContract: (e: any) => void;
+  contractFunctions: SCDefinition;
 }
 
 export default function ContractsDeploy(props: IProps) {
   const [deployButtonLoading, setDeployButtonLoading] = useState(false);
-  const scDefinition: SCDefinition = getContractFunctions(
-    props.compiledContract[Object.keys(props.compiledContract)[0]].abi
-  );
+  // let scDefinition: SCDefinition = getContractFunctions(
+  //   props.compiledContract[Object.keys(props.compiledContract)[0]].abi
+  // );
   const [constructorParams, setConstructorParams] = useState<any>({});
 
   const handleConstructorArgs = (e: any) => {
@@ -71,12 +72,16 @@ export default function ContractsDeploy(props: IProps) {
     }
   };
 
+  // useEffect(() => {
+  //   console.log(props.contractFunctions);
+  // }, [props.contractFunctions]);
+
   useEffect(() => {
     // dirty way to remove from constructor state if switching contracts
     const newObj: any = {};
-    const nameMap = Object.values(scDefinition!.constructor.inputs).map(
-      (x) => x.name
-    );
+    const nameMap = Object.values(
+      props.contractFunctions!.constructor.inputs
+    ).map((x) => x.name);
     Object.keys(constructorParams).map((x) => {
       nameMap.includes(x) && (newObj[x] = constructorParams[x]);
       setConstructorParams(newObj);
@@ -155,7 +160,7 @@ export default function ContractsDeploy(props: IProps) {
         const txReceipt = await contract.deployTransaction.wait();
         props.reuseToast({
           title: "Deployed!",
-          description: `Deployed contract available @ ${txReceipt.contractAddress} on block ${txReceipt.blockNumber}`,
+          description: `Contract available @ ${txReceipt.contractAddress} on block #${txReceipt.blockNumber}`,
           status: "success",
           duration: 10000,
           isClosable: true,
@@ -207,7 +212,7 @@ export default function ContractsDeploy(props: IProps) {
           accountPrivateKey: getAccountPrivKey,
           privateForList: props.getSetTessera,
           compiledContract: props.compiledContract,
-          deployArgs: scDefinition!.constructor.inputs,
+          deployArgs: props.contractFunctions!.constructor.inputs,
         }),
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
@@ -260,16 +265,20 @@ export default function ContractsDeploy(props: IProps) {
             </FormLabel>
             <Select
               id="select-deploy-contract"
-              // value={props.contractAddress}
+              value={props.contractToDeploy}
               onChange={props.handleDeployContract}
             >
-              {Object.keys(props.compiledContract).map((c, i) => (
-                <option key={i} value={c}>
-                  {c}
-                </option>
-              ))}
+              {Object.keys(props.compiledContract).map((c, i) => {
+                if (props.compiledContract[c].bytecode !== "") {
+                  return (
+                    <option key={i} value={c}>
+                      {c}
+                    </option>
+                  );
+                }
+              })}
             </Select>
-            {scDefinition!.constructor.inputs.map((input) => (
+            {props.contractFunctions!.constructor.inputs.map((input) => (
               <>
                 <Text
                   key="text-{input.name}"
@@ -284,7 +293,11 @@ export default function ContractsDeploy(props: IProps) {
                 />
               </>
             ))}
-            <HStack mt={scDefinition!.constructor.inputs.length > 0 ? 4 : 0}>
+            <HStack
+              mt={
+                props.contractFunctions!.constructor.inputs.length > 0 ? 4 : 0
+              }
+            >
               <Button
                 leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
                 loadingText="Deploying..."
