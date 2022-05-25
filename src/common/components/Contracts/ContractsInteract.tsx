@@ -67,10 +67,9 @@ export default function ContractsInteract(props: IProps) {
   useEffect(() => {
     // dirty way to remove from function state if switching contracts
     const newObj: any = {};
+    const nameMap = Object.values(scDefinition.functions).map((x) => x.name);
     Object.keys(transactParams).map((x) => {
-      Object.values(scDefinition.functions)
-        .map((x) => x.name)
-        .includes(x) && (newObj[x] = transactParams[x]);
+      nameMap.includes(x) && (newObj[x] = transactParams[x]);
       setTransactParams(newObj);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,7 +102,6 @@ export default function ContractsInteract(props: IProps) {
   const handleRead = async (e: any) => {
     e.preventDefault();
     console.log("Contract READ: " + e.target.id);
-    console.log(scDefinition);
     setDynamicButtonLoading({
       ...dynamicButtonLoading,
       [e.target.id]: true,

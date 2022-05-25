@@ -34,6 +34,6 @@ function compile(sourceCode: any) {
     name: contractName,
     abi: artifact.abi,
     bytecode: artifact.evm.bytecode.object,
-    gasEstimates: artifact.evm.gasEstimates
+    gasEstimates: artifact.evm.gasEstimates,
   };
 }

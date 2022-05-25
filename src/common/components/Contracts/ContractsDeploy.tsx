@@ -19,7 +19,7 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faRocket } from "@fortawesome/free-solid-svg-icons";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
@@ -70,10 +70,11 @@ export default function ContractsDeploy(props: IProps) {
   useEffect(() => {
     // dirty way to remove from constructor state if switching contracts
     const newObj: any = {};
+    const nameMap = Object.values(scDefinition.constructor.inputs).map(
+      (x) => x.name
+    );
     Object.keys(constructorParams).map((x) => {
-      Object.values(scDefinition.constructor.inputs)
-        .map((x) => x.name)
-        .includes(x) && (newObj[x] = constructorParams[x]);
+      nameMap.includes(x) && (newObj[x] = constructorParams[x]);
       setConstructorParams(newObj);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

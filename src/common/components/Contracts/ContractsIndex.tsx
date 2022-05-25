@@ -45,10 +45,11 @@ import {
 import axios from "axios";
 import { getDetailsByNodeName, getPrivateKey } from "../../lib/quorumConfig";
 import dynamic from "next/dynamic";
-import "@uiw/react-textarea-code-editor/dist.css";
 import getConfig from "next/config";
 import ContractsDeploy from "./ContractsDeploy";
 import ContractsMetaMask from "./ContractsMetaMask";
+import "@uiw/react-textarea-code-editor/dist.css";
+
 const { publicRuntimeConfig } = getConfig();
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
@@ -335,7 +336,7 @@ export default function ContractsIndex(props: IProps) {
               Custom Contract
             </option>
           </Select>
-          <Box mb={10}>
+          <Box mb={10} height="500px">
             <ChakraEditor
               borderRadius="lg"
               borderWidth={2}
@@ -350,8 +351,9 @@ export default function ContractsIndex(props: IProps) {
                 backgroundColor: colorMode === "light" ? "#f5f5f5" : "#2D3748",
                 fontFamily:
                   "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                overflow: "auto",
-                height: "550px",
+                overflowY: "auto",
+                resize: "none",
+                height: "100%",
               }}
               readOnly={selectedContract === "custom" ? false : true}
             />
