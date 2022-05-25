@@ -36,11 +36,11 @@ export default function ExplorerTxnCard({ txn }: IProps) {
           >
             {txn.to === null ? (
               <Text fontSize="sm" textAlign="center">
-                Contract Deployment{" "}
+                Contract Deployment
               </Text>
             ) : (
               <Text fontSize="sm" textAlign="center">
-                Regular Transaction
+                Transaction
               </Text>
             )}
           </Flex>

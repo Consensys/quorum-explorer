@@ -85,7 +85,7 @@ export default function ContractsIndex(props: IProps) {
   const toast = useToast();
   const [code, setCode] = useState(contracts[0].contract);
   const [compiledContract, setCompiledContract] = useState<CompiledContract>({
-    empty: {
+    "": {
       abi: [],
       bytecode: "",
       gasEstimates: {
@@ -101,7 +101,7 @@ export default function ContractsIndex(props: IProps) {
   const [contractFunctions, setContractFunctions] = useState(
     getContractFunctions(compiledContract[Object.keys(compiledContract)[0]].abi)
   );
-  const [contractToDeploy, setContractToDeploy] = useState("empty");
+  const [contractToDeploy, setContractToDeploy] = useState("");
   const [contractToInteract, setContractToInteract] = useState<any[]>([]);
   const [accountAddress, setAccountAddress] = useState("");
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
@@ -613,12 +613,22 @@ export default function ContractsIndex(props: IProps) {
                   divider={<Divider borderColor="gray.200" />}
                   spacing={5}
                 >
-                  {/* {compiledContract.abi.length && (
-                    <pre>{JSON.stringify(compiledContract.abi, null, 2)}</pre>
+                  {typeof compiledContract[contractToDeploy] !==
+                    "undefined" && (
+                    <pre>
+                      {JSON.stringify(
+                        compiledContract[contractToDeploy].abi,
+                        null,
+                        2
+                      )}
+                    </pre>
                   )}
-                  {compiledContract.bytecode && (
-                    <Code>{compiledContract.bytecode.toString()}</Code>
-                  )} */}
+                  {typeof compiledContract[contractToDeploy] !==
+                    "undefined" && (
+                    <Code>
+                      {compiledContract[contractToDeploy].bytecode.toString()}
+                    </Code>
+                  )}
                 </VStack>
               </TabPanel>
 

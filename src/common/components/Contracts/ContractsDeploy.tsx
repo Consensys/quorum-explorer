@@ -315,7 +315,7 @@ export default function ContractsDeploy(props: IProps) {
                 colorScheme="green"
                 onClick={handleDeploy}
                 isLoading={deployButtonLoading}
-                isDisabled={props.contractToDeploy === "empty"}
+                isDisabled={props.contractToDeploy === ""}
               >
                 Deploy
               </Button>
