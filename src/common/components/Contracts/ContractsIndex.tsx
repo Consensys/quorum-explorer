@@ -83,11 +83,21 @@ export default function ContractsIndex(props: IProps) {
   const contracts: SmartContract[] = defaultSmartContracts;
   const toast = useToast();
   const [code, setCode] = useState(contracts[0].contract);
-  //@ts-ignore
   const [compiledContract, setCompiledContract] = useState<CompiledContract>({
-    abi: [],
-    bytecode: "",
+    empty: {
+      abi: [],
+      bytecode: "",
+      gasEstimates: {
+        creation: {
+          codeDepositCost: "",
+          executionCost: "",
+          totalCost: "",
+        },
+        external: {},
+      },
+    },
   });
+  const [contractToDeploy, setContractToDeploy] = useState("empty");
   const [deployedAddress, setDeployedAddress] = useState("");
   const [accountAddress, setAccountAddress] = useState("");
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
@@ -244,16 +254,18 @@ export default function ContractsIndex(props: IProps) {
       },
       data: JSON.stringify({ name: selectedContract, content: code }),
       baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+      timeout: 5000,
     })
       .then((response) => {
         if (response.status === 200) {
           //console.log(response.data);
-          setCompiledContract({
-            abi: response.data.abi,
-            bytecode: response.data.bytecode,
-            name: response.data.name,
-            gasEstimates: response.data.gasEstimates,
-          });
+          setCompiledContract(response.data);
+          // setCompiledContract({
+          //   abi: response.data.abi,
+          //   bytecode: response.data.bytecode,
+          //   name: response.data.name,
+          //   gasEstimates: response.data.gasEstimates,
+          // });
           closeAll();
           toast({
             title: "Compiled Contract!",
@@ -309,6 +321,10 @@ export default function ContractsIndex(props: IProps) {
       });
   };
 
+  const handleDeployContract = async (e: any) => {
+    // function for handling select of which contract from compilation to deploy
+    setContractToDeploy(e.target.value);
+  };
   return (
     <>
       <MotionGrid
@@ -536,6 +552,8 @@ export default function ContractsIndex(props: IProps) {
                       privTxState={privTxState}
                       myChain={myChain}
                       metaChain={metaChain}
+                      contractToDeploy={contractToDeploy}
+                      handleDeployContract={handleDeployContract}
                     />
                     <DynamicContractsInteract
                       config={props.config}
@@ -563,12 +581,12 @@ export default function ContractsIndex(props: IProps) {
                   divider={<Divider borderColor="gray.200" />}
                   spacing={5}
                 >
-                  {compiledContract.abi.length && (
+                  {/* {compiledContract.abi.length && (
                     <pre>{JSON.stringify(compiledContract.abi, null, 2)}</pre>
                   )}
                   {compiledContract.bytecode && (
                     <Code>{compiledContract.bytecode.toString()}</Code>
-                  )}
+                  )} */}
                 </VStack>
               </TabPanel>
 

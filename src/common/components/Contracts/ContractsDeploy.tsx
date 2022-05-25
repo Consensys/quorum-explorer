@@ -10,6 +10,8 @@ import {
   Text,
   Input,
   HStack,
+  FormLabel,
+  Select,
 } from "@chakra-ui/react";
 import { QuorumConfig } from "../../types/QuorumConfig";
 import { CompiledContract, SCDefinition } from "../../types/Contracts";
@@ -42,12 +44,14 @@ interface IProps {
   privTxState: boolean;
   myChain: { chainId: string; chainName: string };
   metaChain: { chainId: string; chainName: string };
+  contractToDeploy: string;
+  handleDeployContract: (e: any) => void;
 }
 
 export default function ContractsDeploy(props: IProps) {
   const [deployButtonLoading, setDeployButtonLoading] = useState(false);
   const scDefinition: SCDefinition = getContractFunctions(
-    props.compiledContract.abi
+    props.compiledContract[Object.keys(props.compiledContract)[0]].abi
   );
   const [constructorParams, setConstructorParams] = useState<any>({});
 
@@ -70,7 +74,7 @@ export default function ContractsDeploy(props: IProps) {
   useEffect(() => {
     // dirty way to remove from constructor state if switching contracts
     const newObj: any = {};
-    const nameMap = Object.values(scDefinition.constructor.inputs).map(
+    const nameMap = Object.values(scDefinition!.constructor.inputs).map(
       (x) => x.name
     );
     Object.keys(constructorParams).map((x) => {
@@ -133,8 +137,8 @@ export default function ContractsDeploy(props: IProps) {
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const factory = new ethers.ContractFactory(
-        props.compiledContract.abi,
-        props.compiledContract.bytecode,
+        props.compiledContract[props.contractToDeploy].abi,
+        props.compiledContract[props.contractToDeploy].bytecode,
         signer
       );
       try {
@@ -203,7 +207,7 @@ export default function ContractsDeploy(props: IProps) {
           accountPrivateKey: getAccountPrivKey,
           privateForList: props.getSetTessera,
           compiledContract: props.compiledContract,
-          deployArgs: scDefinition.constructor.inputs,
+          deployArgs: scDefinition!.constructor.inputs,
         }),
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
@@ -251,7 +255,21 @@ export default function ContractsDeploy(props: IProps) {
         </AccordionButton>
         <AccordionPanel pb={4}>
           <FormControl>
-            {scDefinition.constructor.inputs.map((input) => (
+            <FormLabel htmlFor="select-deploy-contract">
+              Select Contract
+            </FormLabel>
+            <Select
+              id="select-deploy-contract"
+              // value={props.contractAddress}
+              onChange={props.handleDeployContract}
+            >
+              {Object.keys(props.compiledContract).map((c, i) => (
+                <option key={i} value={c}>
+                  {c}
+                </option>
+              ))}
+            </Select>
+            {scDefinition!.constructor.inputs.map((input) => (
               <>
                 <Text
                   key="text-{input.name}"
@@ -266,7 +284,7 @@ export default function ContractsDeploy(props: IProps) {
                 />
               </>
             ))}
-            <HStack mt={scDefinition.constructor.inputs.length > 0 ? 4 : 0}>
+            <HStack mt={scDefinition!.constructor.inputs.length > 0 ? 4 : 0}>
               <Button
                 leftIcon={<FontAwesomeIcon icon={faRocket as IconProp} />}
                 loadingText="Deploying..."
@@ -276,10 +294,12 @@ export default function ContractsDeploy(props: IProps) {
                 colorScheme="green"
                 onClick={handleDeploy}
                 isLoading={deployButtonLoading}
-                isDisabled={
-                  props.compiledContract.abi.length === 0 &&
-                  props.compiledContract.bytecode.length === 0
-                }
+                // isDisabled={
+                //   props.compiledContract[props.contractToDeploy].abi.length ===
+                //     0 &&
+                //   props.compiledContract[props.contractToDeploy].bytecode
+                //     .length === 0
+                // }
               >
                 Deploy
               </Button>

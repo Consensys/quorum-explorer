@@ -14,6 +14,7 @@ import {
   HStack,
   VStack,
   Center,
+  Select,
 } from "@chakra-ui/react";
 import { faDatabase, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { QuorumConfig } from "../../types/QuorumConfig";
@@ -53,21 +54,22 @@ export default function ContractsInteract(props: IProps) {
   const [dynamicButtonLoading, setDynamicButtonLoading] =
     useState<buttonLoading>({});
   const [interacting, setInteracting] = useState(false);
+  const [contractToInteract, setContractToInteract] = useState("empty");
   const [transactParams, setTransactParams] = useState<any>({});
   const scDefinition: SCDefinition = getContractFunctions(
-    props.compiledContract.abi
+    props.compiledContract[Object.keys(props.compiledContract)[0]].abi
   );
-  const readFunctions: SCDFunction[] = scDefinition.functions.filter(
+  const readFunctions: SCDFunction[] = scDefinition!.functions.filter(
     (_) => _.stateMutability === "view"
   );
-  const transactFunctions: SCDFunction[] = scDefinition.functions.filter(
+  const transactFunctions: SCDFunction[] = scDefinition!.functions.filter(
     (_) => _.stateMutability !== "view"
   );
 
   useEffect(() => {
     // dirty way to remove from function state if switching contracts
     const newObj: any = {};
-    const nameMap = Object.values(scDefinition.functions).map((x) => x.name);
+    const nameMap = Object.values(scDefinition!.functions).map((x) => x.name);
     Object.keys(transactParams).map((x) => {
       nameMap.includes(x) && (newObj[x] = transactParams[x]);
       setTransactParams(newObj);
@@ -79,7 +81,7 @@ export default function ContractsInteract(props: IProps) {
     console.log(e.target.id);
     const funcName = e.target.id.split("-")[0];
     const paramName = e.target.id.split("-")[1];
-    const functionGetter = scDefinition.functions.filter(
+    const functionGetter = scDefinition!.functions.filter(
       (_) => _.name === funcName
     )[0];
     if (i.type === "bytes") {
@@ -143,7 +145,7 @@ export default function ContractsInteract(props: IProps) {
       const signer = provider.getSigner();
       const contract = new ethers.Contract(
         props.contractAddress,
-        props.compiledContract.abi,
+        props.compiledContract[contractToInteract].abi,
         signer
       );
       const funcToCall = e.target.id;
@@ -209,7 +211,7 @@ export default function ContractsInteract(props: IProps) {
           functionArgs:
             typeof transactParams[funcToCall] !== "undefined"
               ? Object.values(transactParams[funcToCall])
-              : undefined,
+              : [],
         }),
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
@@ -306,7 +308,7 @@ export default function ContractsInteract(props: IProps) {
       const signer = provider.getSigner();
       const contract = new ethers.Contract(
         props.contractAddress,
-        props.compiledContract.abi,
+        props.compiledContract[contractToInteract].abi,
         signer
       );
       const funcToCall = e.target.id;
@@ -426,9 +428,13 @@ export default function ContractsInteract(props: IProps) {
         </AccordionButton>
         <AccordionPanel pb={4}>
           <FormControl>
-            <FormLabel htmlFor="contract-address">
-              Deployed Contract Address
-            </FormLabel>
+            <FormLabel htmlFor="select-contract">Select Contract</FormLabel>
+            <Select
+              id="select-contract"
+              // value={props.contractAddress}
+              // onChange={props.handleContractAddress}
+            />
+            <FormLabel htmlFor="contract-address">Deployed Address</FormLabel>
             <Input
               id="contract-address"
               placeholder="0x"
