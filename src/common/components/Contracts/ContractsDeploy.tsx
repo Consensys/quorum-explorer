@@ -34,7 +34,6 @@ interface IProps {
   privateFrom: string;
   fromPrivateKey: string;
   selectLoading: boolean;
-  setDeployedAddress: (e: string) => void;
   closeAllToasts: () => void;
   reuseToast: any;
   logs: string[];
@@ -46,6 +45,9 @@ interface IProps {
   contractToDeploy: string;
   handleDeployContract: (e: any) => void;
   contractFunctions: SCDefinition;
+  handleDeployedAddress: any;
+  setInteractAddress: any;
+  contractToInteract: any;
 }
 
 export default function ContractsDeploy(props: IProps) {
@@ -87,7 +89,7 @@ export default function ContractsDeploy(props: IProps) {
       setConstructorParams(newObj);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.compiledContract]);
+  }, [props.compiledContract, props.contractFunctions]);
 
   const handleDeploy = async (e: any) => {
     e.preventDefault();
@@ -165,7 +167,11 @@ export default function ContractsDeploy(props: IProps) {
           duration: 10000,
           isClosable: true,
         });
-        props.setDeployedAddress(txReceipt.contractAddress);
+        props.handleDeployedAddress({
+          contract: props.contractToDeploy,
+          deployedAddress: txReceipt.contractAddress,
+        });
+        props.setInteractAddress(txReceipt.contractAddress);
         const joined = props.logs.concat(
           "Contract Address: " + txReceipt.contractAddress
         );
@@ -211,7 +217,7 @@ export default function ContractsDeploy(props: IProps) {
           privateUrl: needle.privateTxUrl,
           accountPrivateKey: getAccountPrivKey,
           privateForList: props.getSetTessera,
-          compiledContract: props.compiledContract,
+          compiledContract: props.compiledContract[props.contractToDeploy],
           deployArgs: props.contractFunctions!.constructor.inputs,
         }),
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
@@ -226,7 +232,11 @@ export default function ContractsDeploy(props: IProps) {
             position: "bottom",
             isClosable: true,
           });
-          props.setDeployedAddress(result.data.contractAddress);
+          props.handleDeployedAddress({
+            contract: props.contractToDeploy,
+            deployedAddress: result.data.contractAddress,
+          });
+          props.setInteractAddress(result.data.contractAddress);
           const joined = props.logs.concat(
             "Contract Address: " + result.data.contractAddress
           );
@@ -234,6 +244,7 @@ export default function ContractsDeploy(props: IProps) {
           setDeployButtonLoading(false);
         })
         .catch((e) => {
+          console.error(e);
           props.closeAllToasts();
           props.reuseToast({
             title: "Error!",

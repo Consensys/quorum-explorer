@@ -102,7 +102,7 @@ export default function ContractsIndex(props: IProps) {
     getContractFunctions(compiledContract[Object.keys(compiledContract)[0]].abi)
   );
   const [contractToDeploy, setContractToDeploy] = useState("empty");
-  const [deployedAddress, setDeployedAddress] = useState("");
+  const [contractToInteract, setContractToInteract] = useState<any[]>([]);
   const [accountAddress, setAccountAddress] = useState("");
   const [selectedContract, setSelectedContract] = useState(contracts[0].name);
   const [logs, setLogs] = useState<string[]>([]);
@@ -127,6 +127,7 @@ export default function ContractsIndex(props: IProps) {
   const [metaMaskAccount, setMetaMaskAccount] = useState("");
   const [myChain, setMyChain] = useState({ chainId: "", chainName: "" });
   const [metaChain, setMetaChain] = useState({ chainId: "", chainName: "" });
+  const [interactAddress, setInteractAddress] = useState("");
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -197,8 +198,21 @@ export default function ContractsIndex(props: IProps) {
     setPrivTxState(e.target.checked);
   };
 
-  const handleContractAddress = (e: any) => {
-    setDeployedAddress(e.target.value);
+  const handleDeployContract = (e: any) => {
+    // function for handling select of which contract from compilation to deploy
+    // handleDeployedAddress({});
+    setContractFunctions(
+      getContractFunctions(compiledContract[e.target.value].abi)
+    );
+    setContractToDeploy(e.target.value);
+  };
+
+  const handleDeployedAddress = (e: any) => {
+    if (e === true) {
+      setContractToInteract([]);
+    } else {
+      setContractToInteract((oldArray) => [...oldArray, e]);
+    }
   };
 
   function closeAll() {
@@ -250,6 +264,9 @@ export default function ContractsIndex(props: IProps) {
       return;
     }
 
+    handleDeployedAddress(true);
+    setInteractAddress("");
+
     axios({
       method: "POST",
       url: `/api/contractCompile`,
@@ -264,12 +281,6 @@ export default function ContractsIndex(props: IProps) {
         if (response.status === 200) {
           //console.log(response.data);
           setCompiledContract(response.data);
-          // setCompiledContract({
-          //   abi: response.data.abi,
-          //   bytecode: response.data.bytecode,
-          //   name: response.data.name,
-          //   gasEstimates: response.data.gasEstimates,
-          // });
           setContractToDeploy(Object.keys(response.data)[0]);
           setContractFunctions(
             getContractFunctions(
@@ -331,13 +342,6 @@ export default function ContractsIndex(props: IProps) {
       });
   };
 
-  const handleDeployContract = async (e: any) => {
-    // function for handling select of which contract from compilation to deploy
-    setContractFunctions(
-      getContractFunctions(compiledContract[e.target.value].abi)
-    );
-    setContractToDeploy(e.target.value);
-  };
   return (
     <>
       <MotionGrid
@@ -556,7 +560,6 @@ export default function ContractsIndex(props: IProps) {
                       privateFrom={currentTesseraPublicKey}
                       fromPrivateKey={deployParams.privateKeyFrom}
                       selectLoading={selectLoading}
-                      setDeployedAddress={setDeployedAddress}
                       closeAllToasts={closeAll}
                       reuseToast={toast}
                       logs={logs}
@@ -568,12 +571,14 @@ export default function ContractsIndex(props: IProps) {
                       contractToDeploy={contractToDeploy}
                       handleDeployContract={handleDeployContract}
                       contractFunctions={contractFunctions}
+                      handleDeployedAddress={handleDeployedAddress}
+                      setInteractAddress={setInteractAddress}
+                      contractToInteract={contractToInteract}
                     />
                     <DynamicContractsInteract
                       config={props.config}
                       selectedNode={props.selectedNode}
                       compiledContract={compiledContract}
-                      contractAddress={deployedAddress}
                       account={accountAddress}
                       privateFor={deployParams.privateFor}
                       privateFrom={currentTesseraPublicKey}
@@ -581,10 +586,12 @@ export default function ContractsIndex(props: IProps) {
                       selectLoading={selectLoading}
                       closeAllToasts={closeAll}
                       reuseToast={toast}
-                      handleContractAddress={handleContractAddress}
                       getSetTessera={getSetTessera}
                       privTxState={privTxState}
                       contractFunctions={contractFunctions}
+                      contractToInteract={contractToInteract}
+                      setInteractAddress={setInteractAddress}
+                      interactAddress={interactAddress}
                     />
                   </Accordion>
                 </SimpleGrid>
