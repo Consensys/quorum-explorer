@@ -39,7 +39,7 @@ export default function Explorer({ config }: IProps) {
     transactions: [],
   });
   const [lookBackBlocks, setLookBackBlocks] = useState(10);
-  const [timeoutReceived, setTimeoutReceived] = useState(false);
+  // const [timeoutReceived, setTimeoutReceived] = useState(false);
 
   const onSelectChange = (e: any) => {
     e.preventDefault();
@@ -65,7 +65,7 @@ export default function Explorer({ config }: IProps) {
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((res) => {
-          setTimeoutReceived(false);
+          // setTimeoutReceived(false);
           const quorumBlock: QuorumBlock = res.data as QuorumBlock;
           const currentBlock = parseInt(quorumBlock.number, 16);
           const lastXBlockArray = range(
@@ -86,7 +86,7 @@ export default function Explorer({ config }: IProps) {
               }),
               signal: controller.signal,
               baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
-              timeout: 2000,
+              // timeout: 2000,
             });
             return res.data;
           });
@@ -96,6 +96,7 @@ export default function Explorer({ config }: IProps) {
               .filter((a) => a.transactions.length > 0)
               .map((a) => a.transactions)
               .flat();
+            console.log(slicedBlocks);
             setExplorer({
               selectedNode: name,
               blocks: slicedBlocks,
@@ -104,7 +105,7 @@ export default function Explorer({ config }: IProps) {
           });
         })
         .catch((err) => {
-          setTimeoutReceived(true);
+          // setTimeoutReceived(true);
           console.error(err);
         });
     },
@@ -146,7 +147,6 @@ export default function Explorer({ config }: IProps) {
           blocks={explorer.blocks}
           url={getDetailsByNodeName(config, explorer.selectedNode).rpcUrl}
           onSelectChange={onSelectChange}
-          timeoutReceived={timeoutReceived}
         />
         <Divider />
         <ExplorerTxns

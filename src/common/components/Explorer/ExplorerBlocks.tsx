@@ -28,7 +28,6 @@ interface IProps {
   blocks: QuorumBlock[];
   url: string;
   onSelectChange: (e: any) => void;
-  timeoutReceived: boolean;
 }
 
 export default function ExplorerBlocks(props: IProps) {
@@ -116,7 +115,7 @@ export default function ExplorerBlocks(props: IProps) {
         </Flex>
         <Container maxW={{ base: "container.sm", md: "container.xl" }}>
           <SimpleGrid columns={{ base: 1, md: 4 }} gap={{ base: "5", md: "6" }}>
-            {props.timeoutReceived && (
+            {/* {props.timeoutReceived ? (
               <>
                 <Flex
                   alignItems="center"
@@ -137,10 +136,13 @@ export default function ExplorerBlocks(props: IProps) {
                   </VStack>
                 </Flex>
               </>
-            )}
-            {props.blocks.map((block) => (
-              <ExplorerBlockCard key={block.number} block={block} />
-            ))}
+            ) : ( */}
+            <>
+              {props.blocks.map((block, i) => (
+                <ExplorerBlockCard key={i} block={block} />
+              ))}
+            </>
+            {/* )} */}
           </SimpleGrid>
         </Container>
       </BoxMotion>

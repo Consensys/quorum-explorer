@@ -46,7 +46,7 @@ export default function ExplorerBlockCard({ block }: IProps) {
               </Text>
               <Text fontSize="sm" align="center">
                 Validator: {abbreviateValidator(block.miner)}
-              </Text>{" "}
+              </Text>
             </>
           ) : (
             <>

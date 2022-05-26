@@ -22,7 +22,7 @@ export default async function handler(
     size: "",
     gasUsed: "",
     gasLimit: "",
-    timestamp: "",
+    timestamp: Date(),
     uncles: [],
     transactions: [],
   };
