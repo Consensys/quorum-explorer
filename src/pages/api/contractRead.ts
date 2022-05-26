@@ -119,16 +119,16 @@ async function besuReadValueAtAddress(
   );
 
   if (functionAbi.outputs.length > 0) {
-    const funcOutputType = functionAbi.outputs[0].type;
+    const funcOutputTypes = functionAbi.outputs.map((x: any) => x.type);
     const outputSimplified = web3.eth.abi.decodeParameters(
-      [funcOutputType],
+      funcOutputTypes,
       result.output
     );
     console.log("Raw value from deployed contract is: " + result.output);
-    console.log("Type to decode is: " + funcOutputType);
+    console.log("Type to decode is: " + funcOutputTypes);
     console.log("Value from deployed contract is: ");
     console.log(outputSimplified);
-    return outputSimplified[0];
+    return outputSimplified;
   } else {
     console.log(
       "Raw value from deployed contract is: " + JSON.stringify(result)
