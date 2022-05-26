@@ -19,8 +19,8 @@ export function getDefaultValue(t: string) {
       return false as Boolean;
     } else if (t == "address") {
       return "0x0000000000000000000000000000000000000000";
-      // } else if (t=="bytes"){
-      //   return "";
+    } else if (t == "bytes") {
+      return "bytes";
     } else if (t.includes("[")) {
       return "[]";
       return "";

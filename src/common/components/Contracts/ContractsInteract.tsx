@@ -278,9 +278,9 @@ export default function ContractsInteract(props: IProps) {
   };
 
   const handleTransact = async (e: any) => {
-    console.log("Contract TRANSACT: " + e.target.id);
+    console.log("Contract TRANSACT: " + e.name);
     // console.log(scDefinition);
-    const functionToCall = e.target.id;
+    const functionToCall = e.name;
     setDynamicButtonLoading({
       ...dynamicButtonLoading,
       [functionToCall]: true,
@@ -327,7 +327,7 @@ export default function ContractsInteract(props: IProps) {
         ].abi,
         signer
       );
-      const funcToCall = e.target.id;
+      const funcToCall = e.name;
       let res;
       try {
         if (typeof transactParams[funcToCall] !== "undefined") {
@@ -541,7 +541,7 @@ export default function ContractsInteract(props: IProps) {
                           <FontAwesomeIcon icon={faPencilAlt as IconProp} />
                         }
                         colorScheme="purple"
-                        onClick={(e) => handleTransact(e)}
+                        onClick={() => handleTransact(f)}
                         variant="solid"
                         minW={125}
                         isLoading={dynamicButtonLoading[f.name]}
