@@ -476,6 +476,9 @@ export default function ContractsInteract(props: IProps) {
               id="contract-address"
               placeholder="0x"
               value={props.interactAddress}
+              onClick={() =>
+                navigator.clipboard.writeText(props.interactAddress)
+              }
               readOnly
             />
           </FormControl>
@@ -500,9 +503,8 @@ export default function ContractsInteract(props: IProps) {
                       leftIcon={
                         <FontAwesomeIcon icon={faDatabase as IconProp} />
                       }
-                      type="submit"
                       colorScheme="blue"
-                      onClick={handleRead}
+                      onClick={(e) => handleRead(e)}
                       variant="solid"
                       minW={125}
                       isLoading={dynamicButtonLoading[f.name]}
@@ -542,9 +544,8 @@ export default function ContractsInteract(props: IProps) {
                         leftIcon={
                           <FontAwesomeIcon icon={faPencilAlt as IconProp} />
                         }
-                        type="submit"
                         colorScheme="purple"
-                        onClick={handleTransact}
+                        onClick={(e) => handleTransact(e)}
                         variant="solid"
                         minW={125}
                         isLoading={dynamicButtonLoading[f.name]}

@@ -125,6 +125,7 @@ export default function ContractsDeploy(props: IProps) {
 
     if (!props.privTxState) {
       // public transaction
+      // console.log(props.metaChain.chainId, props.myChain.chainId);
       if (props.metaChain.chainId !== props.myChain.chainId) {
         // check whether selected chain is also the network chain
         console.error("You are on the wrong chain!");

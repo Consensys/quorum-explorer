@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { QuorumConfig, QuorumNode } from "../../types/QuorumConfig";
 import { getDetailsByNodeName } from "../../lib/quorumConfig";
-import { motion } from "framer-motion";
 import { connectMetaMask, detectMetaMask } from "../../lib/connectMetaMask";
 import MetaMask from "../Misc/MetaMask";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { Button, useToast } from "@chakra-ui/react";
+import axios from "axios";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 interface IProps {
   config: QuorumConfig;
@@ -52,14 +54,27 @@ export default function ContractsMetaMask(props: IProps) {
   useEffect(() => {
     // get the chainId through the selected node
     try {
-      const rpcUrl = needle.rpcUrl;
-      const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-      provider.getNetwork().then((res) => {
-        props.setMyChain({
-          chainId: "0x" + res.chainId.toString(16),
-          chainName: res.name,
-        });
-      });
+      // const rpcUrl = needle.rpcUrl;
+      // const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+      // provider.getNetwork().then((res) => {
+      //   props.setMyChain({
+      //     chainId: "0x" + res.chainId.toString(16),
+      //     chainName: res.name,
+      //   });
+      // });
+      axios({
+        method: "POST",
+        url: `/api/getChainId`,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({ rpcUrl: needle.rpcUrl }),
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+      })
+        .then((res) => {
+          props.setMyChain(res.data);
+        })
+        .catch((err) => console.error(err));
       const provider2 = new ethers.providers.Web3Provider(
         (window as any).ethereum
       );
