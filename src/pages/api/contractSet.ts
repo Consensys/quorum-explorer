@@ -82,7 +82,7 @@ async function transactAtAddress(
 
   const functionParams = {
     chainId,
-    nonce: txCount,
+    // nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
     gasLimit: 0x3d090, //max number of gas units the tx is allowed to use
     value: 0,

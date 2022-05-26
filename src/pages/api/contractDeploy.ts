@@ -66,7 +66,7 @@ export async function deployContract(
   const constructorValues: string = constructorInitValues(web3, deployArgs);
   const txOptions = {
     chainId,
-    nonce: txCount,
+    // nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
     gasLimit: gasEstimate,
     value: 0,
