@@ -147,6 +147,7 @@ export default function ContractsIndex(props: IProps) {
           .privateKey,
       });
     } else {
+      setGetSetTessera([]);
       setAccountAddress("");
       setTesseraKeys([]);
       setDeployParams({ ...deployParams, privateKeyFrom: "" });

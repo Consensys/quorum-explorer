@@ -107,7 +107,6 @@ export default function ContractsInteract(props: IProps) {
   };
 
   const handleRead = async (e: any) => {
-    e.preventDefault();
     console.log("Contract READ: " + e.target.id);
     setDynamicButtonLoading({
       ...dynamicButtonLoading,
@@ -279,7 +278,6 @@ export default function ContractsInteract(props: IProps) {
   };
 
   const handleTransact = async (e: any) => {
-    e.preventDefault();
     console.log("Contract TRANSACT: " + e.target.id);
     // console.log(scDefinition);
     const functionToCall = e.target.id;
@@ -476,9 +474,17 @@ export default function ContractsInteract(props: IProps) {
               id="contract-address"
               placeholder="0x"
               value={props.interactAddress}
-              onClick={() =>
-                navigator.clipboard.writeText(props.interactAddress)
-              }
+              onClick={() => {
+                navigator.clipboard.writeText(props.interactAddress);
+                props.closeAllToasts();
+                props.reuseToast({
+                  title: "Copied to Clipboard",
+                  status: "success",
+                  duration: 5000,
+                  position: "bottom",
+                  isClosable: true,
+                });
+              }}
               readOnly
             />
           </FormControl>
