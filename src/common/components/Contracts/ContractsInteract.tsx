@@ -107,10 +107,10 @@ export default function ContractsInteract(props: IProps) {
   };
 
   const handleRead = async (e: any) => {
-    console.log("Contract READ: " + e.target.id);
+    console.log("Contract READ: " + e.name);
     setDynamicButtonLoading({
       ...dynamicButtonLoading,
-      [e.target.id]: true,
+      [e.name]: true,
     });
     setInteracting(true);
 
@@ -156,8 +156,8 @@ export default function ContractsInteract(props: IProps) {
         ].abi,
         signer
       );
-      const funcToCall = e.target.id;
       let res;
+      const funcToCall = e.name;
       try {
         if (typeof transactParams[funcToCall] !== "undefined") {
           res = await contract[funcToCall](
@@ -199,7 +199,7 @@ export default function ContractsInteract(props: IProps) {
       props.getSetTessera !== undefined &&
       props.getSetTessera.length > 0
     ) {
-      const funcToCall = e.target.id;
+      const funcToCall = e.name;
       await axios({
         method: "POST",
         url: `/api/contractRead`,
@@ -245,7 +245,7 @@ export default function ContractsInteract(props: IProps) {
             props.reuseToast({
               title: "Read Success!",
               description: `Value from contract function ${
-                e.target.id
+                e.name
               }( ): ${prettyPrintToast(result.data)}`,
               status: "success",
               duration: 5000,
@@ -272,7 +272,7 @@ export default function ContractsInteract(props: IProps) {
     }
     setDynamicButtonLoading({
       ...dynamicButtonLoading,
-      [e.target.id]: false,
+      [e.name]: false,
     });
     setInteracting(false);
   };
@@ -474,17 +474,7 @@ export default function ContractsInteract(props: IProps) {
               id="contract-address"
               placeholder="0x"
               value={props.interactAddress}
-              onClick={() => {
-                navigator.clipboard.writeText(props.interactAddress);
-                props.closeAllToasts();
-                props.reuseToast({
-                  title: "Copied to Clipboard",
-                  status: "success",
-                  duration: 5000,
-                  position: "bottom",
-                  isClosable: true,
-                });
-              }}
+              onFocus={(e) => e.target.select()}
               readOnly
             />
           </FormControl>
@@ -510,7 +500,7 @@ export default function ContractsInteract(props: IProps) {
                         <FontAwesomeIcon icon={faDatabase as IconProp} />
                       }
                       colorScheme="blue"
-                      onClick={(e) => handleRead(e)}
+                      onClick={() => handleRead(f)}
                       variant="solid"
                       minW={125}
                       isLoading={dynamicButtonLoading[f.name]}

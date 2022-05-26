@@ -93,7 +93,6 @@ export default function ContractsDeploy(props: IProps) {
   }, [props.compiledContract, props.contractFunctions]);
 
   const handleDeploy = async (e: any) => {
-    e.preventDefault();
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
 
     if (props.privTxState && props.account.length < 1) {

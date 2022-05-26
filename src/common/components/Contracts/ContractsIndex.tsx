@@ -128,6 +128,7 @@ export default function ContractsIndex(props: IProps) {
   const [myChain, setMyChain] = useState({ chainId: "", chainName: "" });
   const [metaChain, setMetaChain] = useState({ chainId: "", chainName: "" });
   const [interactAddress, setInteractAddress] = useState("");
+  const [selectValue, setSelectValue] = useState(null);
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -139,6 +140,8 @@ export default function ContractsIndex(props: IProps) {
   // Set accountAddress if is a member
   useEffect(() => {
     const needle = getDetailsByNodeName(props.config, props.selectedNode);
+    setSelectValue(null);
+    setGetSetTessera([]);
     if (needle.accountAddress !== undefined) {
       setAccountAddress(needle.accountAddress);
       setDeployParams({
@@ -147,7 +150,6 @@ export default function ContractsIndex(props: IProps) {
           .privateKey,
       });
     } else {
-      setGetSetTessera([]);
       setAccountAddress("");
       setTesseraKeys([]);
       setDeployParams({ ...deployParams, privateKeyFrom: "" });
@@ -485,6 +487,7 @@ export default function ContractsIndex(props: IProps) {
                             value={
                               !privTxState ? metaMaskAccount : accountAddress
                             }
+                            onFocus={(e) => e.target.select()}
                             readOnly
                           />
                           {privTxState ? (
@@ -535,7 +538,9 @@ export default function ContractsIndex(props: IProps) {
                                 instanceId="private-for-deploy"
                                 isMulti
                                 options={tesseraKeys}
+                                value={selectValue}
                                 onChange={(e: any) => {
+                                  setSelectValue(e);
                                   const myList: string[] = [];
                                   e.map((k: any) => myList.push(k.value));
                                   setGetSetTessera(myList);
