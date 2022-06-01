@@ -14,9 +14,6 @@
   - [Additional Features](#additional-features)
   - [Troubleshooting](#troubleshooting)
     - [MetaMask Transaction is Stuck](#metamask-transaction-is-stuck)
-    - [Developing your app/DApp with React and web3js](#developing-your-appdapp-with-react-and-web3js)
-    - [Solc doesn't compile on the frontend and requires a backend](#solc-doesnt-compile-on-the-frontend-and-requires-a-backend)
-    - [TODO:](#todo)
 
 ## Description
 
