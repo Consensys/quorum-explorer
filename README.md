@@ -142,25 +142,3 @@ To resolve this problem:
 4. Attempt transaction again on Wallets page
 
 You should not need to do this if the network is persisting for a long period of time like in production. However, may be necessary in development where the network is periodically reset.
-
-### Developing your app/DApp with React and web3js
-
-We have made use of the solution below and so have left details in here for reference. Web3 has some issues
-with React apps that make use of [Create React App](https://reactjs.org/docs/create-a-new-react-app.html), because
-NodeJS polyfills are not included in v5 of create-react-app. Full details can be found
-[here](https://github.com/ChainSafe/web3.js#web3-and-create-react-app)
-
-To workaround this issue:
-
-1. Create your new react app with create-react-app
-2. Install [react-app-rewired](https://github.com/ChainSafe/web3.js#solution) and a few missing modules which should get your app working again.
-   For reference, please see the [package.json](./package.json) of this project
-
-### Solc doesn't compile on the frontend and requires a backend
-
-Use a backend as well, either via express or something like NextJS(which is what we've done)
-
-
-### TODO:
-- multi contracts - types for bytes?
-- test multi params for the constructor
