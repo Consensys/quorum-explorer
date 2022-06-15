@@ -55,7 +55,7 @@ export default function ExplorerBlocks(props: IProps) {
       },
       data: JSON.stringify({
         rpcUrl: props.url,
-        blockNumber: blockSearch,
+        blockNumber: parseInt(blockSearch, 10).toString(16),
       }),
       baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       timeout: 2000,

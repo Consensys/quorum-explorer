@@ -62,7 +62,7 @@ export default function ExplorerTxnCard({ txn }: IProps) {
                   </Box>
                   <Divider m={1} />
                   <Text fontSize="sm" textAlign="left">
-                    Block: {txn.blockNumber}
+                    Block: {parseInt(txn.blockNumber.toString(), 16)}
                   </Text>
                   <Text fontSize="sm" textAlign="left">
                     Hash: {txn.blockHash}

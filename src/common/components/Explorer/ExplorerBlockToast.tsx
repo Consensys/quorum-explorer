@@ -12,7 +12,7 @@ export default function ExplorerBlockToast({ block, closeToast }: IProps) {
     <Box color="white" p={3} bg="#2c56dd">
       <HStack>
         <Text fontSize="sm" as="b" textAlign="left">
-          Block:&nbsp;&nbsp; {block.number}
+          Block: {parseInt(block.number, 16)}
         </Text>
         <Spacer />
         <Box

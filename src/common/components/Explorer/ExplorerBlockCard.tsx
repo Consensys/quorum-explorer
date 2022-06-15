@@ -35,7 +35,7 @@ export default function ExplorerBlockCard({ block }: IProps) {
             <>
               <HStack>
                 <Text fontSize="md" as="b">
-                  {block.number}
+                  {parseInt(block.number, 16)}
                 </Text>
                 <ExplorerBlockDetails block={block} />
               </HStack>
