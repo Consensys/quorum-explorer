@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import type { Session } from "next-auth";
 import { useSession, getSession } from "next-auth/react";
 import AccessDenied from "../common/components/Misc/AccessDenied";
-import { Container, Divider } from "@chakra-ui/react";
+import { Button, Container, Divider } from "@chakra-ui/react";
 import ExplorerBlocks from "../common/components/Explorer/ExplorerBlocks";
 import ExplorerTxns from "../common/components/Explorer/ExplorerTxns";
 import PageHeader from "../common/components/Misc/PageHeader";
@@ -39,7 +39,7 @@ export default function Explorer({ config }: IProps) {
     transactions: [],
   });
   const [lookBackBlocks, setLookBackBlocks] = useState(10);
-  // const [timeoutReceived, setTimeoutReceived] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   const onSelectChange = (e: any) => {
     e.preventDefault();
@@ -49,6 +49,9 @@ export default function Explorer({ config }: IProps) {
   // use useCallBack
   const nodeInfoHandler = useCallback(
     async (name: string) => {
+      if (isPaused === true) {
+        return;
+      }
       const needle: QuorumNode = getDetailsByNodeName(config, name);
       axios({
         method: "POST",
@@ -65,7 +68,6 @@ export default function Explorer({ config }: IProps) {
         baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       })
         .then((res) => {
-          // setTimeoutReceived(false);
           const quorumBlock: QuorumBlock = res.data as QuorumBlock;
           const currentBlock = parseInt(quorumBlock.number, 16);
           const lastXBlockArray = range(
@@ -105,26 +107,27 @@ export default function Explorer({ config }: IProps) {
           });
         })
         .catch((err) => {
-          // setTimeoutReceived(true);
           console.error(err);
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [config, lookBackBlocks]
+    [config, lookBackBlocks, isPaused]
   );
 
   useEffect(() => {
     nodeInfoHandler(explorer.selectedNode);
     intervalRef.current = setInterval(() => {
-      nodeInfoHandler(explorer.selectedNode);
-      console.log("explorer > called for new info...");
+      if (isPaused !== true) {
+        nodeInfoHandler(explorer.selectedNode);
+        console.log("explorer > called for new info...");
+      }
     }, refresh5s);
 
     return () => {
       clearInterval(intervalRef.current as NodeJS.Timeout);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [explorer.selectedNode, lookBackBlocks]);
+  }, [explorer.selectedNode, lookBackBlocks, isPaused]);
 
   const handleSelectNode = (e: any) => {
     controller.abort();
@@ -147,6 +150,7 @@ export default function Explorer({ config }: IProps) {
           blocks={explorer.blocks}
           url={getDetailsByNodeName(config, explorer.selectedNode).rpcUrl}
           onSelectChange={onSelectChange}
+          setIsPaused={setIsPaused}
         />
         <Divider />
         <ExplorerTxns

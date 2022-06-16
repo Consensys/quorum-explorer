@@ -12,9 +12,10 @@ import { getSecsAgo, abbreviateValidator } from "../../lib/explorer";
 
 interface IProps {
   block: QuorumBlock;
+  setIsPaused: any;
 }
 
-export default function ExplorerBlockCard({ block }: IProps) {
+export default function ExplorerBlockCard({ block, setIsPaused }: IProps) {
   // console.log(block);
   return (
     <>
@@ -37,7 +38,7 @@ export default function ExplorerBlockCard({ block }: IProps) {
                 <Text fontSize="md" as="b">
                   {parseInt(block.number, 16)}
                 </Text>
-                <ExplorerBlockDetails block={block} />
+                <ExplorerBlockDetails block={block} setIsPaused={setIsPaused} />
               </HStack>
               <Divider />
               <Text fontSize="sm" textAlign="left">

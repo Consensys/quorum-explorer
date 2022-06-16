@@ -10,9 +10,6 @@ import {
   useToast,
   Select,
   Tooltip,
-  Skeleton,
-  Divider,
-  VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
 import ExplorerBlockCard from "./ExplorerBlockCard";
@@ -28,9 +25,15 @@ interface IProps {
   blocks: QuorumBlock[];
   url: string;
   onSelectChange: (e: any) => void;
+  setIsPaused: any;
 }
 
-export default function ExplorerBlocks(props: IProps) {
+export default function ExplorerBlocks({
+  blocks,
+  url,
+  onSelectChange,
+  setIsPaused,
+}: IProps) {
   const [blockSearch, setBlockSearch] = useState("");
   const toast = useToast();
   const toastIdRef: any = React.useRef();
@@ -54,8 +57,8 @@ export default function ExplorerBlocks(props: IProps) {
         "Content-Type": "application/json",
       },
       data: JSON.stringify({
-        rpcUrl: props.url,
-        blockNumber: parseInt(blockSearch, 10).toString(16),
+        rpcUrl: url,
+        blockNumber: "0x" + parseInt(blockSearch, 10).toString(16),
       }),
       baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       timeout: 2000,
@@ -97,7 +100,7 @@ export default function ExplorerBlocks(props: IProps) {
           <Container maxW="40%" m={0} p={0}>
             <Flex justifyContent="flex-end" gap="16px">
               <Tooltip label="Select number of blocks back to display data">
-                <Select maxW="20%" onChange={props.onSelectChange}>
+                <Select maxW="20%" onChange={onSelectChange}>
                   <option value="10">10</option>
                   <option value="20">20</option>
                   <option value="30">30</option>
@@ -115,34 +118,15 @@ export default function ExplorerBlocks(props: IProps) {
         </Flex>
         <Container maxW={{ base: "container.sm", md: "container.xl" }}>
           <SimpleGrid columns={{ base: 1, md: 4 }} gap={{ base: "5", md: "6" }}>
-            {/* {props.timeoutReceived ? (
-              <>
-                <Flex
-                  alignItems="center"
-                  justifyContent="center"
-                  flexDirection={{ base: "column", md: "column" }}
-                  px={{ base: "5", md: "8" }}
-                  pt={{ base: "5", md: "4" }}
-                  pb={{ base: "5", md: "4" }}
-                  borderRadius="lg"
-                  borderWidth={2}
-                  overflow="hidden"
-                >
-                  <VStack>
-                    <Skeleton h="20px" w="130px" />
-                    <Divider />
-                    <Skeleton h="20px" w="130px" />
-                    <Skeleton h="20px" w="130px" />
-                  </VStack>
-                </Flex>
-              </>
-            ) : ( */}
             <>
-              {props.blocks.map((block, i) => (
-                <ExplorerBlockCard key={i} block={block} />
+              {blocks.map((block, i) => (
+                <ExplorerBlockCard
+                  key={i}
+                  block={block}
+                  setIsPaused={setIsPaused}
+                />
               ))}
             </>
-            {/* )} */}
           </SimpleGrid>
         </Container>
       </BoxMotion>

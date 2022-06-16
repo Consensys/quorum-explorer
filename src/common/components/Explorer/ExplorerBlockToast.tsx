@@ -44,15 +44,17 @@ export default function ExplorerBlockToast({ block, closeToast }: IProps) {
           </Tr>
           <Tr fontSize="xs">
             <Td borderBottomColor={"#2c56dd"}>Size</Td>
-            <Td borderBottomColor={"#2c56dd"}>{block.size} </Td>
+            <Td borderBottomColor={"#2c56dd"}>{parseInt(block.size, 16)} </Td>
           </Tr>
           <Tr fontSize="xs">
             <Td borderBottomColor={"#2c56dd"}>Gas Used</Td>
-            <Td borderBottomColor={"#2c56dd"}>{block.gasUsed} </Td>
+            <Td borderBottomColor={"#2c56dd"}>{parseInt(block.gasUsed, 16)}</Td>
           </Tr>
           <Tr fontSize="xs">
             <Td borderBottomColor={"#2c56dd"}>Timestamp</Td>
-            <Td borderBottomColor={"#2c56dd"}>{block.timestamp} </Td>
+            <Td borderBottomColor={"#2c56dd"}>
+              {new Date(parseInt(block.timestamp, 16)).toString()}
+            </Td>
           </Tr>
           <Tr fontSize="xs">
             <Td borderBottomColor={"#2c56dd"}>State Root</Td>
