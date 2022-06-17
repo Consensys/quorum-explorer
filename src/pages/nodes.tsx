@@ -21,6 +21,7 @@ import { QuorumConfig, QuorumNode } from "../common/types/QuorumConfig";
 import { getDetailsByNodeName } from "../common/lib/quorumConfig";
 import { refresh5s } from "../common/lib/common";
 import axios from "axios";
+import NodePeers from "../common/components/Nodes/NodePeers";
 import { configReader } from "../common/lib/getConfig";
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
@@ -63,6 +64,7 @@ export default function Nodes({ config }: IProps) {
     queuedTxns: 0,
     pendingTxns: 0,
   });
+  const [peers, setPeers] = useState([]);
 
   const stats: QuorumStatCard[] = [
     {
@@ -156,6 +158,23 @@ export default function Nodes({ config }: IProps) {
             queuedTxns: 0,
           });
         });
+      await axios({
+        method: "POST",
+        url: `/api/nodeGetPeers`,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          rpcUrl: needle.rpcUrl,
+        }),
+        baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+      })
+        .then((res) => {
+          setPeers(res.data);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [config]
@@ -198,6 +217,7 @@ export default function Nodes({ config }: IProps) {
           ip={node.ip}
           statusText={node.statusText}
         />
+        {peers.length > 0 && <NodePeers peers={peers} />}
       </Container>
     </>
   );
