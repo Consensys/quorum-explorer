@@ -13,11 +13,11 @@ export default async function handler(
     return;
   }
   // console.log(req.body);
-  let output: any = await compile(req.body.content);
+  let output: any = await compile(req.body.content, req.body.version);
   res.status(200).json(output);
 }
 
-async function compile(sourceCode: any) {
+async function compile(sourceCode: any, version: string) {
   const input = {
     language: "Solidity",
     sources: { main: { content: sourceCode } },
@@ -35,8 +35,9 @@ async function compile(sourceCode: any) {
   >{};
   return new Promise((resolve, reject) => {
     // Create the Solidity Compiler Standard Input and Output JSON
+    // Use "latest" if you want latest build
     solc.loadRemoteVersion(
-      "latest",
+      version,
       async function (err: any, solcSnapshot: any) {
         if (err) {
           // An error was encountered, display and quit

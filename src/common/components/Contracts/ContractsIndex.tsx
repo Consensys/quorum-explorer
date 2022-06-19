@@ -129,6 +129,8 @@ export default function ContractsIndex(props: IProps) {
   const [metaChain, setMetaChain] = useState({ chainId: "", chainName: "" });
   const [interactAddress, setInteractAddress] = useState("");
   const [selectValue, setSelectValue] = useState(null);
+  const [compilerVers, setCompilerVers] = useState([]);
+  const [solidityVer, setSolidityVer] = useState("");
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -195,6 +197,26 @@ export default function ContractsIndex(props: IProps) {
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.selectedNode]);
+
+  // Get list of solidity compiler versions
+  useEffect(() => {
+    axios({
+      method: "GET",
+      url: `https://binaries.soliditylang.org/bin/list.json`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      signal: controller.signal,
+      baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
+    })
+      .then((res) => {
+        setCompilerVers(res.data.builds.reverse());
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const privTx = (e: any) => {
     // set the state of whether we are using private txns or not
@@ -275,6 +297,22 @@ export default function ContractsIndex(props: IProps) {
       return;
     }
 
+    if (solidityVer === "") {
+      toast({
+        title: "Select Solidity Version",
+        description: `Please select a solidity version!`,
+        status: "warning",
+        duration: 5000,
+        position: "bottom",
+        isClosable: true,
+      });
+      setButtonLoading({
+        ...buttonLoading,
+        Compile: { status: false, isDisabled: false },
+      });
+      return;
+    }
+
     handleDeployedAddress(true);
     setInteractAddress("");
 
@@ -284,7 +322,11 @@ export default function ContractsIndex(props: IProps) {
       headers: {
         "Content-Type": "application/json",
       },
-      data: JSON.stringify({ name: selectedContract, content: code }),
+      data: JSON.stringify({
+        name: selectedContract,
+        content: code,
+        version: solidityVer,
+      }),
       baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
       timeout: 5000,
     })
@@ -404,6 +446,21 @@ export default function ContractsIndex(props: IProps) {
               readOnly={selectedContract === "custom" ? false : true}
             />
           </Box>
+          <Select
+            placeholder="Solidity Compiler Version"
+            mb={3}
+            onChange={(e: any) => {
+              setSolidityVer(e.target.value);
+            }}
+          >
+            {compilerVers.map((vers: any) => {
+              return (
+                <>
+                  <option value={vers.path.slice(8, -3)}>{vers.path}</option>
+                </>
+              );
+            })}
+          </Select>
           <Flex
             justifyContent="space-between"
             alignContent="center"
