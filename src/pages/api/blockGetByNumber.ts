@@ -53,7 +53,6 @@ export default async function handler(
     quorumBlock["uncles"] = ethBlockByNumber.data.result.uncles;
     quorumBlock["transactions"] = ethBlockByNumber.data.result.transactions;
   } catch (e) {
-    console.error(e);
     console.error(
       "Node is unreachable. Ensure ports are open and client is running!"
     );

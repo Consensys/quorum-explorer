@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import apiAuth from "../../common/lib/authentication";
 import { ethApiCall } from "../../common/lib/ethApiCall";
 import { ConsensusAlgorithms, Clients } from "../../common/types/Validator";

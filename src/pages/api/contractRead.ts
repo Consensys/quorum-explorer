@@ -13,7 +13,7 @@ export default async function handler(
   if (!checkSession) {
     return;
   }
-  console.log(req.body);
+  // console.log(req.body);
   if (req.body.client === "besu") {
     await besuReadValueAtAddress(
       // still needs to be updated with proper values
@@ -57,6 +57,13 @@ async function readValueAtAddress(
   const web3 = new Web3(rpcUrl);
   const web3quorum = Web3Quorum(web3, { privateUrl: privateUrl }, true);
   const contractInstance = new web3quorum.eth.Contract(abi, contractAddress);
+
+  const functionAbi = contractInstance._jsonInterface.find((e: any) => {
+    return e.name === functionToCall;
+  });
+  if (functionAbi === undefined) {
+    throw "Called function not in ABI";
+  }
 
   if (functionArgs === undefined || functionArgs.length === 0) {
     const res = await contractInstance.methods[functionToCall]()

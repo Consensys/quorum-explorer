@@ -32,7 +32,7 @@ export default function ExplorerBlockCard({ block, setIsPaused }: IProps) {
         overflow="hidden"
       >
         <VStack>
-          {block.statusText !== "error" ? (
+          {block.statusText !== "error" && block.number !== "-1" ? (
             <>
               <HStack>
                 <Text fontSize="md" as="b">
