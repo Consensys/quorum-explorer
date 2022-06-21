@@ -3,8 +3,9 @@ import Web3 from "web3";
 //@ts-ignore
 import Web3Quorum from "web3js-quorum";
 import axios from "axios";
-import { CompiledContract, SCDFunctionArg } from "../../common/types/Contracts";
 import apiAuth from "../../common/lib/authentication";
+import { configReader } from "../../common/lib/getConfig";
+import { QuorumNode } from "../../common/types/QuorumConfig";
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,7 +15,7 @@ export default async function handler(
   if (!checkSession) {
     return;
   }
-  console.log(req.body);
+  // console.log(req.body);
   await deployContract(
     req.body.client,
     req.body.rpcUrl,
@@ -23,9 +24,15 @@ export default async function handler(
     req.body.privateForList,
     req.body.compiledContract,
     req.body.deployArgs
-  ).then((txHash) => {
-    res.status(200).json(txHash);
-  });
+  )
+    .then((txHash) => {
+      res.status(200).json(txHash);
+    })
+    .catch((e) => {
+      console.error(e);
+      res.status(500);
+      res.end();
+    });
 }
 
 function constructorInitValues(web3: Web3, deployArgs: any) {
@@ -57,6 +64,15 @@ export async function deployContract(
   const account = web3.eth.accounts.privateKeyToAccount(accountPrivateKey);
   const txCount = await web3.eth.getTransactionCount(account.address);
   const chainId = await web3.eth.getChainId();
+
+  // Verify that privateUrl cannot be subject to a server-side request forgery
+  const getConf = JSON.parse(await configReader());
+  const rpcList = getConf.nodes.map((x: QuorumNode) => {
+    return x.privateTxUrl;
+  });
+  if (!rpcList.includes(privateUrl)) {
+    throw "Provided URL is not in allow list";
+  }
 
   const fromTxPublicKey = await axios
     .get(privateUrl + "/keys", {
