@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import Web3 from "web3";
 //@ts-ignore
 import Web3Quorum from "web3js-quorum";
@@ -69,7 +68,6 @@ async function transactAtAddress(
     return e.name === functionToCall;
   });
 
-  console.log(functionInputParams);
   const functionCallParams = functionInputParams.map((_: any) => _.value);
   const functionArgs = web3quorum.eth.abi
     .encodeParameters(functionAbi.inputs, functionCallParams)
@@ -77,12 +75,12 @@ async function transactAtAddress(
 
   const from = web3.eth.accounts.privateKeyToAccount(fromPrivateKey);
   // get the nonce for the sender ethereum account
-  const txCount = await web3.eth.getTransactionCount(from.address);
+  const txCount = await web3.eth.getTransactionCount(from.address, "pending");
   const data = functionAbi.signature + functionArgs;
 
   const functionParams = {
     chainId,
-    // nonce: txCount,
+    nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
     gasLimit: 0x3d090, //max number of gas units the tx is allowed to use
     value: 0,

@@ -50,6 +50,14 @@ export async function deployContract(
   compiledContract: any,
   deployArgs: any
 ) {
+  // Verify that privateUrl cannot be subject to a server-side request forgery
+  const getConf = JSON.parse(await configReader());
+  const rpcList = getConf.nodes.map((x: QuorumNode) => {
+    return x.privateTxUrl;
+  });
+  if (!rpcList.includes(privateUrl)) {
+    throw "Provided URL is not in allow list";
+  }
   const abi = compiledContract.abi;
   const bytecode = compiledContract.bytecode;
   const gasEstimate =
@@ -62,17 +70,11 @@ export async function deployContract(
     client === "goquorum" ? true : false
   );
   const account = web3.eth.accounts.privateKeyToAccount(accountPrivateKey);
-  const txCount = await web3.eth.getTransactionCount(account.address);
+  const txCount = await web3.eth.getTransactionCount(
+    account.address,
+    "pending"
+  );
   const chainId = await web3.eth.getChainId();
-
-  // Verify that privateUrl cannot be subject to a server-side request forgery
-  const getConf = JSON.parse(await configReader());
-  const rpcList = getConf.nodes.map((x: QuorumNode) => {
-    return x.privateTxUrl;
-  });
-  if (!rpcList.includes(privateUrl)) {
-    throw "Provided URL is not in allow list";
-  }
 
   const fromTxPublicKey = await axios
     .get(privateUrl + "/keys", {
@@ -82,7 +84,7 @@ export async function deployContract(
   const constructorValues: string = constructorInitValues(web3, deployArgs);
   const txOptions = {
     chainId,
-    // nonce: txCount,
+    nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
     gasLimit: gasEstimate,
     value: 0,
