@@ -1,12 +1,13 @@
+/* eslint-disable @next/next/link-passhref */
+import { Button, chakra, Divider, Flex, HStack } from "@chakra-ui/react";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { motion } from "framer-motion";
 import Link from "next/link";
-import { Flex, Button, HStack, Divider, chakra } from "@chakra-ui/react";
-import MobileNav from "./MobileNav";
-import { QuorumIcon } from "./QuorumIcon";
 import { NavItems } from "../../types/NavBar";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { motion } from "framer-motion";
+import MobileNav from "./MobileNav";
+import { QuorumIcon } from "./QuorumIcon";
 
 export default function NavBar() {
   return (
@@ -19,7 +20,7 @@ export default function NavBar() {
         transition={{ duration: 1 }}
       >
         <Flex w="100%" px="6" py="5" align="center" justify="space-between">
-          <QuorumIcon />
+          <a href="/"><QuorumIcon /></a>
           {/* TODO: fix me up to avoid duplication of items  */}
           <HStack spacing="5" display={{ base: "none", md: "flex" }}>
             {NavItems.map((item, i) => (

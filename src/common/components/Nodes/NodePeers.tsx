@@ -32,6 +32,7 @@ export default function NodePeers({ peers }: IProps) {
         mt={10}
       >
         <Flex
+          id="peers"
           flexDirection="column"
           borderRadius="lg"
           borderWidth={2}

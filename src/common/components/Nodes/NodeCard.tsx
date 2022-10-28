@@ -1,8 +1,11 @@
-import { ReactElement } from "react";
-import { Box, Heading, Skeleton, HStack, VStack, Flex } from "@chakra-ui/react";
+/* eslint-disable @next/next/link-passhref */
+import { Box, Flex, Heading, HStack, Skeleton, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { ReactElement } from "react";
 const MotionHeading = motion(Heading);
 const MotionBox = motion(Box);
+const MotionFlex = motion(Flex);
 
 interface IProps {
   title: string;
@@ -12,9 +15,14 @@ interface IProps {
 }
 
 export default function NodeCard({ title, text, icon, statusText }: IProps) {
+  const links: any = {
+    Blocks: "/explorer",
+    Peers: "#peers"
+  }
   return (
-    <>
-      <Flex
+    <Link
+      href={links[title] ? links[title] : "/nodes"}>
+      <MotionFlex
         alignItems="center"
         justifyContent="center"
         flexDirection={{ base: "column", md: "row" }}
@@ -22,7 +30,13 @@ export default function NodeCard({ title, text, icon, statusText }: IProps) {
         py={{ base: "5", md: "5" }}
         borderRadius="lg"
         borderWidth={2}
-        boxShadow="lg"
+        boxShadow="md"
+        cursor="pointer"
+        whileHover={{
+          scale: 1.05,
+          boxShadow: "rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px"
+        }}
+
       >
         <HStack spacing={10}>
           <MotionBox
@@ -62,7 +76,7 @@ export default function NodeCard({ title, text, icon, statusText }: IProps) {
             )}
           </VStack>
         </HStack>
-      </Flex>
-    </>
+      </MotionFlex>
+    </Link>
   );
 }

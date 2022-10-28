@@ -11,18 +11,18 @@ export const NavItems: NavItem[] = [
     label: 'Nodes',
     icon: faServer,
   },
-  {
-    label: 'Validators',
-    icon: faUsers
-  },
+  // {
+  //   label: 'Validators',
+  //   icon: faUsers
+  // },
   {
     label: 'Explorer',
     icon: faCompass,
   },
-  {
-    label: 'Contracts',
-    icon: faFileAlt,
-  },
+  // {
+  //   label: 'Contracts',
+  //   icon: faFileAlt,
+  // },
   {
     label: 'Wallets',
     icon: faWallet,
