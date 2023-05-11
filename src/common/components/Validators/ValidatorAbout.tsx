@@ -37,8 +37,8 @@ export default function ValidatorsAbout() {
               no effect on overall consensus.
             </Text>
             <Text>
-              When a validator is proposed or removed, the entry under "Pending
-              Votes" will not automatically be removed. Each node can call a
+              When a validator is proposed or removed, the entry under &quotPending
+              Votes&quot will not automatically be removed. Each node can call a
               discard on the voting process during or after the validator has
               been added.
             </Text>

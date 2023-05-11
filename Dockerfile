@@ -1,4 +1,4 @@
-FROM node:lts-alpine as dependencies
+FROM node:lts-alpine3.16 as dependencies
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN apk add --no-cache --virtual .gyp \
@@ -8,13 +8,13 @@ RUN apk add --no-cache --virtual .gyp \
   && npm ci \
   && apk del .gyp
 
-FROM node:lts-alpine as builder
+FROM node:lts-alpine3.16 as builder
 WORKDIR /app
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
 RUN npm run build
 
-FROM node:lts-alpine as runner
+FROM node:lts-alpine3.16 as runner
 ENV NODE_ENV=production
 WORKDIR /app
 # If you are using a custom next.config.js file, uncomment this line.

@@ -4,7 +4,7 @@ const pino = require('pino')
 const logger = defaultConfig =>
   pino({
     ...defaultConfig,
-    prettyPrint: {
+    pinoPrint: {
       translateTime: "SYS:hh:MM:ss TT dd-mm-yyyy",
       errorLikeObjectKeys: ["err", "error", "details"],
       ignore: "pid,hostname,service,prefix",
