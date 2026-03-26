@@ -17,7 +17,7 @@
 
 ## Description
 
-This is a lightweight explorer that is designed to get you up and running really quickly to give you an overview of yout chain.
+This is a lightweight explorer that is designed to get you up and running really quickly to give you an overview of your chain.
 It has not been designed for production use yet!
 
 ## Prerequisites
@@ -111,7 +111,7 @@ services:
       - 25000:25000/tcp
 ```
 
-The above you can find a bare-minimum `docker-compose.yaml`. You should edit the locations of the `config.json` and `.env.production` depending on where they are located. Both of those files **must** be provided for the application to function. Please take a look at `.env.production` and `/config/config.json` in this repo for how to format.
+Above, you can find a bare-minimum `docker-compose.yaml`. You should edit the locations of the `config.json` and `.env.production` depending on where they are located. Both of those files **must** be provided for the application to function. Please take a look at `.env.production` and `/config/config.json` in this repo for how to format.
 
 ### Building your own Docker container
 
