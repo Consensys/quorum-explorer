@@ -328,7 +328,7 @@ export default function ContractsIndex(props: IProps) {
         version: solidityVer,
       }),
       baseURL: `${publicRuntimeConfig.QE_BASEPATH}`,
-      timeout: 5000,
+      timeout: 15000,
     })
       .then((response) => {
         if (response.status === 200) {
