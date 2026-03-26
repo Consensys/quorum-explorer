@@ -17,7 +17,7 @@
 
 ## Description
 
-This is a lightweight explorer that is designed to get you up and running really quickly to give you an overview of yout chain.
+This is a lightweight explorer that is designed to get you up and running really quickly to give you an overview of your chain.
 It has not been designed for production use yet!
 
 ## Prerequisites
