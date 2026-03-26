@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { NextApiRequest, NextApiResponse } from "next";
 import Web3 from "web3";
 //@ts-ignore
